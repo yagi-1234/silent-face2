@@ -25,7 +25,7 @@ export default function RootLayout({
                 {children}
         </main>
         <footer className="text-center text-sm text-gray-500 mt-10 py-4 border-t">
-          &copy; 2025 Silent Face App
+          &copy; 2025 Silent Face Appa
         </footer>
       </body>
     </html>
