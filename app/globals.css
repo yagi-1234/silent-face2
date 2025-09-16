@@ -1,26 +1,293 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: #fafafa;
+  color: #333;
+}
+
+a {
+  text-decoration: none;
+  color: #0070f3;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+input {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.13 0.028 261.692);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.13 0.028 261.692);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.13 0.028 261.692);
+  --primary: oklch(0.21 0.034 264.665);
+  --primary-foreground: oklch(0.985 0.002 247.839);
+  --secondary: oklch(0.967 0.003 264.542);
+  --secondary-foreground: oklch(0.21 0.034 264.665);
+  --muted: oklch(0.967 0.003 264.542);
+  --muted-foreground: oklch(0.551 0.027 264.364);
+  --accent: oklch(0.967 0.003 264.542);
+  --accent-foreground: oklch(0.21 0.034 264.665);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.928 0.006 264.531);
+  --input: oklch(0.928 0.006 264.531);
+  --ring: oklch(0.707 0.022 261.325);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0.002 247.839);
+  --sidebar-foreground: oklch(0.13 0.028 261.692);
+  --sidebar-primary: oklch(0.21 0.034 264.665);
+  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-accent: oklch(0.967 0.003 264.542);
+  --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
+  --sidebar-border: oklch(0.928 0.006 264.531);
+  --sidebar-ring: oklch(0.707 0.022 261.325);
+}
+
+.dark {
+  --background: oklch(0.13 0.028 261.692);
+  --foreground: oklch(0.985 0.002 247.839);
+  --card: oklch(0.21 0.034 264.665);
+  --card-foreground: oklch(0.985 0.002 247.839);
+  --popover: oklch(0.21 0.034 264.665);
+  --popover-foreground: oklch(0.985 0.002 247.839);
+  --primary: oklch(0.928 0.006 264.531);
+  --primary-foreground: oklch(0.21 0.034 264.665);
+  --secondary: oklch(0.278 0.033 256.848);
+  --secondary-foreground: oklch(0.985 0.002 247.839);
+  --muted: oklch(0.278 0.033 256.848);
+  --muted-foreground: oklch(0.707 0.022 261.325);
+  --accent: oklch(0.278 0.033 256.848);
+  --accent-foreground: oklch(0.985 0.002 247.839);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.21 0.034 264.665);
+  --sidebar-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-accent: oklch(0.278 0.033 256.848);
+  --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  .root-panel {
+    @apply bg-white rounded-2xl w-240 p-6
+  }
+  .header-title {
+    @apply text-xl font-semibold mb-4
+  }
+  body {
+    @apply bg-background text-foreground
+  }
+  table {
+    @apply bg-gray-50 divide-y divide-gray-200
+  }
+  table th {
+    @apply px-2 py-1 bg-blue-100
+  }
+  table td {
+    @apply px-2 py-0 leading-none
+  }
+  .numeric-field {
+    @apply text-right
+  }
+  input {
+    @apply border border-gray-200 rounded-lg h-8
+  }
+  select {
+    @apply border border-gray-200 bg-white rounded-lg h-8
+  }
+  /*            className="w-full p-2 border rounded-lg bg-white text-gray-800" */
+  textarea {
+    @apply w-full p-2 border rounded-lg bg-white text-gray-800
+  }
+}
+
+@layer components {
+  .searchPanel {
+    @apply ml-4
+  }
+
+  .label-fixed {
+    @apply text-blue-500
+  }
+  .input-form {
+    @apply flex items-center mb-4
+  }
+  .input-form-full {
+    @apply items-center mb-4
+  }
+  .input-form label, .input-form-full label {
+    @apply w-32 font-medium mr-2
+  }
+  .input-form input {
+    @apply w-80
+  }
+  .input-form .text-sm {
+    @apply w-24
+  }
+  .input-form .text-datetime {
+    @apply w-48
+  }
+  .input-form .isError {
+    @apply bg-red-100
+  }
+  .input-fixed {
+    @apply bg-blue-100
+  }
+
+  .input-check-label {
+    @apply flex items-center space-x-2
+  }
+  .input-check-label span {
+    @apply text-sm font-normal
+  }
+  .input-check-label input {
+    @apply w-5 h-5
+  }
+  .footer-area {
+    @apply fixed bottom-0 w-228 bg-white border-t p-2
+  }
+  .footer-area .footer-area-sub {
+    @apply flex justify-between items-center
+  }
+  .footer-area .footer-area-sub .footer-left {
+    @apply flex gap-2
+  }
+  .footer-area .footer-area-sub .footer-right {
+    @apply flex gap-2
+  }
+  .half-w {
+    @apply w-1/2
+  }
+
+  input:disabled {
+    @apply bg-gray-100
+  }
+
+  .button-sm {
+    @apply text-sm
+  }
+  .button-normal {
+    @apply bg-gray-300 text-gray-600 flex items-center justify-center w-16 h-8 p-2 rounded-sm mr-2
+  }
+  .button-page {
+    @apply text-gray-600 flex items-center justify-center w-10 p-2
+  }
+  .button-plus {
+    @apply w-7
+  }
+  .button-save {
+    @apply bg-blue-600 text-white flex items-center justify-center w-20 h-8 px-4 py-2 rounded-sm;
+    &:hover {
+      @apply bg-blue-800;
+    }
+  }
+  .button-second {
+    @apply bg-blue-400 text-white flex items-center justify-center w-18 h-8 px-4 py-2 rounded-sm;
+    &:hover {
+      @apply bg-blue-500;
+    }
+    &:disabled {
+      @apply bg-gray-300;
+      &:hover {
+        @apply bg-gray-300;
+      }
+    }
+  }
+  .button-search {
+    @apply bg-green-600 text-white flex items-center justify-center w-20 h-8 p-2 rounded-sm mr-2
+  }
+  .button-search:hover {
+    @apply bg-green-800
+  }
+  .button-back {
+    @apply bg-gray-500 text-white flex items-center justify-center w-16 h-8 px-4 py-2 rounded-sm
+  }
+  .button-back:hover {
+    @apply bg-gray-800
+  }
+  button:disabled {
+    @apply bg-gray-300
+  }
+  .button-link {
+    @apply text-blue-500
+  }
+  .button-link:hover {
+    @apply text-blue-800 underline
+  }
+
+  .homeIcon {
+    @apply w-14 h-14
+  }
+  .timestamp {
+    @apply text-right text-sm
+  }
 }
