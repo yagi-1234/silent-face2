@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { Noto_Sans_JP as FontSans } from "next/font/google"
 import "./globals.css"
 
+import { HistoryProvider } from '@/contexts/HistoryContext'
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -17,12 +19,14 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ja">
-      <body>
+      <body className="flex min-h-screen flex-col items-center justify-center">
         <header className="bg-white shadow-md p-4 mb-6">
           <h1>Silent Face</h1>
         </header>
         <main>
-                {children}
+          <HistoryProvider>
+            {children}
+          </HistoryProvider>
         </main>
         <footer className="text-center text-sm text-gray-500 mt-10 py-4 border-t">
           &copy; 2025 Silent Face Appa
