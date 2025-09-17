@@ -5,7 +5,10 @@ import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, Plus, Search } from 'lucide-react'
 
+import { Breadcrumb } from '@/components/Breadcrumb'
+import MessageBanner from '@/components/MessageBanner'
 import { useHistory } from '@/contexts/HistoryContext'
+import { useMessage } from '@/contexts/MessageContext'
 import { Artist, ArtistCondition, initialArtistCondition } from '@/types/music/artist-types'
 import { CodeArtistType, CodeArtistGrade } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
@@ -17,16 +20,26 @@ const Page = () => {
     </Suspense>
   )
 }
-
 export default Page
 
 const ArtistList = () => {
   
   const { addToHistory } = useHistory()
+  const { message, setMessage, messageType, errors } = useMessage()
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [artists, setArtists] = useState<Artist[]>([])
+  const [condition, setCondition] = useState<ArtistCondition>(initialArtistCondition)
+  const [showAdvanced, setShowAdvanced] = useState(false)
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = event.target
+    setCondition(prev => ({
+      ...prev, 
+      [name]: type === 'checkbox' ? (event.target as HTMLInputElement).checked : value
+    }))
+  }
 
   const handleShowForm = (artistId: string) => {
     addToHistory({ title: 'artistList', path: `${pathname}?${searchParams.toString()}`})
@@ -42,11 +55,112 @@ const ArtistList = () => {
     router.push(`/music/tracks/trackList?artist_id=${artistId}&artist_name=${artistName}`);
   }
 
+  const handleSearch = async () => {
+    // const query = new URLSearchParams()
+    // if (condition.artist_id) query.append('artist_id', condition.artist_id)
+    // if (condition.artist_name) query.append('artist_name', condition.artist_name)
+    // if (condition.artist_name_exact_match) query.append('artist_name_exact_match', 'true')
+    // if (condition.grade_from) query.append('grade_from', condition.grade_from)
+    // if (condition.grade_to) query.append('grade_to', condition.grade_to)
+    // if (condition.random_count) query.append('random_count', condition.random_count.toString())
+    // router.push(`/music/artists/artistList?${query.toString()}`)
+    // const fetchData = await fetchArtists(condition)
+    // setArtists(fetchData)
+  }
+
   useEffect(() => {
   }, [])
 
   return (
     <div className="root-panel">
+      <MessageBanner
+          message={message}
+          type={messageType}
+          errors={errors}
+          onClose={() => setMessage('')} />
+      <Breadcrumb />
+      <h2 className="header-title">Artist List</h2>
+      <div className="searchPanel">
+        <div className="input-form">
+          <label htmlFor="artist_name">Artist Name</label>
+          <input type="text"
+              id="artist_name"
+              name="artist_name"
+              value={condition.artist_name}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSearch()
+              }}
+              onChange={handleSearchChange} />
+          <label className="input-check-label">
+            <input type="checkbox"
+                id="artist_name_exact_match"
+                name="artist_name_exact_match"
+                checked={condition.artist_name_exact_match}
+                onChange={handleSearchChange} />
+            <span>Exact Match</span>
+          </label>
+          <button className="w-10 h-10"
+              onClick={() => setShowAdvanced(!showAdvanced)}>
+            {showAdvanced ? 
+                <ChevronsUp size={16} />
+              :
+                <ChevronsDown size={16} />
+            }
+          </button>
+          {!showAdvanced && (
+            <button className="button-search w-20 absolute left-300"
+                onClick={handleSearch}>
+              <Search size={16} />
+            </button>
+          )}
+        </div>
+
+        {showAdvanced && (
+          <>
+            <div className="input-form">
+              <label htmlFor="grade">Grade</label>
+              <select
+                  id="grade_from"
+                  name="grade_from"
+                  className="w-30"
+                  value={condition.grade_from}
+                  onChange={handleSearchChange} >
+                <option key="" value=""></option>
+                {Object.entries(CodeArtistGrade)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+              <span>　～　</span>
+              <select
+                  id="grade_to"
+                  name="grade_to"
+                  className="w-30"
+                  value={condition.grade_to}
+                  onChange={handleSearchChange} >
+                <option key="" value=""></option>
+                {Object.entries(CodeArtistGrade)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="input-form">
+              <label htmlFor="randomFlag">Random Search</label>
+              <input type="number"
+                  id="random_count"
+                  name="random_count"
+                  className="numeric-field w-30"
+                  value={condition.random_count ?? ''}
+                  onChange={handleSearchChange} />
+            <button className="button-search w-20 absolute left-220"
+                  onClick={handleSearch}>
+                <Search size={16} />
+              </button>
+            </div>
+          </>
+        )}
+      </div>
       <table>
         <thead>
           <tr>
