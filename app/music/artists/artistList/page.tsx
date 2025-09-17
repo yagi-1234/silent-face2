@@ -6,12 +6,15 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, Plus, Search } from 'lucide-react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
+import ConfirmModal from '@/components/ConfirmModal'
+import HiddenPanel from '@/components/HiddenPanel'
 import MessageBanner from '@/components/MessageBanner'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { Artist, ArtistCondition, initialArtistCondition } from '@/types/music/artist-types'
 import { CodeArtistType, CodeArtistGrade } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
+import { useCustomBack } from '@/utils/navigationUtils'
 
 const Page = () => {
   return (
@@ -24,6 +27,7 @@ export default Page
 
 const ArtistList = () => {
   
+  const { handleBack } = useCustomBack()
   const { addToHistory } = useHistory()
   const { message, setMessage, messageType, errors } = useMessage()
   const pathname = usePathname()
@@ -31,6 +35,7 @@ const ArtistList = () => {
   const searchParams = useSearchParams()
   const [artists, setArtists] = useState<Artist[]>([])
   const [condition, setCondition] = useState<ArtistCondition>(initialArtistCondition)
+  const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -207,6 +212,30 @@ const ArtistList = () => {
           ))}
         </tbody>
       </table>
+      <div className="footer-area">
+        <div className="footer-area-sub">
+          <div className="footer-left">
+            <button className="button-back"
+                onClick={() => handleBack(false)}>
+              <ArrowLeft size={16} />
+            </button>
+          </div>
+          <div>
+            <button className="button-save"
+                onClick={() => handleShowForm("")}>
+              <Plus size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+      <ConfirmModal />
+      <HiddenPanel
+          isOpen={hiddenPanelOpen}
+          content={
+              <>
+                condition:<br /> {JSON.stringify(condition)}<br />
+              </>
+          } />
     </div>
   )
 }
