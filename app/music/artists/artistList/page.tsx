@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, Plus, Search } from 'lucide-react'
@@ -10,7 +10,17 @@ import { Artist, ArtistCondition, initialArtistCondition } from '@/types/music/a
 import { CodeArtistType, CodeArtistGrade } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 
-const Page: NextPage = () => {
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading artist list...</div>}>
+      <ArtistList />
+    </Suspense>
+  )
+}
+
+export default Page
+
+const ArtistList = () => {
   
   const { addToHistory } = useHistory()
   const pathname = usePathname()
@@ -86,5 +96,3 @@ const Page: NextPage = () => {
     </div>
   )
 }
-
-export default Page
