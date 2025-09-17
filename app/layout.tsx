@@ -2,7 +2,9 @@ import type { Metadata } from "next"
 import { Noto_Sans_JP as FontSans } from "next/font/google"
 import "./globals.css"
 
+import { ConfirmModalProvider } from '@/contexts/ConfirmModalContext'
 import { HistoryProvider } from '@/contexts/HistoryContext'
+import { MessageProvider } from '@/contexts/MessageContext'
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -24,9 +26,13 @@ export default function RootLayout({
           <h1>Silent Face</h1>
         </header>
         <main>
+          <ConfirmModalProvider>
           <HistoryProvider>
+          <MessageProvider>
             {children}
+          </MessageProvider>
           </HistoryProvider>
+          </ConfirmModalProvider>
         </main>
         <footer className="text-center text-sm text-gray-500 mt-10 py-4 border-t">
           &copy; 2025 Silent Face Appa
