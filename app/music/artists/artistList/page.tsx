@@ -5,6 +5,7 @@ import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, Plus, Search } from 'lucide-react'
 
+import { fetchArtists } from '@/actions/music/artist-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
@@ -74,6 +75,28 @@ const ArtistList = () => {
   }
 
   useEffect(() => {
+    const loadData = async () => {
+      const condition1 = {
+        ...condition,
+        artist_id: searchParams.get('artist_id') ?? '',
+        artist_name: searchParams.get('artist_name') ?? '',
+        artist_name_exact_match: searchParams.get('artist_name_exact_match') ? true : false,
+        grade_from: searchParams.get('grade_from') ?? '',
+        grade_to: searchParams.get('grade_to') ?? '',
+        random_count: searchParams.get('random_count') ? Number(searchParams.get('random_count')) : null,
+      }
+      setCondition(condition1)
+      const fetchData = await fetchArtists(condition1)
+      setArtists(fetchData)
+    }
+    loadData()
+
+    const handler = (e: WindowEventMap['keydown']) => {
+      if (e.ctrlKey && e.altKey && e.key === 'd')
+        setHiddenPanelOpen(prev => !prev)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
   }, [])
 
   return (
