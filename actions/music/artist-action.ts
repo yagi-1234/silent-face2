@@ -13,7 +13,7 @@ export const fetchArtist = async (artistId: string): Promise<Artist> => {
       console.error('Error fetchArtist:', error)
       throw error
   }
-  console.log('artist:', result)
+  console.log('artista:', result)
   result.updated_at
   return result
 }
