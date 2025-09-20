@@ -48,11 +48,8 @@ const LoginForm = () => {
     // await logout()
 
     const result = await login(userData.user_name, userData.password)
-    console.log('52', result)
-    const result2 = await checkUser()
-    console.log('53', result2)
     if (result) {
-      //router.push(`/home`)
+      router.push(`/home`)
     } else {
       setMessage('Login denied')
       setMessageType('error')
