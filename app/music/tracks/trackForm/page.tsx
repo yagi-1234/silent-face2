@@ -69,7 +69,7 @@ const TrackForm = () => {
     }
     setErrors(removeErrorKey(errors, name))
     setTrack(prev => {
-      let updatedValue: any;
+      let updatedValue: unknown;
       if (type === 'checkbox') updatedValue = (event.target as HTMLInputElement).checked ? '1' : '0'
       else if (type === 'number') updatedValue = value === '' ? null : value
       else updatedValue = value
