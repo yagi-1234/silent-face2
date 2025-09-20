@@ -80,7 +80,7 @@ const TrackForm = () => {
     })
   }
   const handleChangeDate = (value: string) => {
-    let newLastListenedAt = value + " " + formatDateTime(track.last_listened_at, 'HH:mm:ss')
+    const newLastListenedAt = value + " " + formatDateTime(track.last_listened_at, 'HH:mm:ss')
     setTrack(prev => ({
       ...prev, last_listened_at: isNaN(new Date(newLastListenedAt).getTime()) ? prev.last_listened_at : new Date(newLastListenedAt)
     }))
