@@ -121,7 +121,7 @@ const TaskForm = () => {
   }
 
   const handlePlus = () => {
-    let lastActedAt = new Date()
+    const lastActedAt = new Date()
     let nextDate = task.next_date
     let limitDate = task.limit_date
     if (task.next_period) {

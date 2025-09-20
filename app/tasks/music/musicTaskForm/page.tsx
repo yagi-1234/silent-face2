@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { ArrowLeft, Check, Plus } from 'lucide-react'
-import type { NextPage } from 'next'
 import { useSearchParams } from 'next/navigation'
 
 import { fetchMusicTask, mergeMusicTask } from '@/actions/tasks/task-action'
@@ -49,7 +48,7 @@ const MusicTaskForm = () => {
     }))
   }
   const handleChangeDate = (value: string) => {
-    let newLastActedAt = value + " " + formatDateTime(task.last_acted_at, 'HH:mm:ss')
+    const newLastActedAt = value + " " + formatDateTime(task.last_acted_at, 'HH:mm:ss')
     setTask(prev => ({
       ...prev, last_acted_at: isNaN(new Date(newLastActedAt).getTime()) ? prev.last_acted_at : new Date(newLastActedAt)
     }))

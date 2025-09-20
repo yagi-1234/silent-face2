@@ -112,7 +112,7 @@ const MusicTaskList = () => {
           {Object.entries(CodeTaskStatus)
               .sort(([a], [b]) => a.localeCompare(b))
               .map(([key, label]) => (
-                <label className="input-check-label">
+                <label key={key} className="input-check-label">
                   <input type="checkbox"
                       className=""
                       value={key}
