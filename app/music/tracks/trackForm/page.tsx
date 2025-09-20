@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { Check, ChevronsLeft, ChevronsRight, ArrowLeft, Plus } from 'lucide-react'
-import type { NextPage } from 'next'
 import { useSearchParams } from 'next/navigation'
 
 import { fetchArtist } from '@/actions/music/artist-action'
@@ -97,7 +96,7 @@ const TrackForm = () => {
   const handleMoveTrack = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (isTrackEdited(originalTrack, track)) {
       setModalMessage('You have unsaved changes. Are you sure you want to leave this page?')
-      let eventName = event.currentTarget.name
+      const eventName = event.currentTarget.name
       setConfirmHandler(() => {
         moveTrack(eventName)
       })
