@@ -12,6 +12,7 @@ import HiddenPanel from '@/components/HiddenPanel'
 import MessageBanner from '@/components/MessageBanner'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
+import { checkUser } from '@/contexts/RooterContext'
 import { Artist, ArtistCondition, initialArtistCondition } from '@/types/music/artist-types'
 import { CodeArtistType, CodeArtistGrade } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
@@ -74,7 +75,12 @@ const ArtistList = () => {
     // setArtists(fetchData)
   }
 
+  const checkLogin = async () => {
+    await checkUser()
+  }
+
   useEffect(() => {
+    checkLogin()
     const loadData = async () => {
       const condition1 = {
         ...condition,

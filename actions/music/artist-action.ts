@@ -1,4 +1,6 @@
 import { supabase } from '@/lib/supabase'
+
+import { getUserId } from '@/actions/user/user-action'
 import type { ValidationErrors } from '@/types/common/common-types'
 import type { ArtistCondition, Artist } from '@/types/music/artist-types'
 import { makeKeywordForSql} from '@/utils/stringUtils'
@@ -13,7 +15,7 @@ export const fetchArtist = async (artistId: string): Promise<Artist> => {
       console.error('Error fetchArtist:', error)
       throw error
   }
-  console.log('artista:', result)
+  console.log('artist:', result)
   result.updated_at
   return result
 }
@@ -24,6 +26,7 @@ export const fetchArtists = async (condition: ArtistCondition): Promise<Artist[]
   let query = supabase
       .from('mv11_artists')
       .select('*')
+      .eq('user_id', await getUserId())
   if (condition.artist_name) {
     if (condition.artist_name_exact_match) {
       const keyword = makeKeywordForSql(condition.artist_name, false)

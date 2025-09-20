@@ -1,12 +1,22 @@
 'use client'
 
+import { Suspense, useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 
 import { AlarmClockCheck, BookImage, BookOpenText, BookText, Clapperboard, Download, Gamepad2, Users, FileAudio, Music, MicVocal, SquareLibrary, Tv } from 'lucide-react'
 
 import HomeIconButton from '@/components/HomeIconButton'
+import { checkUser } from '@/contexts/RooterContext'
 
 const Page: NextPage = () => {
+
+  const checkLogin = async () => {
+    await checkUser()
+  }
+
+  useEffect(() => {
+    checkLogin()
+  }, [])
 
   return (
     <div className="root-panel">
