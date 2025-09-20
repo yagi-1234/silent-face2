@@ -63,16 +63,16 @@ const ArtistList = () => {
   }
 
   const handleSearch = async () => {
-    // const query = new URLSearchParams()
-    // if (condition.artist_id) query.append('artist_id', condition.artist_id)
-    // if (condition.artist_name) query.append('artist_name', condition.artist_name)
-    // if (condition.artist_name_exact_match) query.append('artist_name_exact_match', 'true')
-    // if (condition.grade_from) query.append('grade_from', condition.grade_from)
-    // if (condition.grade_to) query.append('grade_to', condition.grade_to)
-    // if (condition.random_count) query.append('random_count', condition.random_count.toString())
-    // router.push(`/music/artists/artistList?${query.toString()}`)
-    // const fetchData = await fetchArtists(condition)
-    // setArtists(fetchData)
+    const query = new URLSearchParams()
+    if (condition.artist_id) query.append('artist_id', condition.artist_id)
+    if (condition.artist_name) query.append('artist_name', condition.artist_name)
+    if (condition.artist_name_exact_match) query.append('artist_name_exact_match', 'true')
+    if (condition.grade_from) query.append('grade_from', condition.grade_from)
+    if (condition.grade_to) query.append('grade_to', condition.grade_to)
+    if (condition.random_count) query.append('random_count', condition.random_count.toString())
+    router.push(`/music/artists/artistList?${query.toString()}`)
+    const fetchData = await fetchArtists(condition)
+    setArtists(fetchData)
   }
 
   const checkLogin = async () => {

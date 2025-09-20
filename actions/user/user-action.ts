@@ -28,7 +28,6 @@ export const makeUser = async (userName: string, password: string) => {
 
 export const isLoggedIn = async (): Promise<boolean> => {
   const { data: { session } } = await supabase.auth.getSession()
-  console.log('isLoggedIn:', session?.user.id ? 'Yes' : 'No')
   if (session?.user.id) return true
   return false
 }
