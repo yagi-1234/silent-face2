@@ -49,8 +49,6 @@ const TrackForm = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, type, value } = event.target
-    console.log(name)
-    console.log(value)
     let newValue = value
     if (name === 'album_id' && value) {
       // setTrack(prev => ({

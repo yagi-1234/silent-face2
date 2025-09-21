@@ -8,7 +8,7 @@ import { formatDateToYYYYMMDD } from '@/utils/dateFormat'
 export const fetchTask = async (taskId: string): Promise<Task> => {
     console.log('taskId:', taskId)
     const { data, error } = await supabase
-            .from('ct01_tasks_new')
+            .from('ct01_tasks')
             .select('*')
             .eq('task_id', taskId)
             .single()
@@ -22,7 +22,7 @@ export const fetchTask = async (taskId: string): Promise<Task> => {
 
 export const fetchTasks = async (): Promise<Task[]> => {
   const { data: result, error } = await supabase
-      .from('ct01_tasks_new')
+      .from('ct01_tasks')
       .select('*')
       .order('next_date')
       .order('task_status', { ascending: false })
@@ -51,7 +51,7 @@ const insertTask = async (newData: Task): Promise<Task> => {
     const { task_id, ...insertData } = newData
     console.log("insertData:", insertData)
     const { data: result, error } = await supabase
-            .from('ct01_tasks_new')
+            .from('ct01_tasks')
             .insert(insertData)
             .select()
             .single()
@@ -75,7 +75,7 @@ const updateTask = async (newData: Task): Promise<Task> => {
     }
     console.log("updateData:", updateData)
     const { data: result, error } = await supabase    
-            .from('ct01_tasks_new')
+            .from('ct01_tasks')
             .update(updateData)
             .eq('task_id', updateData.task_id)
             .select()

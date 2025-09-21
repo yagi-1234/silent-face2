@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { Noto_Sans_JP as FontSans } from "next/font/google"
 import "./globals.css"
-import { LogOut } from 'lucide-react'
 
 import { ConfirmModalProvider } from '@/contexts/ConfirmModalContext'
 import { HistoryProvider } from '@/contexts/HistoryContext'
@@ -25,10 +24,6 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col items-center justify-center">
         <header className="bg-white shadow-md p-4 mb-6">
           <h1>Silent Face</h1>
-          <button className="button-save"
-              >
-            <LogOut size={16} />
-          </button>
         </header>
         <main>
           <ConfirmModalProvider>
