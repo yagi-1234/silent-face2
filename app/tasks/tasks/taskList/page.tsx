@@ -1,9 +1,8 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Plus, FileText, CircleCheckBig, Info, LayoutList } from 'lucide-react'
+import { ArrowLeft, Plus, FileText, CircleCheckBig, Info, Search } from 'lucide-react'
 
 import { fetchTasks, updateLastActedAt, updateTaskStatus } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -17,7 +16,7 @@ import { checkUser } from '@/contexts/RooterContext'
 import { CodeTaskStatus, CodeTaskType, CodeScheduleType, CodePriorityType } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import type { Task } from '@/types/tasks/task-types'
+import { Task, TaskCondition, initialTaskCondition } from '@/types/tasks/task-types'
 
 const Page = () => {
   return (
@@ -38,6 +37,15 @@ const TaskList = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [tasks, setTasks] = useState<Task[]>([])
+  const [condition, setCondition] = useState<TaskCondition>(initialTaskCondition)
+
+  const handleSearch = async () => {
+    const query = new URLSearchParams()
+    if (condition.taskStatusList.length > 0) query.append('taskStatusList', condition.taskStatusList.join(','))
+    router.push(`/tasks/tasks/taskList?${query.toString()}`)
+    const fetchData = await fetchTasks(condition)
+    setTasks(fetchData)
+  }
 
   const handleShowForm = (taskId: string) => {
     addToHistory({ title: 'taskList', path: `${pathname}?${searchParams.toString()}`})
@@ -96,7 +104,7 @@ const TaskList = () => {
   }
 
   const loadList = async () => {
-    const result = await fetchTasks()
+    const result = await fetchTasks(condition)
     setTasks(result)
   }
 
@@ -119,6 +127,31 @@ const TaskList = () => {
       <Breadcrumb />
       <h2 className="header-title">Task List</h2>
       <div className="searchPanel">
+        <div className="input-form">
+          <label htmlFor="task_status">Task Status</label>
+          {Object.entries(CodeTaskStatus)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([key, label]) => (
+                <label key={key} className="input-check-label">
+                  <input type="checkbox"
+                      className=""
+                      value={key}
+                      checked={condition?.taskStatusList.includes(key)}
+                      onChange={(e) => {
+                        setCondition(prev => ({
+                          ...prev,
+                          taskStatusList: e.target.checked ? [...prev.taskStatusList, key] : prev.taskStatusList.filter(status => status !== key)
+                        }))
+                      }}
+                  />
+                  <span>{label}</span>
+                </label>
+          ))}
+          <button className="button-search"
+              onClick={handleSearch}>
+            <Search size={16} />
+          </button>
+        </div>
       </div>
       <table>
         <thead>

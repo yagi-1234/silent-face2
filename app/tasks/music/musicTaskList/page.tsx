@@ -1,7 +1,6 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { ArrowLeft, FileText, Plus, Search, RotateCw } from "lucide-react"
@@ -72,10 +71,10 @@ const MusicTaskList = () => {
     setModalMessage('Are you sure you want to change Status?')
     setConfirmHandler(async () => {
       const result = await updateMusicTaskStatus(taskSubId, taskStatus)
+      loadData()
       setTasks(prev => prev.map(t => t.task_sub_id === result.task_sub_id ? result : t))
       setMessage('Saved Successfully!')
       setMessageType('info')
-      loadData()
     })
     setIsModalOpen(true)
   }

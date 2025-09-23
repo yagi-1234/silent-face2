@@ -45,6 +45,14 @@ export const initialTask: Task = {
   updated_count: 0
 }
 
+export type TaskCondition = {
+  taskStatusList: string[]
+}
+
+export const initialTaskCondition: TaskCondition = {
+  taskStatusList: ['0','1','2']
+}
+
 export type MusicTask = {
   task_sub_id: string | null
   user_id: string | null

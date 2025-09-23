@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase"
 
 import type { ValidationErrors } from '@/types/common/common-types'
-import type { MusicTask, MusicTaskCondition, Task } from '@/types/tasks/task-types'
+import type { Task, TaskCondition, MusicTask, MusicTaskCondition } from '@/types/tasks/task-types'
 
 import { formatDateToYYYYMMDD } from '@/utils/dateFormat'
 
@@ -20,16 +20,16 @@ export const fetchTask = async (taskId: string): Promise<Task> => {
     return data
 }
 
-export const fetchTasks = async (): Promise<Task[]> => {
+export const fetchTasks = async (condition: TaskCondition): Promise<Task[]> => {
   const { data: result, error } = await supabase
       .from('ct01_tasks')
       .select('*')
+      .in('task_status', condition.taskStatusList)
       .order('next_date')
       .order('task_status', { ascending: false })
       .order('last_acted_at', { ascending: false })
-      // .order('task_priority', { ascending: true })
     if (error) {
-        console.error('Error fetching tasks:', error)
+        console.error('Error fetchTasks:', error)
         return []
     }
     return result
@@ -215,6 +215,7 @@ export const updateMusicTaskStatus = async (taskSubId: string, taskStatus: strin
     throw 'error'
 
   const maxTaskStatus = await fetchMaxTaskStatus(taskStatus, oldData.task_sub_type ?? '')
+  console.log('maxTaskStatus:', maxTaskStatus)
 
   const newData = { ...oldData,
     task_status: taskStatus,
@@ -263,7 +264,7 @@ const fetchMaxTaskStatus = async (taskStatus: string, taskSubType: string): Prom
     console.error('Error fetchMaxTaskStatus:', error)
     throw error
   }
-  if (!result[0]) return 1
+  if (!result[0]) return 0
   return result[0].max_task_priority
 }
 
