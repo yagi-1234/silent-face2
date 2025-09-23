@@ -55,7 +55,6 @@ export const initialTaskCondition: TaskCondition = {
 
 export type MusicTask = {
   task_sub_id: string | null
-  user_id: string | null
   task_id: string | null
   task_sub_type: string | null
   task_status: string | null
@@ -77,7 +76,6 @@ export type MusicTask = {
 
 export const initialMusicTask: MusicTask = {
   task_sub_id: null,
-  user_id: null,
   task_id: null,
   task_sub_type: null,
   task_status: null,
