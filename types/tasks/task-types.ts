@@ -46,10 +46,12 @@ export const initialTask: Task = {
 }
 
 export type TaskCondition = {
+  task_type: string
   taskStatusList: string[]
 }
 
 export const initialTaskCondition: TaskCondition = {
+  task_type: '',
   taskStatusList: ['0','1','2']
 }
 

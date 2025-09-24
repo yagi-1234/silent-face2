@@ -105,9 +105,7 @@ const MusicTaskList = () => {
       <h2 className="header-title">Task List (Music)</h2>
       <div className="searchPanel">
         <div className="input-form">
-          <label htmlFor="task_status">
-            Task Status
-          </label>
+          <label htmlFor="task_status">Task Status</label>
           {Object.entries(CodeTaskStatus)
               .sort(([a], [b]) => a.localeCompare(b))
               .map(([key, label]) => (

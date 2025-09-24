@@ -21,18 +21,18 @@ export const fetchTask = async (taskId: string): Promise<Task> => {
 }
 
 export const fetchTasks = async (condition: TaskCondition): Promise<Task[]> => {
-  const { data: result, error } = await supabase
-      .from('ct01_tasks')
-      .select('*')
-      .in('task_status', condition.taskStatusList)
-      .order('next_date')
-      .order('task_status', { ascending: false })
-      .order('last_acted_at', { ascending: false })
-    if (error) {
-        console.error('Error fetchTasks:', error)
-        return []
-    }
-    return result
+  let query = supabase.from('ct01_tasks').select('*')
+  if (condition.task_type) query = query.eq('task_type', condition.task_type)
+  if (condition.taskStatusList.length > 0) query = query.in('task_status', condition.taskStatusList)
+  query = query.order('next_date')
+  query = query.order('task_status', { ascending: false })
+  query = query.order('last_acted_at', { ascending: false })
+  const { data: result, error } = await query
+  if (error) {
+      console.error('Error fetchTasks:', error)
+      return []
+  }
+  return result
 }
 
 export const mergeTask = async (newData: Task): Promise<Task> => {

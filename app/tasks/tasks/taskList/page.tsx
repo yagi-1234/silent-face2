@@ -17,6 +17,7 @@ import { CodeTaskStatus, CodeTaskType, CodeScheduleType, CodePriorityType } from
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { Task, TaskCondition, initialTaskCondition } from '@/types/tasks/task-types'
+import { ellipsis } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -112,6 +113,13 @@ const TaskList = () => {
     await checkUser()
   }
 
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setCondition(prev => ({
+      ...prev, [name]: value
+    }))
+  }
+
   useEffect(() => {
     checkLogin()
     loadList()
@@ -127,6 +135,24 @@ const TaskList = () => {
       <Breadcrumb />
       <h2 className="header-title">Task List</h2>
       <div className="searchPanel">
+        <div className="input-form">
+          <label htmlFor="task_type">Type</label>
+          <select
+              id="task_type"
+              name="task_type"
+              className="w-48"
+              value={condition.task_type}
+              onChange={(e) => handleChange(e)}>
+            <option key="" value=""></option>
+            {Object.entries(CodeTaskType)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+            ))}
+          </select>
+        </div>
         <div className="input-form">
           <label htmlFor="task_status">Task Status</label>
           {Object.entries(CodeTaskStatus)
@@ -185,11 +211,11 @@ const TaskList = () => {
               </td>
               <td>{CodeTaskType[task.task_type] ?? ""}</td>
               <td>{task.task_cycle}</td>
-              <td>{task.task_name}</td>
+              <td>{ellipsis(task.task_name, 24)}</td>
               <td>{CodePriorityType[task.priority]}</td>
               <td>{CodeScheduleType[task.schedule_type]}</td>
-              <td>{task.task_progress}</td>
-              <td>{task.action_count}</td>
+              <td className="numeric-field">{task.task_progress}</td>
+              <td className="numeric-field">{task.action_count}</td>
               <td>{formatDateTime(task.first_acted_at, "yyyy/MM/dd")}</td>
               <td>{formatDateTime(task.last_acted_at, "yyyy/MM/dd")}</td>
               <td>{formatDateTime(task.next_date, "yyyy/MM/dd")}</td>
