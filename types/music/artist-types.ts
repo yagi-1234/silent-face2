@@ -10,8 +10,8 @@ export type Artist = {
   artist_comment: string
   updated_count: number | null
   updated_at: Date | null
-  origin_name: string | null
-  origin_country: string | null
+  country_name_1: string | null
+  origin_full_name_1: string | null
   album_count: number
   owned_count: number
   track_count: number
@@ -25,16 +25,16 @@ export const initialArtist: Artist = {
   artist_name_2: '',
   artist_type: '',
   origin_code: '',
-  origin_country: '',
   years_active: '',
   grade: '',
   artist_comment: '',
+  country_name_1: null,
+  origin_full_name_1: '',
   album_count: 0,
   owned_count: 0,
   track_count: 0,
   updated_count: 0,
   updated_at: null,
-  origin_name: null,
   last_listened_at: null,
 }
 

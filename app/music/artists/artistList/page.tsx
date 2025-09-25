@@ -95,7 +95,7 @@ const ArtistList = () => {
       const fetchData = await fetchArtists(condition1)
       setArtists(fetchData)
     }
-    loadData()
+    if (searchParams.size > 0) loadData()
 
     const handler = (e: WindowEventMap['keydown']) => {
       if (e.ctrlKey && e.altKey && e.key === 'd')
@@ -213,7 +213,7 @@ const ArtistList = () => {
             <tr key={artist.artist_id}>
               <td>{artist.artist_name_1}</td>
               <td>{CodeArtistType[artist.artist_type]}</td>
-              <td>{artist.origin_country}</td>
+              <td>{artist.country_name_1}</td>
               <td className="numeric-field">
                 <button
                     className="button-link"

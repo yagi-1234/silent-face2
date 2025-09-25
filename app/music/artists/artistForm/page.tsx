@@ -41,7 +41,7 @@ const ArtistForm = () => {
   const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const { handleBack } = useCustomBack()
-  const [showModal, setShowModal] = useState(false)
+  const [showRegionModal, setShowRegionModal] = useState(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
@@ -57,11 +57,11 @@ const ArtistForm = () => {
   }
 
   const handleRegionSelect = (regionCode: string, regionName: string) => {
-    setShowModal(false)
+    setShowRegionModal(false)
     setArtist(prev => ({
       ...prev,
       origin_code: regionCode,
-      origin_name: regionName,
+      origin_full_name_1: regionName,
     }))
   }
 
@@ -154,14 +154,14 @@ const ArtistForm = () => {
           </select>
         </div>
         <div className="input-form">
-          <label htmlFor="origin_code">Origin</label>
+          <label htmlFor="origin_full_name_1">Origin</label>
           <input type="text"
-              id="origin_name"
-              name="origin_name"
-              value={artist.origin_name ?? ''}
+              id="origin_full_name_1"
+              name="origin_full_name_1"
+              value={artist.origin_full_name_1 ?? ''}
               readOnly />
           <button className="button-normal"
-              onClick={() => setShowModal(true)}>
+              onClick={() => setShowRegionModal(true)}>
             <Search size={16} />
           </button>
         </div>
@@ -223,8 +223,8 @@ const ArtistForm = () => {
           </div>
         </div>
       </div>
-      {showModal && (
-        <Modal onClose={() => setShowModal(false)}>
+      {showRegionModal && (
+        <Modal onClose={() => setShowRegionModal(false)}>
           <RegionList
               onSelect={handleRegionSelect} />
         </Modal>

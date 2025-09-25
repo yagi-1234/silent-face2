@@ -97,7 +97,7 @@ export function RegionList({ onSelect }: Props) {
               <tr key={region.region_code}>
                 <td>{region.region_code}</td>
                 <td
-                    onDoubleClick={() => onSelect(region.region_code, region.region_name_1)}>
+                    onDoubleClick={() => onSelect(region.region_code, region.region_full_name_1)}>
                   {region.region_full_name_1}
                 </td>
               </tr>

@@ -7,7 +7,7 @@ import { makeKeywordForSql} from '@/utils/stringUtils'
 export const fetchArtist = async (artistId: string): Promise<Artist> => {
   const { data: result, error } = await supabase
       .from('mv11_artists')
-      .select('artist_id, artist_name_0, artist_name_1, artist_name_2, artist_type, origin_code, years_active, grade, artist_comment, updated_count, updated_at, origin_name, origin_country, album_count, owned_count, track_count, last_listened_at')
+      .select('artist_id, artist_name_0, artist_name_1, artist_name_2, artist_type, origin_code, years_active, grade, artist_comment, updated_count, updated_at, country_name_1, origin_full_name_1, album_count, owned_count, track_count, last_listened_at')
       .eq('artist_id', artistId)
       .single()
   if (error) {
@@ -66,7 +66,7 @@ export const mergeArtist = async (newData: Artist): Promise<Artist> => {
 }
 
 const insertArtist = async (newData: Artist): Promise<Artist> => {
-    const { artist_id, album_count, owned_count, track_count, last_listened_at, origin_name, origin_country, ...insertData } = newData
+    const { artist_id, album_count, owned_count, track_count, last_listened_at, country_name_1, origin_full_name_1, ...insertData } = newData
     console.log("insertData:", insertData)
     const { data: result, error } = await supabase
         .from('mt11_artists')
@@ -82,7 +82,7 @@ const insertArtist = async (newData: Artist): Promise<Artist> => {
 }
 
 const updateArtist = async (newData: Artist): Promise<Artist> => {
-  const { album_count, owned_count, track_count, last_listened_at, origin_name, origin_country, ...newData2 } = newData
+  const { album_count, owned_count, track_count, last_listened_at, country_name_1, origin_full_name_1, ...newData2 } = newData
   const updateData = { ...newData2,
     updated_at: new Date(),
     updated_count: Number(newData2.updated_count ?? 0) + 1
