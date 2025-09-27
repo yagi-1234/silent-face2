@@ -135,6 +135,33 @@ export const validateTask = (task: Task): ValidationErrors => {
     return errors
 }
 
+export const isTaskEdited = (original?: Task, current?: Task): boolean => {
+  if (!original || !current) return true;
+  return (
+    original.task_type !== current.task_type ||
+    original.task_name !== current.task_name ||
+    original.priority !== current.priority ||
+    original.task_status !== current.task_status ||
+    original.schedule_type !== current.schedule_type ||
+    (!original.last_acted_at && !current.last_acted_at
+      ? false
+      : new Date(original.last_acted_at || "").getTime() !==
+        new Date(current.last_acted_at || "").getTime()) ||
+    original.task_cycle !== current.task_cycle ||
+    (!original.next_date && !current.next_date
+      ? false
+      : new Date(original.next_date || "").getTime() !==
+        new Date(current.next_date || "").getTime()) ||
+    original.buffer_period !== current.buffer_period ||
+    (!original.limit_date && !current.limit_date
+      ? false
+      : new Date(original.limit_date || "").getTime() !==
+        new Date(current.limit_date || "").getTime()) ||
+    original.action_count !== current.action_count ||
+    original.task_comment !== current.task_comment
+  )
+}
+
 export const fetchMusicTask = async (task_sub_id: string): Promise<MusicTask> => {
   const { data: result, error } = await supabase
       .from('ct02_music_tasks')

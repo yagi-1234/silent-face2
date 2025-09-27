@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Check, Plus } from 'lucide-react'
 
 import { fetchItemForTask } from '@/actions/library/library-action'
-import { fetchTask, mergeTask, validateTask } from '@/actions/tasks/task-action'
+import { fetchTask, mergeTask, validateTask, isTaskEdited } from '@/actions/tasks/task-action'
 import PartialDateInput from '@/components/PartialDateInput'
 import ConfirmModal from '@/components/ConfirmModal'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
@@ -44,37 +44,11 @@ const TaskForm = () => {
   const { handleBack } = useCustomBack()
   const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
 
-  const isTaskEdited = (original?: Task, current?: Task): boolean => {
-    if (!original || !current) return true;
-    return (
-      original.task_type !== current.task_type ||
-      original.task_name !== current.task_name ||
-      original.priority !== current.priority ||
-      original.task_status !== current.task_status ||
-      original.schedule_type !== current.schedule_type ||
-      (!original.last_acted_at && !current.last_acted_at
-        ? false
-        : new Date(original.last_acted_at || "").getTime() !==
-          new Date(current.last_acted_at || "").getTime()) ||
-      original.task_cycle !== current.task_cycle ||
-      (!original.next_date && !current.next_date
-        ? false
-        : new Date(original.next_date || "").getTime() !==
-          new Date(current.next_date || "").getTime()) ||
-      original.buffer_period !== current.buffer_period ||
-      (!original.limit_date && !current.limit_date
-        ? false
-        : new Date(original.limit_date || "").getTime() !==
-          new Date(current.limit_date || "").getTime()) ||
-      original.action_count !== current.action_count ||
-      original.task_comment !== current.task_comment
-    )
-  }
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
+    const { name, value, classList } = event.target;
+    const isNumeric = classList.contains("numeric-field")
     setTask(prev => ({
-      ...prev, [name]: value
+      ...prev, [name]: isNumeric ? (value === '' ? null : Number(value)) : value
     }))
     let nextDate = task.next_date
     let limitDate = task.limit_date
@@ -96,11 +70,12 @@ const TaskForm = () => {
     }))
   }
   const handleChangeDate = (value: string, name: string) => {
+    console.log('value', value)
     setTask(prev => ({
       ...prev, [name]: value
     }))
-    let nextDate = task.next_date
-    let limitDate = task.limit_date
+    let nextDate = name == 'next_date' ? (value ? new Date(value) : null) : task.next_date
+    let limitDate = name == 'limit_date' ? (value ? new Date(value) : null) : task.limit_date
     if (task.next_period && name === 'last_acted_at' && value) {
       nextDate = new Date(value)
       nextDate.setDate(nextDate.getDate() + Number(task.next_period))
@@ -113,6 +88,7 @@ const TaskForm = () => {
       limitDate = new Date(value)
       limitDate.setDate(limitDate.getDate() + Number(task.buffer_period))
     }
+    console.log('nextDate', nextDate)
     setTask(prev => ({
       ...prev,
       next_date: nextDate,

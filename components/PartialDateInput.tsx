@@ -61,7 +61,7 @@ const PartialDateInput: React.FC<PartialDateInputProps> = ({
           value={month}
           onChange={(e) => { setMonth(e.target.value) }}
           onBlur={() => {
-            const padded = month.padStart(2, '0')
+            const padded = month ? month.padStart(2, '0') : ''
             if (padded !== month) setMonth(padded)
             // handleUpdate(year, padded, day)
           }}
@@ -73,7 +73,7 @@ const PartialDateInput: React.FC<PartialDateInputProps> = ({
           value={day}
           onChange={(e) => { setDay(e.target.value) }}
           onBlur={() => {
-            const padded = day.padStart(2, '0')
+            const padded = day ? day.padStart(2, '0') : ''
             if (padded !== day) setDay(padded)
             handleUpdate(year, month, day)
           }}
