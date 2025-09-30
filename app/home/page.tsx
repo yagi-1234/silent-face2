@@ -41,7 +41,7 @@ const Page: NextPage = () => {
 
       <div className='grid grid-cols-6 gap-10 text-center'>
         <HomeIconButton icon={Users} label="Artists" path="/music/artists/artistList" />
-        <HomeIconButton icon={FileAudio} label="Discography" path="/music/albums/albumList" />
+        <HomeIconButton icon={FileAudio} label="Albums" path="/music/albums/albumList" />
         <HomeIconButton icon={Music} label="Tracks" path="/music/tracks/trackList" />
         <HomeIconButton icon={MicVocal} label="Lives" path="" />
         <HomeIconButton icon={SquareLibrary} label="Playlists" path="" />

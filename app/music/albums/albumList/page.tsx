@@ -14,7 +14,7 @@ import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { Album, AlbumCondition, initialAlbumCondition } from '@/types/music/album-types'
 import { CodeOwnedFlag } from '@/utils/codeUtils'
-import { formatDateTime } from '@/utils/dateFormat'
+import { formatDateTime, formatDateVariousTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 
 const Page = () => {
@@ -55,7 +55,7 @@ const AlbumList = () => {
     if (condition.artist_name) query.append('artist_name', condition.artist_name)
     if (condition.artist_name_exact_match) query.append('artist_name_exact_match', 'true')
     if (condition.album_id) query.append('artist_id', condition.album_id)
-    if (condition.album_name) query.append('artist_id', condition.album_name)
+    if (condition.album_name) query.append('album_name', condition.album_name)
     if (condition.album_name_exact_match) query.append('album_name_exact_match', 'true')
     if (condition.album_type) query.append('album_type', 'true')
     if (condition.owned_flag) query.append('owned_flag', 'true')
@@ -239,7 +239,7 @@ const AlbumList = () => {
             <th>Owned</th>
             <th>Tracks</th>
             <th>Length</th>
-            <th>Score</th>
+            <th>Point</th>
             <th>Last Listened At</th>
             <th />
           </tr>
@@ -249,7 +249,7 @@ const AlbumList = () => {
             <tr key={album.album_id}>
               <td>{album.artist_name_1}</td>
               <td>{formatAlbumTypeOrNo(album.album_type, album.album_no)}</td>
-              <td>{formatDateTime(album.released, "yyyy/MM/dd")}</td>
+              <td>{formatDateVariousTime(album.released, "yyyy/MM/dd")}</td>
               <td>{album.album_name_1}</td>
               <td className="text-center">{CodeOwnedFlag[album.owned_flag]}</td>
               <td className="numeric-field">
@@ -259,8 +259,8 @@ const AlbumList = () => {
                   {album.track_count}
                 </button>
               </td>
-              <td>{album.track_length}</td>
-              <td>{album.album_point ? album.album_point.toFixed(2) : ""}</td>
+              <td className="numeric-field">{album.track_length}</td>
+              <td className="numeric-field">{album.album_point ? album.album_point.toFixed(2) : ""}</td>
               <td>{formatDateTime(album.last_listened_at, "yyyy/MM/dd")}</td>
               <td>
                 <button

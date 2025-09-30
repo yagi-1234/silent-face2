@@ -21,7 +21,7 @@ import { Album, initialAlbum } from '@/types/music/album-types'
 import { CodeAlbumType, CodeOwnedFlag } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { removeArticle } from '@/utils/stringUtils'
+import { removeArticle, convertToRome, toUpperCase } from '@/utils/stringUtils'
 
 const Page = () => {
   return (
@@ -51,14 +51,20 @@ const AlbumList = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
-    if (name && name === 'album_name_1' && value) {
-      setAlbum(prev => ({
-        ...prev, album_name_0: removeArticle(value)
-      }))
-    }
     setErrors(removeErrorKey(errors, name))
     setAlbum(prev => ({
       ...prev, [name]: value
+    }))
+  }
+
+  const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    const albumName0 = toUpperCase(await convertToRome(value))
+    setErrors(removeErrorKey(errors, 'album_name_0'))
+    setAlbum(prev => ({
+      ...prev,
+      album_name_0:albumName0,
+      album_name_1: value
     }))
   }
 
@@ -178,7 +184,7 @@ const AlbumList = () => {
               name="album_name_1"
               className={errors.album_name_1 ? "isError" : ""}
               value={album.album_name_1}
-              onChange={handleChange} />
+              onChange={handleNameOneToZero} />
         </div>
         <div className="input-form">
           <label htmlFor="album_name_2"></label>
@@ -258,7 +264,7 @@ const AlbumList = () => {
               mode="flexible" />
         </div>
         <div className="input-form-full">
-          <label htmlFor="album_comment">Album Comment</label>
+          <label htmlFor="album_comment">Comment</label>
           <textarea id="album_comment"
               name="album_comment"
               rows={3}

@@ -135,6 +135,7 @@ export const isAlbumEdited = (original?: Album, current?: Album): boolean => {
   if (original.album_name_1 !== current.album_name_1) return true
   if (original.album_name_2 !== current.album_name_2) return true
   if (original.album_type !== current.album_type) return true
+  if (original.album_no !== current.album_no) return true
   if (original.released !== current.released) return true
   if (original.owned_flag !== current.owned_flag) return true
   if (!compareDate(original.added_at, current.added_at)) return true
