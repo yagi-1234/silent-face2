@@ -59,12 +59,11 @@ const AlbumList = () => {
 
   const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    const albumName0 = toUpperCase(await convertToRome(value))
+    const albumName0 = removeArticle(toUpperCase(await convertToRome(value)))
     setErrors(removeErrorKey(errors, 'album_name_0'))
     setAlbum(prev => ({
       ...prev,
-      album_name_0:albumName0,
-      album_name_1: value
+      album_name_0: albumName0
     }))
   }
 
@@ -184,7 +183,8 @@ const AlbumList = () => {
               name="album_name_1"
               className={errors.album_name_1 ? "isError" : ""}
               value={album.album_name_1}
-              onChange={handleNameOneToZero} />
+              onChange={handleChange} 
+              onBlur={handleNameOneToZero} />
         </div>
         <div className="input-form">
           <label htmlFor="album_name_2"></label>

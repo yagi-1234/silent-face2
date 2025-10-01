@@ -16,6 +16,7 @@ import { checkUser } from '@/contexts/RooterContext'
 import { Track, TrackCondition, initialTrackCondition } from '@/types/music/track-types'
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
+import { ellipsis } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -223,13 +224,13 @@ const TrackList = () => {
         <tbody>
           {tracks.map((track) => (
             <tr key={track.track_id} className="leading-none">
-              <td>{track.artist_name_1}</td>
-              <td>{track.album_name_1}</td>
+              <td>{ellipsis(track.artist_name_1, 24)}</td>
+              <td>{ellipsis(track.album_name_1, 32)}</td>
               <td className="numeric-field">
                 {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}
               </td>
-              <td>{track.track_name_1}</td>
-              <td>{track.track_point}</td>
+              <td>{ellipsis(track.track_name_1, 40)}</td>
+              <td className="numeric-field">{track.is_point_except === "1" ? "-" : track.track_point}</td>
               <td className="numeric-field">{!!track.single_no ? track.single_no : track.is_single === "1" ? "◯" : ""}</td>
               <td className="numeric-field">{!!track.track_year ? track.track_year : track.album_year}</td>
               <td>{track.track_length}</td>

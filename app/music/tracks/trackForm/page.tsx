@@ -16,11 +16,11 @@ import PartialDateInput from '@/components/PartialDateInput'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
+import { ArtistAlbum } from '@/types/music/album-types'
 import { Track, initialTrack } from '@/types/music/track-types'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { removeArticle } from '@/utils/stringUtils'
-import { ArtistAlbum } from '@/types/music/album-types'
+import { removeArticle, convertToRome, toUpperCase } from '@/utils/stringUtils'
 
 const Page = () => {
   return (
@@ -60,11 +60,6 @@ const TrackForm = () => {
       if (value && Number(track.album_year) === Number(value))
         newValue = ''
     }
-    if (name === 'track_name_1' && value) {
-      setTrack(prev => ({
-        ...prev, track_name_0: removeArticle(value)
-      }))
-    }
     setErrors(removeErrorKey(errors, name))
     setTrack(prev => {
       let updatedValue: unknown;
@@ -75,6 +70,21 @@ const TrackForm = () => {
         ...prev, [name]: updatedValue
       }
     })
+  }
+  const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    const trackName0 = removeArticle(toUpperCase(await convertToRome(value)))
+    setErrors(removeErrorKey(errors, 'track_name_0'))
+    setTrack(prev => ({
+      ...prev,
+      track_name_0: trackName0
+    }))
+  }
+  const handleChangePoint = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    setTrack(prev => ({
+      ...prev, track_point: track.track_point ? Number(value) : 100 + Number(value)
+    }))
   }
   const handleChangeDate = (value: string) => {
     const newLastListenedAt = value + " " + formatDateTime(track.last_listened_at, 'HH:mm:ss')
@@ -291,7 +301,8 @@ const TrackForm = () => {
               name="track_name_1"
               className={errors.track_name_1 ? "isError" : ""}
               value={track.track_name_1}
-              onChange={handleChange} />
+              onChange={handleChange}
+              onBlur={handleNameOneToZero} />
         </div>
         <div className="input-form">
           <label htmlFor="track_name_2"></label>
@@ -360,7 +371,7 @@ const TrackForm = () => {
               name="track_point"
               className="numeric-field w-24"
               value={track.track_point ?? ''}
-              onChange={handleChange} />
+              onChange={handleChangePoint} />
         </div>
         <div className="input-form">
           <label htmlFor="listening_count">Listened</label>
@@ -383,7 +394,7 @@ const TrackForm = () => {
           <span>{formatDateTime(track.last_listened_at, "HH:mm")}</span>
         </div>
         <div className="input-form-full">
-          <label htmlFor="track_comment">Track Comment</label>
+          <label htmlFor="track_comment">Comment</label>
           <textarea id="track_comment"
               name="track_comment"
               rows={3}
