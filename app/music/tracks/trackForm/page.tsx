@@ -80,12 +80,6 @@ const TrackForm = () => {
       track_name_0: trackName0
     }))
   }
-  const handleChangePoint = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    setTrack(prev => ({
-      ...prev, track_point: track.track_point ? Number(value) : 100 + Number(value)
-    }))
-  }
   const handleChangeDate = (value: string) => {
     const newLastListenedAt = value + " " + formatDateTime(track.last_listened_at, 'HH:mm:ss')
     setTrack(prev => ({
@@ -371,7 +365,7 @@ const TrackForm = () => {
               name="track_point"
               className="numeric-field w-24"
               value={track.track_point ?? ''}
-              onChange={handleChangePoint} />
+              onChange={handleChange} />
         </div>
         <div className="input-form">
           <label htmlFor="listening_count">Listened</label>
