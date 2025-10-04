@@ -52,6 +52,7 @@ const TrackImport = () => {
         album_year: 0,
         track_id: fetchData.track_id || '',
         disc_no: cells[1] ? Number(cells[1]) : null,
+        disc_no_for_sort: cells[1] ? Number(cells[1]) : 0,
         track_no: Number(cells[0]),
         track_artist_name: cells[4],
         track_name_0: removeArticle(toUpperCase(await convertToRome(cells[5]))),
