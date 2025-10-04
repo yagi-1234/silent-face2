@@ -9,6 +9,7 @@ export type Track = {
   album_name_2: string
   album_year: number | null
   disc_no: number | null
+  disc_no_for_sort: number
   track_id: string
   track_no: number | null
   track_name_0: string
@@ -40,6 +41,7 @@ export const initialTrack: Track = {
   album_name_2: '',
   album_year: null,
   disc_no: null,
+  disc_no_for_sort: 0,
   track_id: '',
   track_no: null,
   track_name_0: '',

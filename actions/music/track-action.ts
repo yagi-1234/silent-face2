@@ -22,7 +22,7 @@ export const fetchTrackByTrackNo = async (albumId: string, disc_no: number | nul
       .from('mv31_tracks')
       .select('*')
   query = query.eq('album_id', albumId)
-  if (disc_no) query.eq('disc_no', disc_no)
+  query = query.eq('disc_no_for_sort', disc_no)
   query = query.eq('track_no', trackNo)
   const { data: result, error } = await query
   if (error) {
@@ -68,7 +68,7 @@ export const fetchTracks = async (condition: TrackCondition): Promise<Track[]> =
   query = query.limit(1000)
   query = query.order('artist_name_0')
       .order('album_year')
-      .order('disc_no')
+      .order('disc_no_for_sort')
       .order('track_no')
   const { data: result, error } = await query
   if (error) {
@@ -179,7 +179,7 @@ const insertTracks = async (newData: Track[]) => {
 }
 
 const updateTrack = async (newData: Track): Promise<Track> => {
-  const { artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, ...newData2 } = newData
+  const { artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, ...newData2 } = newData
   const updateData = { ...newData2,
     updated_at: new Date(),
     updated_count: Number(newData2.updated_count ?? 0) + 1

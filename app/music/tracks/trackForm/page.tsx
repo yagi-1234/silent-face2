@@ -110,7 +110,7 @@ const TrackForm = () => {
     let newTrackNo = track.track_no
     if (eventName === 'prev_button') newTrackNo = newTrackNo - 1
     if (eventName === 'next_button') newTrackNo = newTrackNo + 1
-    const fetchData = await fetchTrackByTrackNo(track.album_id, track.disc_no, newTrackNo)
+    const fetchData = await fetchTrackByTrackNo(track.album_id, track.disc_no_for_sort, newTrackNo)
     if (fetchData) {
       setTrack(fetchData)
       setOriginalTrack(fetchData)
