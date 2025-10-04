@@ -21,7 +21,7 @@ export const fetchTask = async (taskId: string): Promise<Task> => {
 }
 
 export const fetchTasks = async (condition: TaskCondition): Promise<Task[]> => {
-  let query = supabase.from('ct01_tasks').select('*')
+  let query = supabase.from('lv11_library_items').select('*')
   if (condition.task_type) query = query.eq('task_type', condition.task_type)
   if (condition.taskStatusList.length > 0) query = query.in('task_status', condition.taskStatusList)
   query = query.order('next_date')

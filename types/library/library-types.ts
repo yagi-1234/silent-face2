@@ -26,6 +26,8 @@ export type LibraryItem = {
   created_at: Date | null
   updated_at: Date | null
   updated_count: number | null
+  task_id: string | null
+  task_status: string | null
 }
 
 export const initialLibraryItem: LibraryItem = {
@@ -55,7 +57,9 @@ export const initialLibraryItem: LibraryItem = {
   item_comment: '',
   created_at: null,
   updated_at: null,
-  updated_count: 0
+  updated_count: 0,
+  task_id: '',
+  task_status: '',
 }
 
 export type LibraryItemMst = {

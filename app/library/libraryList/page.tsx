@@ -12,7 +12,7 @@ import MessageBanner from '@/components/MessageBanner'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
-import { CodeCompletedFlag, CodeOwnedFlag, CodeLibraryGrade, CodeTaskType } from '@/utils/codeUtils'
+import { CodeCompletedFlag, CodeOwnedFlag, CodeLibraryGrade, CodeTaskType, CodeTaskStatus } from '@/utils/codeUtils'
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
 import { LibraryItem, LibraryItemMst } from '@/types/library/library-types'
@@ -95,6 +95,7 @@ const LibraryList = () => {
             <th>Progress</th>
             <th>{itemMst?.action_count}</th>
             <th>{itemMst?.last_actioned_at}</th>
+            <th>Tasked</th>
             <th></th>
           </tr>
         </thead>
@@ -118,6 +119,7 @@ const LibraryList = () => {
               <td className="numeric-field">{item.progress}</td>
               <td className="numeric-field">{item.action_count}</td>
               <td>{formatDateTime(item.last_actioned_at, "yyyy/MM/dd")}</td>
+              <td>{CodeTaskStatus[item.task_status]}</td>
               <td>
                 <button
                     className="button-page"

@@ -32,7 +32,7 @@ export const fetchItemForTask = async (itemId: string): Promise<Task> => {
 export const fetchItems = async (libraryType: string): Promise<LibraryItem[]> => {
   //console.log('condition:', condition)
   let query = supabase
-      .from('lt11_libray_items')
+      .from('lv11_library_items')
       .select('*')
       .eq('library_type', libraryType)
   const { data: result, error } = await query
@@ -94,6 +94,5 @@ export const fetchItemMst = async (libraryType: string): Promise<LibraryItemMst>
       console.error('Error fetchItemMst:', error)
       throw error
   }
-  console.log('fetchItemMst Complete Result:', result)
   return result
 }
