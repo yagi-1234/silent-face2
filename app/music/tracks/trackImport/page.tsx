@@ -13,7 +13,7 @@ import { checkUser } from '@/contexts/RooterContext'
 import { Track } from '@/types/music/track-types'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { fetchArtistTrack, mergeTracks } from '@/actions/music/track-action'
-import { removeArticle } from '@/utils/stringUtils'
+import { removeArticle, convertToRome, toUpperCase } from '@/utils/stringUtils'
 
 const Page = () => {
   return (
@@ -39,6 +39,7 @@ const TrackImport = () => {
     for (const line of lines) {
       const cells = line.split('\t')
       const fetchData = await fetchArtistTrack(cells[2], cells[3], cells[5])
+      if (!fetchData) continue
       newTexts.push({
         artist_id: fetchData.artist_id || '',
         artist_name_0: '',
@@ -53,7 +54,7 @@ const TrackImport = () => {
         disc_no: cells[1] ? Number(cells[1]) : null,
         track_no: Number(cells[0]),
         track_artist_name: cells[4],
-        track_name_0: removeArticle(cells[5]),
+        track_name_0: removeArticle(toUpperCase(await convertToRome(cells[5]))),
         track_name_1: cells[5],
         track_name_2: cells[6],
         is_bonus_track: cells[9] ? '1' : '0',
@@ -72,13 +73,17 @@ const TrackImport = () => {
     }
     console.log('texts', newTexts)
     setTexts(newTexts)
+    if (lines.length !== newTexts.length) {
+      setMessage('Failed Import ' + newTexts.length + '/' + lines.length)
+      setMessageType('error')
+    }
   }
 
   const handleSave = async () => {
     setModalMessage('Do you want to continue with this registration?')
     setConfirmHandler(async () => {
-      await mergeTracks(texts)
-      setMessage('Saved Successfully!')
+      const mergeCount = await mergeTracks(texts)
+      setMessage('Saved Successfully! ' + mergeCount + '/' + texts.length)
       setMessageType('info')
     })
     setIsModalOpen(true)

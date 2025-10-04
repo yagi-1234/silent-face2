@@ -128,7 +128,7 @@ export const mergeTrack = async (newData: Track): Promise<Track> => {
   }
 }
 
-export const mergeTracks = async (newData: Track[]) => {
+export const mergeTracks = async (newData: Track[]): Promise<Number> => {
   const insertData: Track[] = []
   const updateData: Track[] = []
 
@@ -140,6 +140,8 @@ export const mergeTracks = async (newData: Track[]) => {
   })
   insertTracks(insertData)
   updateTracks(updateData)
+
+  return insertData.length + updateData.length
 }
 
 const insertTrack = async (newData: Track): Promise<Track> => {
@@ -197,7 +199,9 @@ const updateTrack = async (newData: Track): Promise<Track> => {
 }
 
 const updateTracks = async (newData: Track[]) => {
-  
+  newData.forEach((row) => {
+    updateTrack(row)
+  })
 }
 
 export const isTrackEdited = (original?: Track, current?: Track): boolean => {
