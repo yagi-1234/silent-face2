@@ -49,7 +49,7 @@ export const mergeItem = async (newData: LibraryItem): Promise<LibraryItem> => {
 }
 
 const insertItem = async (newData: LibraryItem): Promise<LibraryItem> => {
-  const { item_id, ...insertData } = newData
+  const { item_id, task_id, task_status, ...insertData } = newData
   console.log('insertData:', insertData)
   const { data: result, error } = await supabase
       .from('lt11_libray_items')
@@ -65,9 +65,10 @@ const insertItem = async (newData: LibraryItem): Promise<LibraryItem> => {
 }
 
 const updateItem = async (newData: LibraryItem): Promise<LibraryItem> => {
-  const updateData = { ...newData,
+  const { task_id, task_status, ...newData2 } = newData
+  const updateData = { ...newData2,
     updated_at: new Date(),
-    updated_count: Number(newData.updated_count ?? 0) + 1,
+    updated_count: Number(newData2.updated_count ?? 0) + 1,
   }
   console.log('updateData:', updateData)
   const { data: result, error } = await supabase    
