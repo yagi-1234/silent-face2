@@ -119,7 +119,7 @@ const LibraryList = () => {
               <td className="numeric-field">{item.progress}</td>
               <td className="numeric-field">{item.action_count}</td>
               <td>{formatDateTime(item.last_actioned_at, "yyyy/MM/dd")}</td>
-              <td>{CodeTaskStatus[item.task_status]}</td>
+              <td>{CodeTaskStatus[item.task_status ?? ""]}</td>
               <td>
                 <button
                     className="button-page"
