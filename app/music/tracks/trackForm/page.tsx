@@ -20,7 +20,7 @@ import { ArtistAlbum } from '@/types/music/album-types'
 import { Track, initialTrack } from '@/types/music/track-types'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { removeArticle, convertToRome, toUpperCase } from '@/utils/stringUtils'
+import { removeArticle, convertToRome } from '@/utils/stringUtils'
 
 const Page = () => {
   return (
@@ -73,7 +73,7 @@ const TrackForm = () => {
   }
   const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    const trackName0 = removeArticle(toUpperCase(await convertToRome(value)))
+    const trackName0 = removeArticle(await convertToRome(value))
     setErrors(removeErrorKey(errors, 'track_name_0'))
     setTrack(prev => ({
       ...prev,

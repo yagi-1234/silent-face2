@@ -30,7 +30,7 @@ export const convertToRome = async (text: string): Promise<string>  => {
     mode: 'spaced',
     romajiSystem: 'hepburn'
   })
-  return result
+  return toUpperCase(result)
 }
 
 export const toUpperCase = (text: string) => {

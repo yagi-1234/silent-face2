@@ -35,6 +35,7 @@ export const fetchItems = async (libraryType: string): Promise<LibraryItem[]> =>
       .from('lv11_library_items')
       .select('*')
       .eq('library_type', libraryType)
+      .order('released', { ascending: false })
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchItems:', error)
