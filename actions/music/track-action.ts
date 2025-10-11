@@ -162,7 +162,7 @@ const insertTrack = async (newData: Track): Promise<Track> => {
 const insertTracks = async (newData: Track[]) => {
     const newData2: Partial<Track>[] = []
     newData.forEach((row) => {
-      const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, ...row2 } = row
+      const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, ...row2 } = row
       newData2.push(row2)
     })
     console.log("insertData:", newData2)
