@@ -290,4 +290,27 @@ button {
   .timestamp {
     @apply text-right text-sm
   }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.5rem !important;
+    font-weight: bold;
+    color: #333;
+  }
+  .fc .fc-col-header-cell-cushion {
+    color: #333 !important;
+    font-weight: 500;
+  }
+  .fc .fc-daygrid-day-number {
+    color: #333 !important;
+    font-weight: 500;
+  }
+  .fc .fc-event {
+    border: none;
+    padding: 2px 4px;
+    font-size: 0.85rem !important;
+  }
+
+  .fc .fc-daygrid-day-frame {
+    padding: 2px !important;
+  }
 }

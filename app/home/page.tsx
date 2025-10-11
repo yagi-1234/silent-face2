@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 
-import { AlarmClockCheck, BookImage, BookOpenText, BookText, Clapperboard, Download, Gamepad2, Users, FileAudio, Music, MicVocal, SquareLibrary, Tv } from 'lucide-react'
+import { AlarmClockCheck, BookImage, BookOpenText, BookText, Calendar, Clapperboard, Download, Gamepad2, Users, FileAudio, Music, MicVocal, SquareLibrary, Tv } from 'lucide-react'
 
 import HomeIconButton from '@/components/HomeIconButton'
 import { checkUser } from '@/contexts/RooterContext'
@@ -31,6 +31,7 @@ const Page: NextPage = () => {
       <div className='grid grid-cols-6 gap-10 text-center'>
         <HomeIconButton icon={AlarmClockCheck} label="Task List" path="/tasks/tasks/taskList" />
         <HomeIconButton icon={AlarmClockCheck} label="Music Task" path="/tasks/music/musicTaskList" />
+        <HomeIconButton icon={Calendar} label="Events" path="/tasks/events/eventList" />
       </div>
 
       <div className='flex items-center my-6'>

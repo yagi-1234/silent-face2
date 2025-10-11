@@ -116,3 +116,7 @@ export const CodeLibraryGrade: { [key: string]: string | '' } = {
   "12": "D+",
   "13": "D",
 }
+
+export const CodeEventType: { [key: string]: string | '' } = {
+  '01': 'Live'
+}
