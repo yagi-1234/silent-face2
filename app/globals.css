@@ -138,7 +138,7 @@ button {
     @apply border-border outline-ring/50;
   }
   .root-panel {
-    @apply bg-white rounded-2xl w-240 p-6
+    @apply bg-white rounded-2xl max-w-240 p-6
   }
   .header-title {
     @apply text-xl font-semibold mb-4

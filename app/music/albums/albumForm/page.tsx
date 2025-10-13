@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { Check, Clock, ArrowLeft, ArrowRight, Plus } from 'lucide-react'
-import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchArtist } from '@/actions/music/artist-action'

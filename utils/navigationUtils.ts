@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
+import { logout } from '@/actions/user/user-action'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
 
@@ -31,4 +32,19 @@ export const useCustomBack = () => {
   }
 
   return { handleBack }
+}
+
+export const useLogoff = () => {
+  const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
+  const router = useRouter()
+
+  const handleLogoff = () => {
+    setModalMessage('Are you sure you want to logoff?')
+    setConfirmHandler(async () => {
+      await logout()
+      router.push('/login')
+    })
+    setIsModalOpen(true)
+  }
+  return { handleLogoff }
 }

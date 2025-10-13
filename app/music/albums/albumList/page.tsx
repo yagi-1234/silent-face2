@@ -1,13 +1,14 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, Plus, Search, OctagonX } from 'lucide-react'
+import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, LogOut, Plus, Search, OctagonX } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchAlbums, formatAlbumTypeOrNo } from '@/actions/music/album-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
+import { LogoffButton } from '@/components/LogoffButton'
 import { useHistory } from '@/contexts/HistoryContext'
 import MessageBanner from '@/components/MessageBanner'
 import { useMessage } from '@/contexts/MessageContext'
@@ -15,7 +16,7 @@ import { checkUser } from '@/contexts/RooterContext'
 import { Album, AlbumCondition, initialAlbumCondition } from '@/types/music/album-types'
 import { CodeOwnedFlag } from '@/utils/codeUtils'
 import { formatDateTime, formatDateVariousTime } from '@/utils/dateFormat'
-import { useCustomBack } from '@/utils/navigationUtils'
+import { useCustomBack, useLogoff } from '@/utils/navigationUtils'
 
 const Page = () => {
   return (
@@ -126,7 +127,10 @@ const AlbumList = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <div className="flex justify-between">
+        <Breadcrumb />
+        <LogoffButton />
+      </div>
       <h2 className="header-title">Album List</h2>
       <div className="searchPanel">
         <div className="input-form">

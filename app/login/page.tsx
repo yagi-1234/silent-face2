@@ -6,6 +6,8 @@ import { LogIn } from 'lucide-react'
 
 import { login, logout, makeUser, validateUser } from '@/actions/user/user-action'
 import MessageBanner from '@/components/MessageBanner'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { useMessage } from '@/contexts/MessageContext'
 import { User } from '@/types/user/user-types'
 
@@ -64,28 +66,32 @@ const LoginForm = () => {
           errors={errors}
           onClose={() => setMessage('')} />
       <h2 className="header-title">Login</h2>
-      <div className="input-form">
-        <label htmlFor="user_name">User Name</label>
-        <input type="text"
-            id="user_name"
-            name="user_name"
-            value={userData?.user_name}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="password">Password</label>
-        <input type="password"
-            id="password"
-            name="password"
-            value={userData?.password}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <button className="button-save"
-            onClick={handleLogin}>
-          <LogIn size={16} />
-        </button>
-      </div>
+      <Card className="w-[500px]">
+        <CardContent className="space-y-4">
+          <div className="input-form">
+            <label htmlFor="user_name">User Name</label>
+            <input type="text"
+                id="user_name"
+                name="user_name"
+                value={userData?.user_name}
+                onChange={handleChange} />
+          </div>
+          <div className="input-form">
+            <label htmlFor="password">Password</label>
+            <input type="password"
+                id="password"
+                name="password"
+                value={userData?.password}
+                onChange={handleChange} />
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button className="w-full"
+              onClick={handleLogin}>
+            Login
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   )
 }
