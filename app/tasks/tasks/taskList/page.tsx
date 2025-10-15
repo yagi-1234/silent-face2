@@ -9,6 +9,7 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import MessageBanner from '@/components/MessageBanner'
+import HiddenPanel from '@/components/HiddenPanel'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
@@ -39,10 +40,12 @@ const TaskList = () => {
   const searchParams = useSearchParams()
   const [tasks, setTasks] = useState<Task[]>([])
   const [condition, setCondition] = useState<TaskCondition>(initialTaskCondition)
+  const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
 
   const handleSearch = async () => {
     const query = new URLSearchParams()
-    if (condition.taskStatusList.length > 0) query.append('taskStatusList', condition.taskStatusList.join(','))
+    if (condition.task_status_list.length > 0) query.append('task_status_list', condition.task_status_list.join(','))
+    if (condition.task_type) query.append('task_type', condition.task_type)
     router.push(`/tasks/tasks/taskList?${query.toString()}`)
     const fetchData = await fetchTasks(condition)
     setTasks(fetchData)
@@ -115,6 +118,7 @@ const TaskList = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
+    console.log('a')
     setCondition(prev => ({
       ...prev, [name]: value
     }))
@@ -122,7 +126,27 @@ const TaskList = () => {
 
   useEffect(() => {
     checkLogin()
+
+    if ([...searchParams.keys()].length !== 0) {
+      const taskStatusList = searchParams.get('task_status_list')
+      console.log('searchParams', searchParams)
+      console.log('taskStatusList', taskStatusList)
+      const condition1 = {
+        ...condition,
+        task_type: searchParams.get('task_type') ?? '',
+        task_status_list: taskStatusList ? taskStatusList.split(',') : [],
+      }
+      setCondition(condition1)
+    }
     loadList()
+
+    const handler = (e: WindowEventMap['keydown']) => {
+      if (e.ctrlKey && e.altKey && e.key === 'd') {
+        setHiddenPanelOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler);
   }, [])
 
   return (
@@ -162,11 +186,11 @@ const TaskList = () => {
                   <input type="checkbox"
                       className=""
                       value={key}
-                      checked={condition?.taskStatusList.includes(key)}
+                      checked={condition?.task_status_list.includes(key)}
                       onChange={(e) => {
                         setCondition(prev => ({
                           ...prev,
-                          taskStatusList: e.target.checked ? [...prev.taskStatusList, key] : prev.taskStatusList.filter(status => status !== key)
+                          task_status_list: e.target.checked ? [...prev.task_status_list, key] : prev.task_status_list.filter(status => status !== key)
                         }))
                       }}
                   />
@@ -266,6 +290,15 @@ const TaskList = () => {
         </div>
       </div>
       <ConfirmModal />
+      <HiddenPanel
+        isOpen={hiddenPanelOpen}
+        content={
+          <>
+            condition:
+            <br /> {JSON.stringify(condition)}
+          </>
+        }
+      />
     </div>
   )
 }

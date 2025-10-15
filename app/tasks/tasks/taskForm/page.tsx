@@ -127,7 +127,10 @@ const TaskForm = () => {
         setErrors(validationErrors)
         return
       }
-      setTask(await mergeTask(task))
+
+      let updateTaskKey = ''
+      if (task.task_key && originalTask.action_count && task.action_count && originalTask.action_count < task.action_count) updateTaskKey = task.task_key
+      setTask(await mergeTask(task, updateTaskKey))
       setMessage("Saved Successfully!")
       setMessageType("info")
     })

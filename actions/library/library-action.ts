@@ -3,7 +3,6 @@ import { supabase } from '@/lib/supabase'
 import type { LibraryItem, LibraryItemMst } from '@/types/library/library-types'
 import { Task, initialTask } from '@/types/tasks/task-types'
 
-
 export const fetchItem = async (itemId: string): Promise<LibraryItem> => {
   console.log('itemId:', itemId)
   const { data: result, error } = await supabase
@@ -97,4 +96,15 @@ export const fetchItemMst = async (libraryType: string): Promise<LibraryItemMst>
       throw error
   }
   return result
+}
+
+export const updateItemByUpdatingTask = async (itemId: string, actionCount: number | null, lastActedAt: Date | null) => {
+  const oldData = await fetchItem(itemId)
+  const updateData = { ...oldData,
+    action_count: actionCount,
+    last_actioned_at: lastActedAt,
+    updated_at: new Date(),
+    updated_count: Number(oldData.updated_count ?? 0) + 1,
+  }
+  await updateItem(updateData)
 }

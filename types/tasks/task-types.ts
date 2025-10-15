@@ -1,22 +1,23 @@
 export type Task = {
-    task_id: string
-    task_type: string
-    task_cycle: string
-    task_name: string
-    priority: string
-    task_status: string
-    schedule_type: string
-    task_progress: number | null
-    action_count: number | null
-    first_acted_at: Date | null
-    last_acted_at: Date | null
-    next_period: number | null
-    next_date: Date | null
-    buffer_period: number | null
-    limit_date: Date | null
-    task_comment: string | null
-    updated_at: Date | null
-    updated_count: number | null
+  task_id: string
+  task_type: string
+  task_cycle: string
+  task_key: string
+  task_name: string
+  priority: string
+  task_status: string
+  schedule_type: string
+  task_progress: number | null
+  action_count: number | null
+  first_acted_at: Date | null
+  last_acted_at: Date | null
+  next_period: number | null
+  next_date: Date | null
+  buffer_period: number | null
+  limit_date: Date | null
+  task_comment: string | null
+  updated_at: Date | null
+  updated_count: number | null
 }
 
 export type TaskUIState = Task & {
@@ -28,6 +29,7 @@ export const initialTask: Task = {
   task_id: '',
   task_type: '',
   task_cycle: '',
+  task_key: '',
   task_name: '',
   priority: '2',
   task_status: '0',
@@ -47,12 +49,12 @@ export const initialTask: Task = {
 
 export type TaskCondition = {
   task_type: string
-  taskStatusList: string[]
+  task_status_list: string[]
 }
 
 export const initialTaskCondition: TaskCondition = {
   task_type: '',
-  taskStatusList: ['0','1','2']
+  task_status_list: ['0','1','2']
 }
 
 export type MusicTask = {

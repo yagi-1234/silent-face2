@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase"
 
+import { updateItemByUpdatingTask } from '@/actions/library/library-action'
 import type { ValidationErrors } from '@/types/common/common-types'
 import type { Task, TaskCondition, MusicTask, MusicTaskCondition } from '@/types/tasks/task-types'
 
@@ -21,9 +22,10 @@ export const fetchTask = async (taskId: string): Promise<Task> => {
 }
 
 export const fetchTasks = async (condition: TaskCondition): Promise<Task[]> => {
+  console.log('condition:', condition)
   let query = supabase.from('ct01_tasks').select('*')
   if (condition.task_type) query = query.eq('task_type', condition.task_type)
-  if (condition.taskStatusList.length > 0) query = query.in('task_status', condition.taskStatusList)
+  if (condition.task_status_list.length > 0) query = query.in('task_status', condition.task_status_list)
   query = query.order('next_date')
   query = query.order('task_status', { ascending: false })
   query = query.order('last_acted_at', { ascending: false })
@@ -35,26 +37,23 @@ export const fetchTasks = async (condition: TaskCondition): Promise<Task[]> => {
   return result
 }
 
-export const mergeTask = async (newData: Task): Promise<Task> => {
-    // const newDataEdition = { ...newData,
-    //     last_acted_at: toZonedTime(newData.last_acted_at || '', 'Asia/Tokyo')
-    // }
-
+export const mergeTask = async (newData: Task, updateTaskKey: string): Promise<Task> => {
     if (newData.task_id) {
-        return await updateTask(newData)
-    } else {
-        return await insertTask(newData)
+      const result = await updateTask(newData)
+      if (updateTaskKey) await updateItemByUpdatingTask(updateTaskKey, newData.action_count, newData.last_acted_at)
+      return result
     }
+    else return await insertTask(newData)
 }
 
 const insertTask = async (newData: Task): Promise<Task> => {
     const { task_id, ...insertData } = newData
     console.log("insertData:", insertData)
     const { data: result, error } = await supabase
-            .from('ct01_tasks')
-            .insert(insertData)
-            .select()
-            .single()
+        .from('ct01_tasks')
+        .insert(insertData)
+        .select()
+        .single()
     if (error || !result) {
         console.log('error')
         alert ('Error: Insert Task Failed')
@@ -67,7 +66,6 @@ const insertTask = async (newData: Task): Promise<Task> => {
 const updateTask = async (newData: Task): Promise<Task> => {
 
     const updateData = { ...newData,
-        // last_acted_at: toZonedTime(newData.last_acted_at || '', 'Asia/Tokyo'),
         next_date: newData.next_date ? formatDateToYYYYMMDD(new Date(newData.next_date)) : null,
         limit_date: newData.limit_date ? formatDateToYYYYMMDD(new Date(newData.limit_date)) : null,
         updated_at: new Date(),
@@ -75,16 +73,20 @@ const updateTask = async (newData: Task): Promise<Task> => {
     }
     console.log("updateData:", updateData)
     const { data: result, error } = await supabase    
-            .from('ct01_tasks')
-            .update(updateData)
-            .eq('task_id', updateData.task_id)
-            .select()
-            .single()
+        .from('ct01_tasks')
+        .update(updateData)
+        .eq('task_id', updateData.task_id)
+        .select()
+        .single()
     if (error) {
         alert ('Error: updateTask Failed')
         throw(error)
     }
     console.log('updateTask Complete Result:', result)
+
+
+
+
     return result
 }
 
