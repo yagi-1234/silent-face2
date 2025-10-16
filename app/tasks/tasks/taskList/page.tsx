@@ -7,9 +7,10 @@ import { ArrowLeft, Plus, FileText, CircleCheckBig, Info, Search } from 'lucide-
 import { fetchTasks, updateLastActedAt, updateTaskStatus } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import { LogoffButton } from '@/components/LogoffButton'
 import MessageBanner from '@/components/MessageBanner'
 import HiddenPanel from '@/components/HiddenPanel'
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
@@ -156,7 +157,10 @@ const TaskList = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <div className="flex justify-between">
+        <Breadcrumb />
+        <LogoffButton />
+      </div>
       <h2 className="header-title">Task List</h2>
       <div className="searchPanel">
         <div className="input-form">

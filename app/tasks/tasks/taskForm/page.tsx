@@ -19,6 +19,7 @@ import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
+import { LogoffButton } from '@/components/LogoffButton'
 import MessageBanner from '@/components/MessageBanner'
 import HiddenPanel from '@/components/HiddenPanel'
 
@@ -172,7 +173,10 @@ const TaskForm = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <div className="flex justify-between">
+        <Breadcrumb />
+        <LogoffButton />
+      </div>
       <h2 className="header-title">Task Form</h2>
       <p className="timestamp">
         {task.task_id ? "last updated at: " + formatDateTime(task.updated_at, 'yyyy/MM/dd HH:mm') + " (" + task.updated_count + ")" : '(Not registered)'}
