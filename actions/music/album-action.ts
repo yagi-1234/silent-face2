@@ -162,3 +162,12 @@ export const formatAlbumTypeOrNo = (albumType: string, albumNo: number | null) =
     return albumNo + 'rd'
   return albumNo + 'th'
 }
+
+export const updateAlbumByUpdatingTask = async (albumId: string, lastListenedAt: Date | null) => {
+  const oldData = await fetchAlbum(albumId)
+  const updateData = { ...oldData,
+    listening_count: oldData.listening_count ? oldData.listening_count + 1 : 1,
+    last_listened_at: lastListenedAt,
+  }
+  await updateAlbum(updateData)
+}

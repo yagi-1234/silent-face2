@@ -82,7 +82,7 @@ export const initialMusicTask: MusicTask = {
   task_sub_id: null,
   task_id: null,
   task_sub_type: null,
-  task_status: null,
+  task_status: '0',
   task_priority: null,
   artist_id: null,
   artist_name: null,

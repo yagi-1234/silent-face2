@@ -8,6 +8,7 @@ import { ArrowLeft, FileText, Plus, Search, RotateCw } from "lucide-react"
 import { fetchMusicTasks, updateMusicTaskStatus, refreshMusicTask } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
+import { LogoffButton } from '@/components/LogoffButton'
 import MessageBanner from '@/components/MessageBanner'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
@@ -101,7 +102,10 @@ const MusicTaskList = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <div className="flex justify-between">
+        <Breadcrumb />
+        <LogoffButton />
+      </div>
       <h2 className="header-title">Task List (Music)</h2>
       <div className="searchPanel">
         <div className="input-form">

@@ -4,12 +4,13 @@ import { Suspense, useEffect, useState } from 'react'
 import { ArrowLeft, Check, Plus } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
-import { fetchMusicTask, mergeMusicTask } from '@/actions/tasks/task-action'
+import { fetchMusicTask, mergeMusicTask, isMusicTaskEdited } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
-import { useConfirmModal } from '@/contexts/ConfirmModalContext'
+import { LogoffButton } from '@/components/LogoffButton'
 import MessageBanner from '@/components/MessageBanner'
 import PartialDateInput from '@/components/PartialDateInput'
+import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { MusicTask, initialMusicTask } from '@/types/tasks/task-types'
@@ -33,7 +34,7 @@ const MusicTaskForm = () => {
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
   const searchParams = useSearchParams()
   const [task, setTask] = useState<MusicTask>(initialMusicTask)
-  const [originaltask, setOriginalTask] = useState<MusicTask>(initialMusicTask)
+  const [originalTask, setOriginalTask] = useState<MusicTask>(initialMusicTask)
   
   const inTaskSubId = searchParams.get('task_sub_id') ?? ''
   const inArtistId = searchParams.get('artist_id') ?? ''
@@ -72,7 +73,9 @@ const MusicTaskForm = () => {
       //   setErrors(validationErrors)
       //   return
       // }
-      const result = await mergeMusicTask(task)
+      let updateAlbumKey = ''
+      if (originalTask.action_count && task.action_count && originalTask.action_count < task.action_count) updateAlbumKey = task.album_id ?? ''
+      const result = await mergeMusicTask(task, updateAlbumKey)
       setTask(result)
       setOriginalTask(result)
       setMessage("Saved Successfully!")
@@ -100,14 +103,14 @@ const MusicTaskForm = () => {
           album_id: inAlbumId,
           album_name: inAlbumName,
         }))
+        setOriginalTask(prev => ({
+          ...prev,
+          artist_id: inArtistId,
+          artist_name: inArtistName,
+          album_id: inAlbumId,
+          album_name: inAlbumName,
+        }))
       }
-      setOriginalTask(prev => ({
-        ...prev,
-        artist_id: inArtistId,
-        artist_name: inArtistName,
-        album_id: inAlbumId,
-        album_name: inAlbumName,
-      }))
     }
     loadTask()
   }, [inTaskSubId, inArtistId, inArtistName, inAlbumId, inAlbumName])
@@ -119,7 +122,10 @@ const MusicTaskForm = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <div className="flex justify-between">
+        <Breadcrumb />
+        <LogoffButton />
+      </div>
       <h2 className="header-title">Task Form (Music)</h2>
       <p className="timestamp">
         {task.task_sub_id ? "last updated at: " + formatDateTime(task.updated_at, 'yyyy/MM/dd HH:mm') + " (" + task.updated_count + ")" : '(Not registered)'}
@@ -223,12 +229,13 @@ const MusicTaskForm = () => {
         <div className="footer-area-sub">
           <div className="footer-left">
             <button className="button-back"
-                onClick={() => handleBack(true)}>
+                onClick={() => handleBack(isMusicTaskEdited(originalTask, task))}>
               <ArrowLeft size={16} />
             </button>
           </div>
           <div className="footer-right">
             <button className="button-save"
+                disabled={!isMusicTaskEdited(originalTask, task)}
                 onClick={handleSave}>
               <Check size={16} />
             </button>

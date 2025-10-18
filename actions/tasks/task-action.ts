@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase"
 
 import { updateItemByUpdatingTask } from '@/actions/library/library-action'
+import { updateAlbumByUpdatingTask } from '@/actions/music/album-action'
 import type { ValidationErrors } from '@/types/common/common-types'
 import type { Task, TaskCondition, MusicTask, MusicTaskCondition } from '@/types/tasks/task-types'
 
@@ -83,10 +84,6 @@ const updateTask = async (newData: Task): Promise<Task> => {
         throw(error)
     }
     console.log('updateTask Complete Result:', result)
-
-
-
-
     return result
 }
 
@@ -191,9 +188,13 @@ export const fetchMusicTasks = async (condition: MusicTaskCondition): Promise<Mu
   return result
 }
 
-export const mergeMusicTask = async (newData: MusicTask): Promise<MusicTask> => {
+export const mergeMusicTask = async (newData: MusicTask, updateAlbumKey: string): Promise<MusicTask> => {
   console.log('newData:', newData)
-  if (newData.task_sub_id) return await updateMusicTask(newData)
+  if (newData.task_sub_id) {
+    const result = await updateMusicTask(newData)
+    if (updateAlbumKey) await updateAlbumByUpdatingTask(updateAlbumKey, newData.last_acted_at)
+    return result
+  }
   else return await insertMusicTask(newData)
 }
 
@@ -321,4 +322,26 @@ const fetchMusicTasksForRefresh = async (): Promise<MusicTask[]> => {
     throw error
   }
   return result
+}
+
+export const isMusicTaskEdited = (original?: MusicTask, current?: MusicTask): boolean => {
+  console.log('test')
+  console.log(original)
+  console.log(current)
+  if (!original || !current) return true;
+  return (
+    original.task_sub_type !== current.task_sub_type ||
+    original.task_status !== current.task_status ||
+    original.task_priority !== current.task_priority ||
+    original.artist_id !== current.artist_id ||
+    original.artist_name !== current.artist_name ||
+    original.album_id !== current.album_id ||
+    original.album_name !== current.album_name ||
+    original.action_count !== current.action_count ||
+    (!original.last_acted_at && !current.last_acted_at
+      ? false
+      : new Date(original.last_acted_at || "").getTime() !==
+        new Date(current.last_acted_at || "").getTime()) ||
+    original.task_comment !== current.task_comment
+  )
 }
