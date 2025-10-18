@@ -1,7 +1,6 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import type { NextPage } from 'next'
 import { useSearchParams } from 'next/navigation'
 
 import { ArrowLeft, Check, Plus } from 'lucide-react'

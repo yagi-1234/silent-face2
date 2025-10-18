@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation'
 import { fetchMusicTask, mergeMusicTask, isMusicTaskEdited } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
+import HiddenPanel from '@/components/HiddenPanel'
 import { LogoffButton } from '@/components/LogoffButton'
 import MessageBanner from '@/components/MessageBanner'
 import PartialDateInput from '@/components/PartialDateInput'
@@ -35,6 +36,7 @@ const MusicTaskForm = () => {
   const searchParams = useSearchParams()
   const [task, setTask] = useState<MusicTask>(initialMusicTask)
   const [originalTask, setOriginalTask] = useState<MusicTask>(initialMusicTask)
+  const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   
   const inTaskSubId = searchParams.get('task_sub_id') ?? ''
   const inArtistId = searchParams.get('artist_id') ?? ''
@@ -74,7 +76,7 @@ const MusicTaskForm = () => {
       //   return
       // }
       let updateAlbumKey = ''
-      if (originalTask.action_count && task.action_count && originalTask.action_count < task.action_count) updateAlbumKey = task.album_id ?? ''
+      if (task.action_count && originalTask.action_count < task.action_count) updateAlbumKey = task.album_id ?? ''
       const result = await mergeMusicTask(task, updateAlbumKey)
       setTask(result)
       setOriginalTask(result)
@@ -113,6 +115,14 @@ const MusicTaskForm = () => {
       }
     }
     loadTask()
+
+    const handler = (e: WindowEventMap['keydown']) => {
+      if (e.ctrlKey && e.altKey && e.key === 'd') {
+        setHiddenPanelOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler);
   }, [inTaskSubId, inArtistId, inArtistName, inAlbumId, inAlbumName])
 
   return (
@@ -243,6 +253,18 @@ const MusicTaskForm = () => {
         </div>
       </div>
       <ConfirmModal />
+      <HiddenPanel
+        isOpen={hiddenPanelOpen}
+        content={
+          <>
+            originalTask:
+            <br /> {JSON.stringify(originalTask)}
+            <br />
+            task:
+            <br /> {JSON.stringify(task)}
+          </>
+        }
+      />
     </div>
   )
 }
