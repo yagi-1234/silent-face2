@@ -76,22 +76,21 @@ const ArtistForm = () => {
         return
       }
       const result = await mergeArtist(artist)
-      setArtist(result)
-      setOriginalArtist(result)
+      await loadArtist(result.artist_id)
       setMessage('Saved Successfully!')
       setMessageType('info')
     })
     setIsModalOpen(true)
   }
 
+  const loadArtist = async (artistId: string) => {
+    if (!artistId) return
+    const fetchData = await fetchArtist(artistId)
+    setArtist(fetchData)
+    setOriginalArtist(fetchData)
+  }
   useEffect(() => {
-    const loadArtist = async () => {
-      if (!inArtistId) return
-      const fetchData = await fetchArtist(inArtistId)
-      setArtist(fetchData)
-      setOriginalArtist(fetchData)
-    }
-    loadArtist()
+    loadArtist(inArtistId)
 
     const handler = (e: WindowEventMap["keydown"]) => {
       if (e.ctrlKey && e.altKey && e.key === 'd')

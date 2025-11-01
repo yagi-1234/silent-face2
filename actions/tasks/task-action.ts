@@ -325,9 +325,6 @@ const fetchMusicTasksForRefresh = async (): Promise<MusicTask[]> => {
 }
 
 export const isMusicTaskEdited = (original?: MusicTask, current?: MusicTask): boolean => {
-  console.log('test')
-  console.log(original)
-  console.log(current)
   if (!original || !current) return true;
   return (
     original.task_sub_type !== current.task_sub_type ||

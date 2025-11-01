@@ -156,13 +156,13 @@ const TaskForm = () => {
     }
     loadTask()
 
-    const handler = (e: WindowEventMap["keydown"]) => {
-      if (e.ctrlKey && e.altKey && e.key === "d") {
+    const handler = (e: WindowEventMap['keydown']) => {
+      if (e.ctrlKey && e.altKey && e.key === 'd') {
         setHiddenPanelOpen((prev) => !prev)
       }
     }
-    window.addEventListener("keydown", handler)
-    return () => window.removeEventListener("keydown", handler);
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler);
   }, [inTaskId])
 
   return (
