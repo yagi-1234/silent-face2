@@ -25,9 +25,10 @@ export const fetchRegionForInsert = async (regionCode: string): Promise<Region> 
     region_name_2: '',
     region_level: result.region_level + 1,
     region_level_name: '',
-    disp_order: 0,
+    disp_order: result.disp_order,
     region_full_name_1: '',
     iso_code: '',
+    priority: '0',
     parent_region_code: regionCode,
     updated_count: 0,
   }

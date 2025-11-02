@@ -132,41 +132,44 @@ export function RegionList({ onSelect }: Props) {
               </label>
             </div>
           </div>
-          <div className="overflow-y-auto max-h-[300px] border rounded">
+          <div className="rounded">
             <table>
               <thead>
                 <tr>
                   <th>Region Name</th>
                   <th></th>
+                  <th>Disp Order</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 {regions.map(region => (
-                  <tr key={region.region_code}>
+                  <tr key={region.region_code} className='h-7'>
                     <td
                         onDoubleClick={() => onSelect(region.region_code ?? '', region.region_full_name_1)}>
                       {region.region_full_name_1}
                     </td>
                     <td>{region.region_name_2}</td>
+                    <td>{region.disp_order}</td>
                     <td className='flex'>
                       <div>
                         <button
                             className="button-page"
                             onClick={() => handleShowEdit(region.region_code ?? '')} >
-                          <FileText className="w-5 h-5" />
+                          <FileText className="w-4 h-4" />
                         </button>
                       </div>
                       <div>
                         <button
                             className="button-page"
                             onClick={() => handleShowPlus(region.region_code ?? '')} >
-                          <ListPlus className="w-5 h-5" />
+                          <ListPlus className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
                   </tr>
                 ))}
+                <div>　</div>
               </tbody>
             </table>
           </div>
