@@ -18,7 +18,7 @@ import { Artist, initialArtist } from '@/types/music/artist-types'
 import { CodeArtistType, CodeArtistGrade } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { removeArticle } from '@/utils/stringUtils'
+import { removeArticle, convertToRome, toLowerCase } from '@/utils/stringUtils'
 
 const Page = () => {
   return (
@@ -45,14 +45,19 @@ const ArtistForm = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
-    if (name === 'artist_name_1' && value) {
-      setArtist(prev => ({
-        ...prev, artist_name_0: removeArticle(value)
-      }))
-    }
     setErrors(removeErrorKey(errors, name))
     setArtist(prev => ({
       ...prev, [name]: value
+    }))
+  }
+
+  const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    const artistName0 = removeArticle(toLowerCase(await convertToRome(value)))
+    setErrors(removeErrorKey(errors, 'artist_name_0'))
+    setArtist(prev => ({
+      ...prev,
+      artist_name_0: artistName0
     }))
   }
 
@@ -127,7 +132,8 @@ const ArtistForm = () => {
               name="artist_name_1"
               className={errors.artist_name_1 ? "isError" : ""}
               value={artist.artist_name_1}
-              onChange={handleChange} />
+              onChange={handleChange}
+              onBlur={handleNameOneToZero} />
         </div>
         <div className="input-form">
           <label htmlFor="artist_name_2"></label>

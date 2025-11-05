@@ -37,3 +37,8 @@ export const toUpperCase = (text: string) => {
   if (!text) return text
   return text.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
+
+export const toLowerCase = (text: string) => {
+  if (!text) return text
+  return text.toLowerCase()
+}
