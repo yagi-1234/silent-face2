@@ -56,6 +56,14 @@ const AlbumList = () => {
     }))
   }
 
+  const handleChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setErrors(removeErrorKey(errors, name))
+    setAlbum(prev => ({
+      ...prev, [name]: value === '' ? null : Number(value)
+    }))
+  }
+
   const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     const albumName0 = removeArticle(toUpperCase(await convertToRome(value)))
@@ -212,8 +220,8 @@ const AlbumList = () => {
               id="album_no"
               name="album_no"
               className={errors.album_no ? "numeric-field isError w-2" : "numeric-field w-20"}
-              value={album.album_no ?? 0}
-              onChange={handleChange} />
+              value={album.album_no ?? ""}
+              onChange={handleChangeNumber} />
         </div>
         <div className="input-form">
           <label htmlFor="released">Released</label>
