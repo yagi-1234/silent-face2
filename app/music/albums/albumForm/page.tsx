@@ -110,7 +110,7 @@ const AlbumList = () => {
   const handleAddTask = () => {
     addToHistory({ title: 'albumForm', path: `${pathname}?${searchParams.toString()}`})
     const queryPrams = new URLSearchParams()
-    queryPrams.append('artist_id', album.artist_id)
+    queryPrams.append('artist_id', album.artist_id ?? '')
     queryPrams.append('artist_name', album.artist_name_1)
     queryPrams.append('album_id', album.album_id)
     queryPrams.append('album_name', album.album_name_1)

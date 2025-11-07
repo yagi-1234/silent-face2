@@ -1,13 +1,13 @@
 export type Artist = {
-  artist_id: string
+  artist_id: string | null
   artist_name_0: string
   artist_name_1: string
-  artist_name_2: string
-  artist_type: string
-  origin_code: string
-  years_active: string
-  grade: string
-  artist_comment: string
+  artist_name_2: string | null
+  artist_type: string | null
+  origin_code: string | null
+  years_active: string | null
+  grade: string | null
+  artist_comment: string | null
   updated_count: number | null
   updated_at: Date | null
   country_name_1: string | null
@@ -19,12 +19,12 @@ export type Artist = {
 }
 
 export const initialArtist: Artist = {
-  artist_id: '',
+  artist_id: null,
   artist_name_0: '',
   artist_name_1: '',
-  artist_name_2: '',
+  artist_name_2: null,
   artist_type: '',
-  origin_code: '',
+  origin_code: null,
   years_active: '',
   grade: '',
   artist_comment: '',

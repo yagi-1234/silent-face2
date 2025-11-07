@@ -47,7 +47,7 @@ const ArtistForm = () => {
     const { name, value } = event.target
     setErrors(removeErrorKey(errors, name))
     setArtist(prev => ({
-      ...prev, [name]: value
+      ...prev, [name]: value ? value : null
     }))
   }
 
@@ -81,7 +81,7 @@ const ArtistForm = () => {
         return
       }
       const result = await mergeArtist(artist)
-      await loadArtist(result.artist_id)
+      await loadArtist(result.artist_id ?? '')
       setMessage('Saved Successfully!')
       setMessageType('info')
     })
@@ -184,7 +184,7 @@ const ArtistForm = () => {
               id="grade"
               name="grade"
               className="w-80"
-              value={artist.grade}
+              value={artist.grade ?? ""}
               onChange={handleChange} >
             <option key="" value=""></option>
             {Object.entries(CodeArtistGrade)
