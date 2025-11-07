@@ -8,7 +8,7 @@ import { makeKeywordForSql} from '@/utils/stringUtils'
 export const fetchAlbum = async (albumId: string): Promise<Album> => {
   const { data: result, error } = await supabase
       .from('mv21_albums')
-      .select('artist_id,artist_name_0,artist_name_1,artist_name_2,album_id,artist_id,album_name_0,album_name_1,album_name_2,album_type,album_no,released,owned_flag,added_at,listening_count,last_listened_at,album_comment,updated_at,updated_count,track_count,track_length,album_point')
+      .select('artist_id,artist_name_0,artist_name_1,artist_name_2,album_id,album_artist_name,album_artist_name_1,album_name_0,album_name_1,album_name_2,album_type,album_no,released,owned_flag,added_at,listening_count,last_listened_at,album_comment,updated_at,updated_count,track_count,track_length,album_point')
       .eq('album_id', albumId)
       .single()
   if (error) {
@@ -93,7 +93,7 @@ export const mergeAlbum = async (newData: Album): Promise<Album> => {
   }
 }
 const insertAlbum = async (newData: Album): Promise<Album> => {
-  const { album_id, artist_name_0, artist_name_1, artist_name_2, album_point, track_count, track_length, ...insertData } = newData
+  const { album_id, artist_name_0, artist_name_1, artist_name_2, album_artist_name_1, album_point, track_count, track_length, ...insertData } = newData
   console.log("insertData:", insertData)
   const { data: result, error } = await supabase
       .from('mt21_albums')
@@ -109,7 +109,7 @@ const insertAlbum = async (newData: Album): Promise<Album> => {
 }
 
 const updateAlbum = async (newData: Album): Promise<Album> => {
-  const { artist_name_0, artist_name_1, artist_name_2, album_point, track_count, track_length, ...newData2 } = newData
+  const { artist_name_0, artist_name_1, artist_name_2, album_artist_name_1, album_point, track_count, track_length, ...newData2 } = newData
   const updateData = { ...newData2,
     updated_at: new Date(),
     updated_count: Number(newData2.updated_count ?? 0) + 1,
@@ -131,6 +131,7 @@ const updateAlbum = async (newData: Album): Promise<Album> => {
 
 export const isAlbumEdited = (original?: Album, current?: Album): boolean => {
   if (!original || !current) return true
+  if (original.album_artist_name !== current.album_artist_name) return true
   if (original.album_name_0 !== current.album_name_0) return true
   if (original.album_name_1 !== current.album_name_1) return true
   if (original.album_name_2 !== current.album_name_2) return true

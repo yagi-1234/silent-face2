@@ -174,6 +174,14 @@ const AlbumList = () => {
               value={album.artist_name_1 ?? ''}
               onChange={handleChange} />
         </div>
+        <div className="input-form">
+          <label htmlFor="album_artist_name">　Album Artist</label>
+          <input type="text"
+              id="album_artist_name"
+              name="album_artist_name"
+              value={album.album_artist_name ?? ''}
+              onChange={handleChange} />
+        </div>
         <div className="input-form mb-2">
           <label htmlFor="album_name_0">Album Name</label>
           <input type="text"

@@ -3,6 +3,8 @@ export type Album = {
   artist_name_0: string
   artist_name_1: string
   artist_name_2: string | null
+  album_artist_name: string | null
+  album_artist_name_1: string | null
   album_id: string
   album_name_0: string
   album_name_1: string
@@ -26,7 +28,9 @@ export const initialAlbum: Album = {
   artist_id: '',
   artist_name_0: '',
   artist_name_1: '',
-  artist_name_2: '',
+  artist_name_2: null,
+  album_artist_name: null,
+  album_artist_name_1: null,
   album_id: '',
   album_name_0: '',
   album_name_1: '',

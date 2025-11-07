@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, LogOut, Plus, Search, OctagonX } from 'lucide-react'
+import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, Plus, Search, OctagonX } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchAlbums, formatAlbumTypeOrNo } from '@/actions/music/album-action'
@@ -16,7 +16,7 @@ import { checkUser } from '@/contexts/RooterContext'
 import { Album, AlbumCondition, initialAlbumCondition } from '@/types/music/album-types'
 import { CodeOwnedFlag } from '@/utils/codeUtils'
 import { formatDateTime, formatDateVariousTime } from '@/utils/dateFormat'
-import { useCustomBack, useLogoff } from '@/utils/navigationUtils'
+import { useCustomBack } from '@/utils/navigationUtils'
 
 const Page = () => {
   return (
@@ -251,7 +251,7 @@ const AlbumList = () => {
         <tbody>
           {albums.map((album) => (
             <tr key={album.album_id}>
-              <td>{album.artist_name_1}</td>
+              <td>{album.album_artist_name_1}</td>
               <td>{formatAlbumTypeOrNo(album.album_type, album.album_no)}</td>
               <td>{formatDateVariousTime(album.released, "yyyy/MM/dd")}</td>
               <td>{album.album_name_1}</td>
