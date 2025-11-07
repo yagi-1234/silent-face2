@@ -1,8 +1,8 @@
 export type Track = {
-  artist_id: string
+  artist_id: string | null
   artist_name_0: string
   artist_name_1: string
-  artist_name_2: string
+  artist_name_2: string | null
   album_id: string | null
   album_name_0: string
   album_name_1: string

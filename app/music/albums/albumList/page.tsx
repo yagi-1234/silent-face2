@@ -259,7 +259,7 @@ const AlbumList = () => {
               <td className="numeric-field">
                 <button
                     className="button-link"
-                    onClick={() => handleShowTracks(album.artist_id, album.artist_name_1, album.album_id, album.album_name_1)}>
+                    onClick={() => handleShowTracks(album.artist_id ?? '', album.artist_name_1, album.album_id, album.album_name_1)}>
                   {album.track_count}
                 </button>
               </td>

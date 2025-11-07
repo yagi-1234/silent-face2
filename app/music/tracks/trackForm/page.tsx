@@ -172,7 +172,7 @@ const TrackForm = () => {
           artist_name_1: fetchData.artist_name_1,
           artist_name_2: fetchData.artist_name_2,
         }
-        aritstId = fetchData.artist_id
+        aritstId = fetchData.artist_id ?? ''
         setTrack(fetchData2)
         setOriginalTrack(fetchData2)
       } else if (inAlbumId) {
@@ -189,12 +189,12 @@ const TrackForm = () => {
           album_name_2: fetchData.album_name_2,
           album_year: Number(fetchData.released?.substring(0, 4)),
         }
-        aritstId = fetchData2.artist_id
+        aritstId = fetchData2.artist_id ?? ''
         setTrack(fetchData2)
         setOriginalTrack(fetchData2)
       } else if (inTrackId) {
         const fetchData = await fetchTrack(inTrackId)
-        aritstId = fetchData.artist_id
+        aritstId = fetchData.artist_id ?? ''
         setTrack(fetchData)
         setOriginalTrack(fetchData)
       } else return
