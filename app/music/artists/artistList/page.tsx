@@ -212,28 +212,28 @@ const ArtistList = () => {
           {artists.map((artist) => (
             <tr key={artist.artist_id}>
               <td>{artist.artist_name_1}</td>
-              <td>{CodeArtistType[artist.artist_type]}</td>
+              <td>{CodeArtistType[artist.artist_type ?? '']}</td>
               <td>{artist.country_name_1}</td>
               <td className="numeric-field">
                 <button
                     className="button-link"
-                    onClick={() => handleShowAlbums(artist.artist_id, artist.artist_name_1)}>
+                    onClick={() => handleShowAlbums(artist.artist_id ?? '', artist.artist_name_1)}>
                   {artist.owned_count} / {artist.album_count}
                 </button>
               </td>
               <td className="numeric-field">
                 <button
                     className="button-link"
-                    onClick={() => handleShowTracks(artist.artist_id, artist.artist_name_1)}>
+                    onClick={() => handleShowTracks(artist.artist_id ?? '', artist.artist_name_1)}>
                   {artist.track_count} 
                 </button>
               </td>
-              <td>{CodeArtistGrade[artist.grade]}</td>
+              <td>{CodeArtistGrade[artist.grade ?? '']}</td>
               <td>{formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}</td>
               <td>
                 <button
                     className="button-page"
-                    onClick={() => handleShowForm(artist.artist_id)} >
+                    onClick={() => handleShowForm(artist.artist_id ?? '')} >
                   <FileText className="w-5 h-5" />
                 </button>
               </td>
