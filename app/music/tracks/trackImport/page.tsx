@@ -55,6 +55,7 @@ const TrackImport = () => {
         disc_no_for_sort: cells[1] ? Number(cells[1]) : 0,
         track_no: Number(cells[0]),
         track_artist_name: cells[4],
+        track_artist_name_1: null,
         track_name_0: removeArticle(await convertToRome(cells[5])),
         track_name_1: cells[5],
         track_name_2: cells[6],

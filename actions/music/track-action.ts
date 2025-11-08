@@ -41,10 +41,10 @@ export const fetchTracks = async (condition: TrackCondition): Promise<Track[]> =
   if (condition.artist_name) {
     if (condition.artist_name_exact_match) {
       const keyword = makeKeywordForSql(condition.artist_name, false)
-      query = query.or(`artist_name_0.eq.${keyword},artist_name_1.eq.${keyword},artist_name_2.eq.${keyword}`)
+      query = query.or(`artist_name_0.eq.${keyword},artist_name_1.eq.${keyword},artist_name_2.eq.${keyword},track_artist_name_1.eq.${keyword}`)
     } else {
       const keyword = makeKeywordForSql(condition.artist_name, true)
-      query = query.or(`artist_name_0.ilike.${keyword},artist_name_1.ilike.${keyword},artist_name_2.ilike.${keyword}`)
+      query = query.or(`artist_name_0.ilike.${keyword},artist_name_1.ilike.${keyword},artist_name_2.ilike.${keyword},track_artist_name_1.ilike.${keyword}`)
     }
   }
   if (condition.album_name) {
@@ -145,7 +145,7 @@ export const mergeTracks = async (newData: Track[]): Promise<Number> => {
 }
 
 const insertTrack = async (newData: Track): Promise<Track> => {
-    const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, ...insertData } = newData
+    const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, ...insertData } = newData
     const { data: result, error } = await supabase
         .from('mt31_tracks')
         .insert(insertData)
@@ -162,7 +162,7 @@ const insertTrack = async (newData: Track): Promise<Track> => {
 const insertTracks = async (newData: Track[]) => {
     const newData2: Partial<Track>[] = []
     newData.forEach((row) => {
-      const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, ...row2 } = row
+      const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, ...row2 } = row
       newData2.push(row2)
     })
     console.log("insertData:", newData2)
@@ -179,11 +179,12 @@ const insertTracks = async (newData: Track[]) => {
 }
 
 const updateTrack = async (newData: Track): Promise<Track> => {
-  const { artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, ...newData2 } = newData
+  const { artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, ...newData2 } = newData
   const updateData = { ...newData2,
     updated_at: new Date(),
     updated_count: Number(newData2.updated_count ?? 0) + 1
   }
+  console.log('updateData:', updateData)
   const { data: result, error } = await supabase
       .from('mt31_tracks')
       .update(updateData)
@@ -206,6 +207,7 @@ const updateTracks = async (newData: Track[]) => {
 
 export const isTrackEdited = (original?: Track, current?: Track): boolean => {
   if (!original || !current) return true
+  if (original.album_id !== current.album_id) return true
   if (original.disc_no !== current.disc_no) return true
   if (original.track_no !== current.track_no) return true
   if (original.track_name_0 !== current.track_name_0) return true

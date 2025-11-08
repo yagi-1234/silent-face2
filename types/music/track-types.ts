@@ -6,7 +6,7 @@ export type Track = {
   album_id: string | null
   album_name_0: string
   album_name_1: string
-  album_name_2: string
+  album_name_2: string | null
   album_year: number | null
   disc_no: number | null
   disc_no_for_sort: number
@@ -14,18 +14,19 @@ export type Track = {
   track_no: number | null
   track_name_0: string
   track_name_1: string
-  track_name_2: string
-  track_artist_name: string
+  track_name_2: string | null
+  track_artist_name: string | null
+  track_artist_name_1: string | null
   is_bonus_track: string
   track_year: number | null
-  track_length: string
+  track_length: string | null
   is_single: string
   single_no: number | null
   track_point: number | null
   is_point_except: string
   listening_count: number | null
   last_listened_at: Date | null
-  track_comment: string
+  track_comment: string | null
   updated_count: number | null
   updated_at: Date | null
 }
@@ -47,7 +48,8 @@ export const initialTrack: Track = {
   track_name_0: '',
   track_name_1: '',
   track_name_2: '',
-  track_artist_name: '',
+  track_artist_name: null,
+  track_artist_name_1: null,
   is_bonus_track: '0',
   track_year: null,
   track_length: '',

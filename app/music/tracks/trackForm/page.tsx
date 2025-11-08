@@ -65,7 +65,7 @@ const TrackForm = () => {
       let updatedValue: unknown;
       if (type === 'checkbox') updatedValue = (event.target as HTMLInputElement).checked ? '1' : '0'
       else if (type === 'number') updatedValue = value === '' ? null : value
-      else updatedValue = value
+      else updatedValue = value ? value : null
       return {
         ...prev, [name]: updatedValue
       }
@@ -240,7 +240,7 @@ const TrackForm = () => {
           <input type="text"
               id="track_artist_name"
               name="track_artist_name"
-              value={track.track_artist_name}
+              value={track.track_artist_name ?? ''}
               onChange={handleChange} />
         </div>
         <div className="input-form">
@@ -313,7 +313,7 @@ const TrackForm = () => {
               id="track_length"
               name="track_length"
               className="w-30"
-              value={track.track_length}
+              value={track.track_length ?? ''}
               onChange={handleChange} />
           <label htmlFor="track_year"
               className={!track.track_year && !!track.album_year ? "label-fixed w-10 ml-6" : "w-10 ml-6"}>

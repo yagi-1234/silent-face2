@@ -224,7 +224,7 @@ const TrackList = () => {
         <tbody>
           {tracks.map((track) => (
             <tr key={track.track_id} className="leading-none">
-              <td>{ellipsis(track.artist_name_1, 24)}</td>
+              <td>{ellipsis(track.track_artist_name_1, 24)}</td>
               <td>{ellipsis(track.album_name_1, 32)}</td>
               <td className="numeric-field">
                 {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}

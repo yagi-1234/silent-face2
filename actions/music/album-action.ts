@@ -27,10 +27,10 @@ export const fetchAlbums = async (condition: AlbumCondition): Promise<Album[]> =
   if (condition.artist_name) {
     if (condition.artist_name_exact_match) {
       const keyword = makeKeywordForSql(condition.artist_name, false)
-      query = query.or(`artist_name_0.eq.${keyword},artist_name_1.eq.${keyword},artist_name_2.eq.${keyword}`)
+      query = query.or(`artist_name_0.eq.${keyword},artist_name_1.eq.${keyword},artist_name_2.eq.${keyword},album_artist_name_1.eq.${keyword}`)
     } else {
       const keyword = makeKeywordForSql(condition.artist_name, true)
-      query = query.or(`artist_name_0.ilike.${keyword},artist_name_1.ilike.${keyword},artist_name_2.ilike.${keyword}`)
+      query = query.or(`artist_name_0.ilike.${keyword},artist_name_1.ilike.${keyword},artist_name_2.ilike.${keyword},album_artist_name_1.ilike.${keyword}`)
     }
   }
   if (condition.album_name) {
