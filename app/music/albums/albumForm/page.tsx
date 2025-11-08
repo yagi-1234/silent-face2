@@ -20,7 +20,7 @@ import { Album, initialAlbum } from '@/types/music/album-types'
 import { CodeAlbumType, CodeOwnedFlag } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { removeArticle, convertToRome, toUpperCase } from '@/utils/stringUtils'
+import { removeArticle, convertToRome, toLowerCase } from '@/utils/stringUtils'
 
 const Page = () => {
   return (
@@ -66,7 +66,7 @@ const AlbumList = () => {
 
   const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    const albumName0 = removeArticle(toUpperCase(await convertToRome(value)))
+    const albumName0 = removeArticle(toLowerCase(await convertToRome(value)))
     setErrors(removeErrorKey(errors, 'album_name_0'))
     setAlbum(prev => ({
       ...prev,

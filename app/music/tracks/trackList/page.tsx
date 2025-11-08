@@ -98,13 +98,13 @@ const TrackList = () => {
         ...condition,
         artist_id: searchParams.get('artist_id') ?? '',
         artist_name: searchParams.get('artist_name') ?? '',
-        artist_name_exact_match: searchParams.get('artist_name_exact_match') ? true : false,
+        artist_name_exact_match: searchParams.get('artist_id') ? true : false,
         album_id: searchParams.get('album_id') ?? '',
         album_name: searchParams.get('album_name') ?? '',
-        album_name_exact_match: searchParams.get('album_name_exact_match') ? true : false,
+        album_name_exact_match: searchParams.get('album_id') ? true : false,
         track_id: searchParams.get('track_id') ?? '',
         track_name: searchParams.get('track_name') ?? '',
-        track_name_exact_match: searchParams.get('track_name_exact_match') ? true : false,
+        track_name_exact_match: searchParams.get('track_id') ? true : false,
       }
       setCondition(condition1)
       const fetchData = await fetchTracks(condition1)
