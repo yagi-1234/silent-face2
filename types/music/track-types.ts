@@ -29,6 +29,7 @@ export type Track = {
   track_comment: string | null
   updated_count: number | null
   updated_at: Date | null
+  track_count: number | null
   album_track_length: string | null
 }
 
@@ -63,6 +64,7 @@ export const initialTrack: Track = {
   track_comment: '',
   updated_count: 0,
   updated_at: null,
+  track_count: null,
   album_track_length: null,
 }
 
