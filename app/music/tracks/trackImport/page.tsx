@@ -13,7 +13,7 @@ import { checkUser } from '@/contexts/RooterContext'
 import { Track } from '@/types/music/track-types'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { fetchArtistTrack, mergeTracks } from '@/actions/music/track-action'
-import { removeArticle, convertToRome, toUpperCase } from '@/utils/stringUtils'
+import { removeArticle, convertToRome, toLowerCase } from '@/utils/stringUtils'
 
 const Page = () => {
   return (
@@ -54,17 +54,17 @@ const TrackImport = () => {
         disc_no: cells[1] ? Number(cells[1]) : null,
         disc_no_for_sort: cells[1] ? Number(cells[1]) : 0,
         track_no: Number(cells[0]),
-        track_artist_name: cells[4],
+        track_artist_name: cells[4] ?? null,
         track_artist_name_1: null,
-        track_name_0: removeArticle(await convertToRome(cells[5])),
+        track_name_0: removeArticle(toLowerCase(await convertToRome(cells[5]))),
         track_name_1: cells[5],
-        track_name_2: cells[6],
+        track_name_2: cells[6] ?? null,
         is_bonus_track: cells[9] ? '1' : '0',
         track_year: cells[10] ? Number(cells[10]) : null,
-        track_length: cells[7] ? cells[7].substring(0, cells[7].length - 2) + ":" + cells[7].substring(cells[7].length - 2, cells[7].length) : "",
+        track_length: cells[7] ? cells[7].substring(0, cells[7].length - 2) + ':' + cells[7].substring(cells[7].length - 2, cells[7].length) : '',
         is_single: cells[8] ? '1' : '0',
         single_no: cells[8] ? Number(cells[8]) : null,
-        track_point: null,
+        track_point: fetchData.track_point ?? null,
         is_point_except: '0',
         listening_count: null,
         last_listened_at: null,

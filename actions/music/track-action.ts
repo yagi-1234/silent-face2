@@ -103,8 +103,8 @@ export const fetchArtistTrack = async (artistName: string, albumName: string, tr
   query2 = query2.eq('artist_name_1', artistName)
   query2 = query2.eq('album_name_1', albumName)
   const { data: result2, error: error2 } = await query2 as unknown as {
-        data: ArtistTrackKey[] | null
-        error: any
+      data: ArtistTrackKey[] | null
+      error: any
   }
   if (error2 || !result2) {
     console.error('Error fetchArtistTrack:', error2)
@@ -145,7 +145,7 @@ export const mergeTracks = async (newData: Track[]): Promise<Number> => {
 }
 
 const insertTrack = async (newData: Track): Promise<Track> => {
-    const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, ...insertData } = newData
+    const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, track_count, album_track_length, ...insertData } = newData
     const { data: result, error } = await supabase
         .from('mt31_tracks')
         .insert(insertData)
@@ -162,7 +162,7 @@ const insertTrack = async (newData: Track): Promise<Track> => {
 const insertTracks = async (newData: Track[]) => {
     const newData2: Partial<Track>[] = []
     newData.forEach((row) => {
-      const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, ...row2 } = row
+      const { track_id, artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, track_count, album_track_length, ...row2 } = row
       newData2.push(row2)
     })
     console.log("insertData:", newData2)
@@ -179,7 +179,7 @@ const insertTracks = async (newData: Track[]) => {
 }
 
 const updateTrack = async (newData: Track): Promise<Track> => {
-  const { artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, ...newData2 } = newData
+  const { artist_name_0, artist_name_1, artist_name_2, album_name_0, album_name_1, album_name_2, album_year, disc_no_for_sort, track_artist_name_1, track_count, album_track_length, ...newData2 } = newData
   const updateData = { ...newData2,
     updated_at: new Date(),
     updated_count: Number(newData2.updated_count ?? 0) + 1

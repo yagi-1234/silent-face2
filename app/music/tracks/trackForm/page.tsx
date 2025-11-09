@@ -50,12 +50,6 @@ const TrackForm = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, type, value } = event.target
     let newValue = value
-    if (name === 'album_id' && value) {
-      // setTrack(prev => ({
-      //   ...prev,
-      //   album_year: artistAlbums[]
-      // }))
-    }
     if (name === 'track_year') {
       if (value && Number(track.album_year) === Number(value))
         newValue = ''
