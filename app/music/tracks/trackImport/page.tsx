@@ -71,6 +71,8 @@ const TrackImport = () => {
         track_comment: '',
         updated_count: 0,
         updated_at: null,
+        track_count: null,
+        album_track_length: null,
       })
     }
     console.log('texts', newTexts)
