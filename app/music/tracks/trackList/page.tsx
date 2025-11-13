@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { ArrowLeft, FileText, Plus, Search, OctagonX } from "lucide-react"
-import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchTracks } from '@/actions/music/track-action'
@@ -13,7 +12,7 @@ import { useHistory } from '@/contexts/HistoryContext'
 import MessageBanner from '@/components/MessageBanner'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
-import { Track, TrackCondition, initialTrackCondition } from '@/types/music/track-types'
+import { TrackView, TrackCondition, initialTrackCondition } from '@/types/music/track-types'
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
 import { ellipsis } from '@/utils/viewUtils'
@@ -38,7 +37,7 @@ const TrackList = () => {
   const { addToHistory } = useHistory()
   const { handleBack } = useCustomBack()
 
-  const [tracks, setTracks] = useState<Track[]>([])
+  const [tracks, setTracks] = useState<TrackView[]>([])
   const [condition, setCondition] = useState<TrackCondition>(initialTrackCondition)
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

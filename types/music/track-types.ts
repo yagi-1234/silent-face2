@@ -1,22 +1,13 @@
-export type Track = {
-  artist_id: string | null
-  artist_name_0: string
-  artist_name_1: string
-  artist_name_2: string | null
-  album_id: string | null
-  album_name_0: string
-  album_name_1: string
-  album_name_2: string | null
-  album_year: number | null
-  disc_no: number | null
-  disc_no_for_sort: number
+export type TrackRow = {
   track_id: string
+  artist_id: string | null
+  album_id: string | null
+  disc_no: number | null
   track_no: number | null
   track_name_0: string
   track_name_1: string
   track_name_2: string | null
   track_artist_name: string | null
-  track_artist_name_1: string | null
   is_bonus_track: string
   track_year: number | null
   track_length: string | null
@@ -27,13 +18,26 @@ export type Track = {
   listening_count: number | null
   last_listened_at: Date | null
   track_comment: string | null
-  updated_count: number | null
+  created_at: Date | null
   updated_at: Date | null
+  updated_count: number | null
+}
+
+export type TrackView = TrackRow & {
+  artist_name_0: string | null
+  artist_name_1: string | null
+  artist_name_2: string | null
+  album_name_0: string | null
+  album_name_1: string | null
+  album_name_2: string | null
+  album_year: number | null
+  disc_no_for_sort: number
+  track_artist_name_1: string | null
   track_count: number | null
   album_track_length: string | null
 }
 
-export const initialTrack: Track = {
+export const initialTrack: TrackView = {
   artist_id: '',
   artist_name_0: '',
   artist_name_1: '',
@@ -62,6 +66,7 @@ export const initialTrack: Track = {
   listening_count: null,
   last_listened_at: null,
   track_comment: '',
+  created_at: null,
   updated_count: 0,
   updated_at: null,
   track_count: null,

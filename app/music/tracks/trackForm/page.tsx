@@ -17,7 +17,7 @@ import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { ArtistAlbum } from '@/types/music/album-types'
-import { Track, initialTrack } from '@/types/music/track-types'
+import { TrackView, initialTrack } from '@/types/music/track-types'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { removeArticle, convertToRome, toLowerCase } from '@/utils/stringUtils'
@@ -43,8 +43,8 @@ const TrackForm = () => {
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const { handleBack } = useCustomBack()
 
-  const [track, setTrack] = useState<Track>(initialTrack)
-  const [originalTrack, setOriginalTrack] = useState<Track>(initialTrack)
+  const [track, setTrack] = useState<TrackView>(initialTrack)
+  const [originalTrack, setOriginalTrack] = useState<TrackView>(initialTrack)
   const [artistAlbums, setArtistAlbums] = useState<ArtistAlbum[]>([])
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -115,7 +115,7 @@ const TrackForm = () => {
     setIsModalOpen(false)
     setMessage('')
   }
-  const setInitialTrack = (prev: Track, newTrackNo: number): Track => ({
+  const setInitialTrack = (prev: TrackView, newTrackNo: number): TrackView => ({
     ...initialTrack,
     artist_id: prev.artist_id,
     artist_name_0: prev.artist_name_0,
@@ -226,7 +226,7 @@ const TrackForm = () => {
               id="artist_name_1"
               name="artist_name_1"
               className="input-fixed"
-              value={track.artist_name_1}
+              value={track.artist_name_1 ?? ''}
               onChange={handleChange} />
         </div>
         <div className="input-form">

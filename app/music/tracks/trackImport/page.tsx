@@ -2,17 +2,16 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { ArrowLeft, Download, Plus, } from "lucide-react"
-import type { NextPage } from 'next'
 
+import { fetchArtistTrack, mergeTracks } from '@/actions/music/track-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import MessageBanner from '@/components/MessageBanner'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
-import { Track } from '@/types/music/track-types'
+import { TrackView } from '@/types/music/track-types'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { fetchArtistTrack, mergeTracks } from '@/actions/music/track-action'
 import { removeArticle, convertToRome, toLowerCase } from '@/utils/stringUtils'
 
 const Page = () => {
@@ -30,7 +29,7 @@ const TrackImport = () => {
   const { handleBack } = useCustomBack()
   const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
 
-  const [texts, setTexts] = useState<Track[]>([])
+  const [texts, setTexts] = useState<TrackView[]>([])
 
   const handleImport = async () => {
     const clipText = await navigator.clipboard.readText()
@@ -41,24 +40,15 @@ const TrackImport = () => {
       const fetchData = await fetchArtistTrack(cells[2], cells[3], cells[5])
       if (!fetchData) continue
       newTexts.push({
-        artist_id: fetchData.artist_id || '',
-        artist_name_0: '',
-        artist_name_1: cells[2],
-        artist_name_2: '',
-        album_id: fetchData.album_id || '',
-        album_name_0: '',
-        album_name_1: cells[3],
-        album_name_2: '',
-        album_year: 0,
-        track_id: fetchData.track_id || '',
+        artist_id: fetchData.artist_id || null,
+        album_id: fetchData.album_id || null,
+        track_id: fetchData.track_id || null,
         disc_no: cells[1] ? Number(cells[1]) : null,
-        disc_no_for_sort: cells[1] ? Number(cells[1]) : 0,
         track_no: Number(cells[0]),
-        track_artist_name: cells[4] ?? null,
-        track_artist_name_1: null,
+        track_artist_name: cells[4] || null,
         track_name_0: removeArticle(toLowerCase(await convertToRome(cells[5]))),
         track_name_1: cells[5],
-        track_name_2: cells[6] ?? null,
+        track_name_2: cells[6] || null,
         is_bonus_track: cells[9] ? '1' : '0',
         track_year: cells[10] ? Number(cells[10]) : null,
         track_length: cells[7] ? cells[7].substring(0, cells[7].length - 2) + ':' + cells[7].substring(cells[7].length - 2, cells[7].length) : '',
@@ -69,8 +59,18 @@ const TrackImport = () => {
         listening_count: null,
         last_listened_at: null,
         track_comment: '',
+        created_at: null,
         updated_count: 0,
         updated_at: null,
+        artist_name_0: '',
+        artist_name_1: cells[2],
+        artist_name_2: '',
+        album_name_0: '',
+        album_name_1: cells[3],
+        album_name_2: '',
+        album_year: 0,
+        disc_no_for_sort: cells[1] ? Number(cells[1]) : 0,
+        track_artist_name_1: null,
         track_count: null,
         album_track_length: null,
       })
