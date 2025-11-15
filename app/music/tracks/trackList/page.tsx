@@ -237,7 +237,7 @@ const TrackList = () => {
               <td>
                 <button
                     className="button-page"
-                    onClick={() => handleShowForm(track.track_id)} >
+                    onClick={() => handleShowForm(track.track_id ?? '')} >
                   <FileText className="w-5 h-5" />
                 </button>
               </td>

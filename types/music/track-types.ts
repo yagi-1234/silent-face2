@@ -1,5 +1,5 @@
 export type TrackRow = {
-  track_id: string
+  track_id: string | null
   artist_id: string | null
   album_id: string | null
   disc_no: number | null

@@ -117,10 +117,10 @@ export const fetchArtistTrack = async (artistName: string, albumName: string, tr
 export const mergeTrack = async (newData: TrackView): Promise<TrackView> => {
   if (newData.track_id) {
     const result = await updateTrack(newData)
-    return fetchTrack(result.track_id)
+    return fetchTrack(result.track_id || '')
   } else {
     const result = await insertTrack(newData)
-    return fetchTrack(result.track_id)
+    return fetchTrack(result.track_id || '')
   }
 }
 

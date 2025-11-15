@@ -27,7 +27,7 @@ const TrackImport = () => {
 
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
   const { handleBack } = useCustomBack()
-  const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
+  const { message, setMessage, messageType, setMessageType, errors } = useMessage()
 
   const [texts, setTexts] = useState<TrackView[]>([])
 
