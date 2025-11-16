@@ -188,7 +188,7 @@ button {
     @apply w-32 font-medium mr-2
   }
   .input-form input {
-    @apply w-80
+    @apply w-120
   }
   .input-form .text-sm {
     @apply w-24

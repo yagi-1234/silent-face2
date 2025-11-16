@@ -266,9 +266,15 @@ const TrackForm = () => {
               onChange={handleChange} />
           <span>　/　</span>
           <input type="number"
+              id="track_count"
+              name="track_count"
+              className="numeric-field text-sm"
+              readOnly
+              value={track.track_count ?? ''} />
+          <label htmlFor="disc_no" className="w-16 ml-6">Disc No</label>
+          <input type="number"
               id="disc_no"
               name="disc_no"
-              placeholder='Disc No'
               className={errors.disc_no ? "numeric-field text-sm isError" : "numeric-field text-sm"}
               value={track.disc_no ?? ''}
               onChange={handleChange} />
@@ -306,11 +312,19 @@ const TrackForm = () => {
           <input type="text"
               id="track_length"
               name="track_length"
-              className="w-30"
+              className="text-sm"
               value={track.track_length ?? ''}
               onChange={handleChange} />
+          <span>　/　</span>
+          <input type="text"
+              id="album_track_length"
+              name="album_track_length"
+              className="text-sm"
+              value={track.album_track_length ?? ''}
+              readOnly
+              onChange={handleChange} />
           <label htmlFor="track_year"
-              className={!track.track_year && !!track.album_year ? "label-fixed w-10 ml-6" : "w-10 ml-6"}>
+              className={!track.track_year && !!track.album_year ? "label-fixed w-16 ml-6" : "w-16 ml-6"}>
             Year
           </label>
           <input type="number"
