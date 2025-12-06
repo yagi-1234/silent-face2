@@ -45,7 +45,7 @@ const Page: NextPage = () => {
         <HomeIconButton icon={FileAudio} label="Albums" path="/music/albums/albumList" />
         <HomeIconButton icon={Music} label="Tracks" path="/music/tracks/trackList" />
         <HomeIconButton icon={MicVocal} label="Lives" path="" />
-        <HomeIconButton icon={SquareLibrary} label="Playlists" path="" />
+        <HomeIconButton icon={SquareLibrary} label="Playlists" path="/music/playlists/playlistsList" />
         <HomeIconButton icon={Download} label="Track Import" path="/music/tracks/trackImport" />
       </div>
 
