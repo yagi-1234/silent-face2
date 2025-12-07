@@ -209,7 +209,7 @@ const PlaylistTrackList = () => {
                 <th>Track Name</th>
                 <th>Entry</th>
                 <th>Rank</th>
-                <th>Prev</th>
+                <th>+/-</th>
                 <th>Max</th>
                 <th></th>
                 <th></th>
@@ -249,6 +249,8 @@ const PlaylistTrackList = () => {
                       value={newPlaylistTrack.track_name_1 ?? ""}
                       onChange={handleChangeTrack} />
                 </td>
+                <td></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -310,6 +312,16 @@ const SortableRow = ({ playlistTrack, onDelete }: Props) => {
     transition,
   }
 
+  const setPrevRankCell = (rankNo: number | null, prevRankNo: number | null) => {
+    let content = null
+    if (prevRankNo && rankNo) {
+      content = prevRankNo - rankNo
+      if (content > 0) content = '+' + content
+      if (content === 0) content = '±' + content
+    }
+    return content
+  }
+
   return (
     <tr
         className={clsx(
@@ -325,10 +337,10 @@ const SortableRow = ({ playlistTrack, onDelete }: Props) => {
       <td>{ellipsis(playlistTrack.track_name_1, 24)}</td>
       <td className="numeric-field">{playlistTrack.entry_count}</td>
       <td className="numeric-field">{playlistTrack.rank_no}</td>
-      <td className="numeric-field">{playlistTrack.prev_rank_no}</td>
+      <td className="numeric-field">{setPrevRankCell(playlistTrack.rank_no, playlistTrack.prev_rank_no)}</td>
       <td className="numeric-field">
         {playlistTrack.max_rank_no}
-        {playlistTrack.max_rank_count && (
+        {playlistTrack.max_rank_count && playlistTrack.max_rank_count > 4 && (
           " (" + playlistTrack.max_rank_count + ")"
         )}
       </td>
