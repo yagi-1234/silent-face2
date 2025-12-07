@@ -153,6 +153,7 @@ const updatePlaylistTrack = async (newData: PlaylistTrackView) => {
   const { data: result, error } = await supabase
       .from('mt42_playlist_tracks')
       .update(updateData)
+      .eq('playlist_id', newData.playlist_id)
       .eq('playlist_track_id', newData.playlist_track_id)
   if (error) {
     console.error('Error updatePlaylistTrack:', error)
@@ -166,6 +167,7 @@ const deletePlaylistTrack = async (deleteData: PlaylistTrackView) => {
   const { data: result, error } = await supabase
       .from('mt42_playlist_tracks')
       .delete()
+      .eq('playlist_id', deleteData.playlist_id)
       .eq('playlist_track_id', deleteData.playlist_track_id)
   if (error) {
     console.error('Error deletePlaylistTrack:', error)
