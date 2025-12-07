@@ -74,7 +74,7 @@ const PlaylistTrackList = () => {
         if ((newData.play_order ?? 0) <= (t.play_order ?? 0)) {
           return {
             ...t,
-            play_order: (t.play_order ?? 0) + 1,
+            play_order: Number(t.play_order ?? 0) + 1,
             edit_mode: t.edit_mode ? t.edit_mode : 'u'
           }
         }
@@ -159,7 +159,7 @@ const PlaylistTrackList = () => {
       const newPlaylistTracks = arrayMove(playlistTracks, oldIndex, newIndex)
 
       const reordered = newPlaylistTracks.map((playlistTrack, index) => {
-        const newPlayOrder = index + 1
+        const newPlayOrder = Number(index) + 1
         const newRankNo = playlistTracks.length - index
         const isChanged = (playlistTrack.play_order !== newPlayOrder) || (playlistTrack.rank_no !== newRankNo)
         return {
@@ -169,7 +169,6 @@ const PlaylistTrackList = () => {
           edit_mode: (!playlistTrack.edit_mode && isChanged) ? 'u' : playlistTrack.edit_mode
         }
       })
-      const updated = 
       setPlaylistTracks(reordered)
     }
   }
