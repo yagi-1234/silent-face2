@@ -122,6 +122,14 @@ const LibraryForm = () => {
       <h2 className="header-title">{CodeTaskType[item.library_type]} Form</h2>
       <p className="timestamp">{item.item_id ? "last updated at: " + formatDateTime(item.updated_at, 'yyyy/MM/dd HH:mm') + " (" + item.updated_count + ")" : '(Not registered)'}</p>
       <div className="input-form">
+        <label htmlFor="item_type">{itemMst?.item_type}</label>
+        <input type="text"
+            id="item_type"
+            name="item_type"
+            value={item.item_type ?? ''}
+            onChange={handleChange} />
+      </div>
+      <div className="input-form">
         <label htmlFor="item_name_1">{itemMst?.item_name}</label>
         <input type="text"
             id="item_name_1"

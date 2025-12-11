@@ -1,6 +1,7 @@
 export type LibraryItem = {
   item_id: string
   library_type: string
+  item_type: string
   item_name_0: string
   item_name_1: string
   item_name_2: string
@@ -33,6 +34,7 @@ export type LibraryItem = {
 export const initialLibraryItem: LibraryItem = {
   item_id: '',
   library_type: '',
+  item_type: '',
   item_name_0: '',
   item_name_1: '',
   item_name_2: '',
@@ -84,4 +86,16 @@ export type LibraryItemMst = {
   created_at: Date | null
   updated_at: Date | null
   updated_count: number | null
+}
+
+export type LibraryCondition = {
+  library_type: string | null
+  item_type: string | null
+  item_name: string | null
+}
+
+export const initialLibraryCondition: LibraryCondition = {
+  library_type: null,
+  item_type: null,
+  item_name: null,
 }

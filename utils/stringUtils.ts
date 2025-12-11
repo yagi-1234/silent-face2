@@ -10,7 +10,7 @@ export const removeArticle = (str: string): string => {
   return str.replace(/^(a |an |the )/i, '').trim()
 }
 
-export const makeKeywordForSql = (str: string, isLike: boolean): string => {
+export const makeKeywordForSql = (str: string | null, isLike: boolean): string | null => {
   if (!str)
     return str
   const raw = str.trim().replace(/"/g, '\\"')

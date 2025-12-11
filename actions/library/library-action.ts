@@ -1,7 +1,8 @@
 import { supabase } from '@/lib/supabase'
 
-import type { LibraryItem, LibraryItemMst } from '@/types/library/library-types'
+import type { LibraryItem, LibraryItemMst, LibraryCondition } from '@/types/library/library-types'
 import { Task, initialTask } from '@/types/tasks/task-types'
+import { makeKeywordForSql } from '@/utils/stringUtils'
 
 export const fetchItem = async (itemId: string): Promise<LibraryItem> => {
   console.log('itemId:', itemId)
@@ -28,13 +29,20 @@ export const fetchItemForTask = async (itemId: string): Promise<Task> => {
   return task
 }
 
-export const fetchItems = async (libraryType: string): Promise<LibraryItem[]> => {
-  //console.log('condition:', condition)
+export const fetchItems = async (condition: LibraryCondition): Promise<LibraryItem[]> => {
+  console.log('condition:', condition)
   let query = supabase
       .from('lv11_library_items')
       .select('*')
-      .eq('library_type', libraryType)
-      .order('released', { ascending: false })
+      .eq('library_type', condition.library_type)
+  if (condition.item_type) {
+    query = query.eq('item_type', condition.item_type)
+  }
+  if (condition.item_name) {
+    const itemName = makeKeywordForSql(condition.item_name, true)
+    query = query.or(`item_name_1.ilike.${itemName},item_name_2.ilike.${itemName}`)
+  }
+  query = query.order('released', { ascending: false })
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchItems:', error)
@@ -95,6 +103,7 @@ export const fetchItemMst = async (libraryType: string): Promise<LibraryItemMst>
       console.error('Error fetchItemMst:', error)
       throw error
   }
+  console.log(result)
   return result
 }
 

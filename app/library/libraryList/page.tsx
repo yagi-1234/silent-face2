@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ArrowLeft, FileText, Plus } from 'lucide-react'
+import { ArrowLeft, FileText, Plus, Search } from 'lucide-react'
 
 import { fetchItems, fetchItemMst } from '@/actions/library/library-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -14,7 +14,8 @@ import { checkUser } from '@/contexts/RooterContext'
 import { CodeCompletedFlag, CodeOwnedFlag, CodeLibraryGrade, CodeTaskType, CodeTaskStatus } from '@/utils/codeUtils'
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
-import { LibraryItem, LibraryItemMst } from '@/types/library/library-types'
+import { LibraryItem, LibraryItemMst, LibraryCondition, initialLibraryCondition } from '@/types/library/library-types'
+import { ellipsis } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -37,6 +38,7 @@ const LibraryList = () => {
 
   const [items, setItems] = useState<LibraryItem[]>([])
   const [itemMst, setItemMst] = useState<LibraryItemMst>()
+  const [condition, setCondition] = useState<LibraryCondition>(initialLibraryCondition)
 
   const loadMst = async () => {
     const fetchData = await fetchItemMst(inLibraryType)
@@ -44,14 +46,40 @@ const LibraryList = () => {
   }
 
   const loadData = async () => {
-    const fetchData = await fetchItems(inLibraryType)
+    const condition1 = {
+      ...condition,
+      library_type: searchParams.get('library_type') ?? '',
+      item_type: searchParams.get('item_type') ?? '',
+      item_name: searchParams.get('item_name') ?? ''
+    }
+    setCondition(condition1)
+    const fetchData = await fetchItems(condition1)
     setItems(fetchData)
+  }
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked, type } = event.target
+    setCondition(prev => ({
+      ...prev, 
+      [name]: value
+    }))
   }
 
   const handleShowForm = (itemId: string) => {
     addToHistory({ title: CodeTaskType[inLibraryType] + ' List', path: `${pathname}?${searchParams.toString()}`})
     if (itemId) router.push(`/library/libraryForm?library_type=${inLibraryType}&item_id=${itemId}`)
     else router.push(`/library/libraryForm?library_type=${inLibraryType}`)
+  }
+
+  const handleSearch = async () => {
+    const query = new URLSearchParams()
+    if (condition.library_type) query.append('library_type', condition.library_type)
+    if (condition.item_type) query.append('item_type', condition.item_type)
+    if (condition.item_name) query.append('item_name', condition.item_name)
+    router.push(`/library/libraryList?${query.toString()}`)
+    const fetchData = await fetchItems(condition)
+    console.log("fetchData", fetchData[0])
+    setItems(fetchData)
   }
 
   const checkLogin = async () => {
@@ -74,11 +102,38 @@ const LibraryList = () => {
       <Breadcrumb />
       <h2 className="header-title">{CodeTaskType[inLibraryType]} List</h2>
       <div className="searchPanel">
-
+        <div className="input-form">
+          <label htmlFor="item_type">{itemMst?.item_type}</label>
+          <input type="text"
+              id="item_type"
+              name="item_type"
+              className="w-24"
+              value={condition.item_type ?? ''}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch()
+              }}
+              onChange={handleSearchChange} />
+        </div>
+        <div className="input-form">
+          <label htmlFor="item_name">{itemMst?.item_name}</label>
+          <input type="text"
+              id="item_name"
+              name="item_name"
+              value={condition.item_name ?? ''}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch()
+              }}
+              onChange={handleSearchChange} />
+          <button className="button-search"
+              onClick={handleSearch}>
+            <Search size={16} />
+          </button>
+        </div>
       </div>
       <table>
         <thead>
           <tr>
+            {itemMst?.item_type && <th>{itemMst.item_type}</th> }
             <th>{itemMst?.item_name}</th>
             {itemMst?.item_name_2 && <th></th> }
             <th>{itemMst?.author_name}</th>
@@ -101,8 +156,13 @@ const LibraryList = () => {
         <tbody>
           {items.map((item) => (
             <tr key={item.item_id}>
+              {itemMst?.item_type && 
+                <td>{item.item_type}</td>
+              }
               <td>{item.item_name_1}</td>
-              {itemMst?.item_name_2 && <td>{item.item_name_2}</td> }
+              {itemMst?.item_name_2 && 
+                <td>{ellipsis(item.item_name_2, 24)}</td> 
+              }
               <td>{item.author_name_1}</td>
               <td>{item.author_name_2}</td>
               <td>{item.owner_name}</td>

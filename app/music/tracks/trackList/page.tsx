@@ -141,7 +141,7 @@ const TrackList = () => {
               className={condition.artist_id ? "input-fixed" : ""}
               readOnly={!!condition.artist_id}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSearch()
+                if (e.key === "Enter") handleSearch()
               }}
               onChange={handleSearchChange} />
           <label className="input-check-label">
