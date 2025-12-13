@@ -16,7 +16,7 @@ export const fetchEvent = async (eventId: string): Promise<EventItem> => {
 }
 
 export const fetchEvents = async (): Promise<CalendarEvent[]> => {
-  let query = supabase.from('tt03_events').select('event_id, event_name, start_at')
+  let query = supabase.from('tt03_events').select('*')
   const { data: result, error } = await query
   if (error) {
       console.error('Error fetchEvents:', error)
@@ -25,7 +25,9 @@ export const fetchEvents = async (): Promise<CalendarEvent[]> => {
 
   const events = result.map((event) => ({
     id: event.event_id,
-    title: event.event_name,
+    title: event.event_name + 
+        (event.start_time ? ' ' + event.start_time : '') + 
+        (event.location ? '@' + event.location : ''),
     start: event.start_at,
 //    backgroundColor: '#f87171'
     backgroundColor: '#60a5fa'

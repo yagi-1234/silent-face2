@@ -62,13 +62,7 @@ const LibraryForm = () => {
     }))
   }
 
-    // const { name, value, checked, type } = event.target
-    // setCondition(prev => ({
-    //   ...prev, 
-    //   [name]: type === 'checkbox' ? checked : value
-    // }))
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { type, name, value } = event.target
     let updatedValue: unknown;
     if (type === 'checkbox') updatedValue = (event.target as HTMLInputElement).checked ? '1' : '0'

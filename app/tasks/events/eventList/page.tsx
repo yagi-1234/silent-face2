@@ -48,7 +48,6 @@ const EventList = () => {
   const [condition, setCondition] = useState<TaskCondition>(initialTaskCondition)
 
   const [events, setEvents] = useState<CalendarEvent[]>([])
-  //'https://fullcalendar.io/api/demo-feeds/events.json'
 
   const handleShowForm = (eventId: string) => {
     addToHistory({ title: 'eventCalendar', path: `${pathname}?${searchParams.toString()}`})
@@ -89,8 +88,8 @@ const EventList = () => {
           initialView="dayGridMonth"
           events={events}
           eventClick={handleEventClick}
-          height='600px'
-      />
+          height="auto"
+          aspectRatio={1.2} />
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">
