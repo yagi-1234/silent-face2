@@ -92,10 +92,12 @@ export type LibraryCondition = {
   library_type: string | null
   item_type: string | null
   item_name: string | null
+  task_status: string | null
 }
 
 export const initialLibraryCondition: LibraryCondition = {
   library_type: null,
   item_type: null,
   item_name: null,
+  task_status: null,
 }

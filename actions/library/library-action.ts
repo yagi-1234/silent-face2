@@ -35,13 +35,12 @@ export const fetchItems = async (condition: LibraryCondition): Promise<LibraryIt
       .from('lv11_library_items')
       .select('*')
       .eq('library_type', condition.library_type)
-  if (condition.item_type) {
-    query = query.eq('item_type', condition.item_type)
-  }
+  if (condition.item_type) query = query.eq('item_type', condition.item_type)
   if (condition.item_name) {
     const itemName = makeKeywordForSql(condition.item_name, true)
     query = query.or(`item_name_1.ilike.${itemName},item_name_2.ilike.${itemName}`)
   }
+  if (condition.task_status) query = query.eq('task_status', condition.task_status)
   query = query.order('released', { ascending: false })
   const { data: result, error } = await query
   if (error) {
