@@ -178,6 +178,7 @@ const deletePlaylistTrack = async (deleteData: PlaylistTrackView) => {
 
 const copyToPlaylistTrackRecord = (PlaylistTrackView: PlaylistTrackView, processType: string) => {
   const {
+    disp_order,
     entry_count,
     max_rank_no,
     max_rank_count,

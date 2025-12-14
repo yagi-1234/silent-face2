@@ -40,6 +40,7 @@ export type PlaylistTrackRow = {
 }
 
 export type PlaylistTrackView = PlaylistTrackRow & {
+  disp_order: number | null
   entry_count: number | null
   max_rank_no: number | null
   max_rank_count: number | null
@@ -61,6 +62,7 @@ export const initialPlaylistTrack: PlaylistTrackView = {
   created_at: null,
   updated_at: null,
   updated_count: null,
+  disp_order: null,
   entry_count: null,
   max_rank_no: null,
   max_rank_count: null,
