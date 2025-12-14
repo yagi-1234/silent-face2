@@ -15,14 +15,9 @@ import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import Calendar from '@/components/Calendar'
 
-import { CodeTaskStatus, CodeTaskType, CodeScheduleType, CodePriorityType } from '@/utils/codeUtils'
-import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { Task, TaskCondition, initialTaskCondition } from '@/types/tasks/task-types'
-import { ellipsis } from '@/utils/viewUtils'
+import { TaskCondition, initialTaskCondition } from '@/types/tasks/task-types'
 import type { CalendarEvent} from '@/types/tasks/event-types'
 import { EventClickArg } from '@fullcalendar/core'
 
@@ -88,6 +83,20 @@ const EventList = () => {
           initialView="dayGridMonth"
           events={events}
           eventClick={handleEventClick}
+          eventContent={(arg) => (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="truncate">
+                    {arg.event.title}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {arg.event.title}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
           height="auto"
           aspectRatio={1.2} />
       <div className="footer-area">

@@ -119,5 +119,6 @@ export const CodeLibraryGrade: { [key: string]: string | '' } = {
 
 export const CodeEventType: { [key: string]: string | '' } = {
   '01': 'Live',
-  '03': 'Shopping'
+  '03': 'Shopping',
+  '04': 'Season Event'
 }
