@@ -45,14 +45,14 @@ const EventList = () => {
   const [condition, setCondition] = useState<TaskCondition>(initialTaskCondition)
 
   const [events, setEvents] = useState<EventItem[]>([])
-  const [isListView, setIsListView] = useState<Boolean>(false)
+  const [isListView, setIsListView] = useState<boolean>(false)
 
   const handleShowForm = (eventId: string) => {
     addToHistory({ title: 'eventCalendar', path: `${pathname}?is_list_view=${isListView}`})
     router.push(`/tasks/events/eventForm?event_id=${eventId}`)
   }
 
-  const handleChangeView = (isList: Boolean) => {
+  const handleChangeView = (isList: boolean) => {
     setIsListView(isList)
   }
   
