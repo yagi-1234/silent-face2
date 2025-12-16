@@ -15,24 +15,17 @@ export const fetchEvent = async (eventId: string): Promise<EventItem> => {
   return result
 }
 
-export const fetchEvents = async (): Promise<CalendarEvent[]> => {
-  let query = supabase.from('tt03_events').select('*')
+export const fetchEvents = async (): Promise<EventItem[]> => {
+  let query = supabase
+      .from('tt03_events')
+      .select('*')
+      .order('start_at')
   const { data: result, error } = await query
   if (error) {
       console.error('Error fetchEvents:', error)
       return []
   }
-
-  const events = result.map((event) => ({
-    id: event.event_id,
-    title: event.event_name + 
-        (event.start_time ? ' ' + event.start_time : '') + 
-        (event.location ? '@' + event.location : ''),
-    start: event.start_at,
-//    backgroundColor: '#f87171'
-    backgroundColor: '#60a5fa'
-  }))
-  return events
+  return result
 }
 
 export const mergeEvent = async (newData: EventItem): Promise<EventItem> => {

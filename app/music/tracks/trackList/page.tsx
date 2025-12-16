@@ -221,7 +221,7 @@ const TrackList = () => {
           </tr>
         </thead>
         <tbody>
-          {tracks.map((track) => (
+          {tracks.map(track => (
             <tr key={track.track_id} className="leading-none">
               <td>{ellipsis(track.track_artist_name_1, 24)}</td>
               <td>{ellipsis(track.album_name_1, 32)}</td>

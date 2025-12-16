@@ -12,7 +12,7 @@ export type EventItem = {
   event_name: string | ''
   event_name_2: string | ''
   location: string | null
-  start_at: Date | null
+  start_at: Date
   start_time: string | null
   organized: string | null
   event_url: string | null
@@ -28,7 +28,7 @@ export const initialEventItem: EventItem = {
   event_name: '',
   event_name_2: '',
   location: null,
-  start_at: null,
+  start_at: new Date(),
   start_time: null,
   organized: null,
   event_url: null,
