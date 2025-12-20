@@ -195,7 +195,7 @@ const TrackList = () => {
                 onChange={handleSearchChange} />
             <span>Exact Match</span>
           </label>
-          <button className="button-search"
+          <button className="button-search button-md"
               onClick={handleSearch}>
             <Search size={16} />
           </button>

@@ -102,7 +102,7 @@ export function RegionList({ onSelect }: Props) {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleSearch()
                   }} />
-              <button className="button-search w-20"
+              <button className="button-search button-md w-20"
                   onClick={handleSearch}>
                 <Search size={16} />
               </button>

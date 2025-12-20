@@ -128,7 +128,7 @@ const MusicTaskList = () => {
                   <span>{label}</span>
                 </label>
           ))}
-          <button className="button-search"
+          <button className="button-search button-md"
               onClick={handleSearch}>
             <Search size={16} />
           </button>

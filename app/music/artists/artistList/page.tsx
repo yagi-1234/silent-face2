@@ -1,9 +1,8 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ArrowLeft, ChevronsUp, ChevronsDown, FileText, Plus, Search } from 'lucide-react'
+import { ArrowLeft, AtSign, ChevronsUp, ChevronsDown, Disc3, FileText, History, Music, Plus, Star, Search } from 'lucide-react'
 
 import { fetchArtists } from '@/actions/music/artist-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -35,13 +34,18 @@ const ArtistList = () => {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
+
   const [artists, setArtists] = useState<Artist[]>([])
   const [condition, setCondition] = useState<ArtistCondition>(initialArtistCondition)
+  const [isMobile, setIsMobile] = useState(false)
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = event.target
+    console.log(name)
+    console.log(value)
+    console.log(type)
     setCondition(prev => ({
       ...prev, 
       [name]: type === 'checkbox' ? (event.target as HTMLInputElement).checked : value
@@ -96,7 +100,6 @@ const ArtistList = () => {
       setArtists(fetchData)
     }
     if (searchParams.size > 0) loadData()
-
     const handler = (e: WindowEventMap['keydown']) => {
       if (e.ctrlKey && e.altKey && e.key === 'd')
         setHiddenPanelOpen(prev => !prev)
@@ -114,45 +117,64 @@ const ArtistList = () => {
           onClose={() => setMessage('')} />
       <Breadcrumb />
       <h2 className="header-title">Artist List</h2>
-      <div className="searchPanel">
-        <div className="input-form">
-          <label htmlFor="artist_name">Artist Name</label>
-          <input type="text"
-              id="artist_name"
-              name="artist_name"
-              value={condition.artist_name}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSearch()
-              }}
-              onChange={handleSearchChange} />
-          <label className="input-check-label">
-            <input type="checkbox"
-                id="artist_name_exact_match"
+      <div>
+        <div className="hidden sm:block">
+          <div>
+            <label htmlFor="artist_name" className="input-label">Artist Name</label>
+            <div className="div-row-between">
+              <input type="text"
+                  id="artist_name"
+                  name="artist_name"
+                  placeholder="Artist Name"
+                  className="w-full"
+                  value={condition.artist_name}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSearch()
+                  }}
+                  onChange={handleSearchChange} />
+              <div className="w-50">
+                <ToggleButton
+                    name="artist_name_exact_match"
+                    title="Exact Match"
+                    checked={condition.artist_name_exact_match}
+                    onChange={handleSearchChange} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="block sm:hidden">
+          <div className="mb-2">
+            <label htmlFor="artist_name" className="input-label">Artist Name</label>
+            <input type="text"
+                id="artist_name"
+                name="artist_name"
+                placeholder="Artist Name"
+                className="w-full"
+                value={condition.artist_name}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSearch()
+                }}
+                onChange={handleSearchChange} />
+          </div>
+          <div className='div-row-right'>
+            <ToggleButton
                 name="artist_name_exact_match"
+                title="Exact Match"
                 checked={condition.artist_name_exact_match}
                 onChange={handleSearchChange} />
-            <span>Exact Match</span>
-          </label>
-          <button className="w-10 h-10"
-              onClick={() => setShowAdvanced(!showAdvanced)}>
-            {showAdvanced ? 
-                <ChevronsUp size={16} />
-              :
-                <ChevronsDown size={16} />
-            }
-          </button>
-          {!showAdvanced && (
-            <button className="button-search w-20 absolute left-300"
-                onClick={handleSearch}>
-              <Search size={16} />
-            </button>
-          )}
+          </div>
         </div>
-
+        <div className="div-row-left">
+          <span className="span-accordion">Advanced Search</span>
+          <button
+              onClick={() => setShowAdvanced(!showAdvanced)}>
+            {showAdvanced ? <ChevronsUp size={16} /> : <ChevronsDown size={16} />}
+          </button>
+        </div>
         {showAdvanced && (
           <>
-            <div className="input-form">
-              <label htmlFor="grade">Grade</label>
+            <div className="mb-2">
+              <label htmlFor="grade_from" className="input-label">Grade</label>
               <select
                   id="grade_from"
                   name="grade_from"
@@ -179,68 +201,39 @@ const ArtistList = () => {
                 ))}
               </select>
             </div>
-            <div className="input-form">
-              <label htmlFor="randomFlag">Random Search</label>
+            <div>
+              <label htmlFor="random_count" className="input-label">Random Search</label>
               <input type="number"
                   id="random_count"
                   name="random_count"
                   className="numeric-field w-30"
+                  placeholder="Random Search"
                   value={condition.random_count ?? ''}
                   onChange={handleSearchChange} />
-            <button className="button-search w-20 absolute left-220"
-                  onClick={handleSearch}>
-                <Search size={16} />
-              </button>
             </div>
           </>
         )}
+        <div className="div-row-right">
+          <button className="button-search button-md"
+              onClick={handleSearch}>
+            <Search size={16} />
+          </button>
+        </div>
+     </div>
+      <div className="hidden sm:block">
+        <ArtistTable
+            artists={artists}
+            onShowAlbums={(artistId, artistName1) => handleShowAlbums(artistId, artistName1)}
+            onShowTracks={(artistId, artistName1) => handleShowTracks(artistId, artistName1)}
+            onShowForm={(artistId) => handleShowForm(artistId)} />
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Artist Name</th>
-            <th>Type</th>
-            <th>Origin</th>
-            <th>Albums</th>
-            <th>Tracks</th>
-            <th>Grade</th>
-            <th>Last Listened At</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {artists.map((artist) => (
-            <tr key={artist.artist_id}>
-              <td>{artist.artist_name_1}</td>
-              <td>{CodeArtistType[artist.artist_type ?? '']}</td>
-              <td>{artist.country_name_1}</td>
-              <td className="numeric-field">
-                <button
-                    className="button-link"
-                    onClick={() => handleShowAlbums(artist.artist_id ?? '', artist.artist_name_1)}>
-                  {artist.owned_count} / {artist.album_count}
-                </button>
-              </td>
-              <td className="numeric-field">
-                <button
-                    className="button-link"
-                    onClick={() => handleShowTracks(artist.artist_id ?? '', artist.artist_name_1)}>
-                  {artist.track_count} 
-                </button>
-              </td>
-              <td>{CodeArtistGrade[artist.grade ?? '']}</td>
-              <td>{formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}</td>
-              <td>
-                <button
-                    className="button-page"
-                    onClick={() => handleShowForm(artist.artist_id ?? '')} >
-                  <FileText className="w-5 h-5" />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="block sm:hidden">
+        <ArtistCard
+            artists={artists}
+            onShowAlbums={(artistId, artistName1) => handleShowAlbums(artistId, artistName1)}
+            onShowTracks={(artistId, artistName1) => handleShowTracks(artistId, artistName1)}
+            onShowForm={(artistId) => handleShowForm(artistId)} />
+      </div>
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">
@@ -268,3 +261,127 @@ const ArtistList = () => {
     </div>
   )
 }
+
+type Props = {
+  artists: Artist[]
+  onShowAlbums: (artistId: string, artistName: string) => void
+  onShowTracks: (artistId: string, artistName: string) => void
+  onShowForm: (artistId: string) => void
+}
+
+const ArtistTable = ({ artists, onShowAlbums, onShowTracks, onShowForm }: Props) => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Artist Name</th>
+          <th>Type</th>
+          <th>Origin</th>
+          <th>Albums</th>
+          <th>Tracks</th>
+          <th>Grade</th>
+          <th>Last Listened At</th>
+          <th />
+        </tr>
+      </thead>
+      <tbody>
+        {artists.map(artist => (
+          <tr key={artist.artist_id}>
+            <td>{artist.artist_name_1}</td>
+            <td>{CodeArtistType[artist.artist_type ?? '']}</td>
+            <td>{artist.country_name_1}</td>
+            <td className="numeric-field">
+              <button
+                  className="button-link"
+                  onClick={() => onShowAlbums(artist.artist_id ?? '', artist.artist_name_1)}>
+                {artist.owned_count} / {artist.album_count}
+              </button>
+            </td>
+            <td className="numeric-field">
+              <button
+                  className="button-link"
+                  onClick={() => onShowTracks(artist.artist_id ?? '', artist.artist_name_1)}>
+                {artist.track_count} 
+              </button>
+            </td>
+            <td>{CodeArtistGrade[artist.grade ?? '']}</td>
+            <td>{formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}</td>
+            <td>
+              <button
+                  className="button-page"
+                  onClick={() => onShowForm(artist.artist_id ?? '')} >
+                <FileText className="w-5 h-5" />
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+const ArtistCard = ({ artists, onShowAlbums, onShowTracks, onShowForm }: Props) => {
+  return (
+    <div className="div-card-area">
+      {artists.map(artist => (
+        <div key={artist.artist_id}
+            className="div-card">
+          <div>
+            <button
+                className="button-link card-title"
+                onClick={() => onShowForm(artist.artist_id ?? '')}>
+              {artist.artist_name_1}
+            </button>
+          </div>
+          {artist.country_name_1 && (
+            <div className="div-card-row">
+              <AtSign size={14} />
+              {artist.country_name_1}
+            </div>
+          )}
+          <div className="div-card-row">
+            <Disc3 size={14} />
+            <button
+                className="button-link"
+                onClick={() => onShowAlbums(artist.artist_id ?? '', artist.artist_name_1)}>
+              {artist.owned_count} / {artist.album_count}
+            </button>
+            <span>&ensp;</span>
+            <Music size={14} />
+            <button
+                className="button-link"
+                onClick={() => onShowTracks(artist.artist_id ?? '', artist.artist_name_1)}>
+              {artist.track_count}
+            </button>
+          </div>
+          <div className="div-card-row">
+            <Star size={14} />
+            {CodeArtistGrade[artist.grade ?? '']}
+            <span>&ensp;</span>
+            <History size={14} />
+            {formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const ToggleButton = ({ name, title, checked, onChange } : {
+  name: string
+  title: string
+  checked: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}) => (
+  <label className="flex items-center gap-2 cursor-pointer">
+    <input type="checkbox"
+        name={name}
+        checked={checked}
+        onChange={onChange}
+        className="sr-only" />
+    <div className={`w-11 h-6 rounded-full border transition ${checked ? "bg-blue-500" : "bg-gray-300"}`}>
+      <div className={`w-5 h-5 bg-white rounded-full shdow transition translate-y-0 ${checked ? 'translate-x-5' : 'translate-0.5'}`} />
+    </div>
+    <span className="text-sm">{title}</span>
+  </label>
+)

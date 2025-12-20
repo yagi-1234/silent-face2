@@ -138,7 +138,7 @@ button {
     @apply border-border outline-ring/50;
   }
   .root-panel {
-    @apply bg-white rounded-2xl max-w-360 p-6
+    @apply bg-white rounded-2xl max-w-360 min-w-80 p-6
   }
   .header-title {
     @apply text-xl font-semibold mb-4
@@ -203,6 +203,20 @@ button {
     @apply bg-blue-100
   }
 
+  .input-label {
+    @apply flex text-sm font-bold
+  }
+
+  .div-row-left {
+    @apply flex justify-start mb-2
+  }
+  .div-row-right {
+    @apply flex justify-end mb-2
+  }
+  .div-row-between {
+    @apply flex justify-between mb-2
+  }
+
   .input-check-label {
     @apply flex items-center space-x-2
   }
@@ -235,8 +249,17 @@ button {
   .button-sm {
     @apply text-sm
   }
+  .button-md {
+    @apply w-20 h-8 
+  }
   .button-normal {
     @apply bg-gray-300 text-gray-600 flex items-center justify-center w-16 h-8 p-2 rounded-sm mr-2
+  }
+  .button-search {
+    @apply bg-green-600 text-white flex items-center justify-center rounded-sm mb-2;
+    &:hover {
+      @apply bg-green-800;
+    }
   }
   .button-page {
     @apply text-gray-600 flex items-center justify-center w-10 p-2
@@ -262,12 +285,6 @@ button {
       }
     }
   }
-  .button-search {
-    @apply bg-green-600 text-white flex items-center justify-center w-20 h-8 p-2 rounded-sm mr-2
-  }
-  .button-search:hover {
-    @apply bg-green-800
-  }
   .button-back {
     @apply bg-gray-500 text-white flex items-center justify-center w-16 h-8 px-4 py-2 rounded-sm
   }
@@ -282,6 +299,23 @@ button {
   }
   .button-link:hover {
     @apply text-blue-800 underline
+  }
+
+  .div-card-area {
+    @apply space-y-1
+  }
+  .div-card {
+    @apply rounded-lg border p-3 shadow-sm
+  }
+  .div-card-row {
+    @apply flex items-center gap-1
+  }
+  .card-title {
+    @apply text-lg font-bold
+  }
+
+  .span-accordion {
+    @apply text-gray-400 text-sm mr-2
   }
 
   .homeIcon {

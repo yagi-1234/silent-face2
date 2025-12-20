@@ -185,7 +185,7 @@ const AlbumList = () => {
           </button>
           {!showAdvanced && (
             <>
-              <button className="button-search w-20 absolute left-224"
+              <button className="button-search button-md w-20 absolute left-224"
                   onClick={handleSearch}>
                 <Search size={16} />
               </button>
@@ -221,7 +221,7 @@ const AlbumList = () => {
                   className="numeric-field w-30"
                   value={condition.random_count ?? ''}
                   onChange={handleSearchChange} />
-              <button className="button-search w-20 absolute left-224"
+              <button className="button-search button-md w-20 absolute left-224"
                   onClick={handleSearch}>
                 <Search size={16} />
               </button>
