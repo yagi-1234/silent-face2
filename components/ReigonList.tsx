@@ -132,7 +132,7 @@ export function RegionList({ onSelect }: Props) {
               </label>
             </div>
           </div>
-          <div className="rounded">
+          <div className="rounded overflow-y-auto max-h-[calc(100vh-220px)]">
             <table>
               <thead>
                 <tr>
