@@ -313,6 +313,9 @@ button {
   .card-title {
     @apply text-lg font-bold
   }
+  .card-label {
+    @apply rounded-sm px-2
+  }
 
   .span-accordion {
     @apply text-gray-400 text-sm mr-2
