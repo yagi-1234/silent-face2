@@ -138,7 +138,7 @@ button {
     @apply border-border outline-ring/50;
   }
   .root-panel {
-    @apply bg-white rounded-2xl max-w-360 min-w-80 p-6
+    @apply bg-white rounded-2xl max-w-360 min-w-94 p-6
   }
   .header-title {
     @apply text-xl font-semibold mb-4
@@ -207,8 +207,11 @@ button {
     @apply flex text-sm font-bold
   }
 
-  .div-row-left {
-    @apply flex justify-start mb-2
+  .div-input-row {
+    @apply mb-2
+  }
+  .div-input-left {
+    @apply flex justify-start
   }
   .div-row-right {
     @apply flex justify-end mb-2
@@ -227,7 +230,7 @@ button {
     @apply w-5 h-5
   }
   .footer-area {
-    @apply fixed bottom-0 w-228 bg-white border-t p-2
+    @apply sticky bottom-0 bg-white border-t p-2
   }
   .footer-area .footer-area-sub {
     @apply flex justify-between items-center

@@ -172,17 +172,14 @@ const TaskForm = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <div className="flex justify-between">
-        <Breadcrumb />
-        <LogoffButton />
-      </div>
+      <Breadcrumb />
       <h2 className="header-title">Task Form</h2>
       <p className="timestamp">
         {task.task_id ? "last updated at: " + formatDateTime(task.updated_at, 'yyyy/MM/dd HH:mm') + " (" + task.updated_count + ")" : '(Not registered)'}
       </p>
       <div>
-        <div className="input-form">
-          <label htmlFor="task_type">Task Type</label>
+        <div className="div-input-row">
+          <label htmlFor="task_type" className="input-label">Task Type</label>
           <select
               id="task_type"
               name="task_type"
@@ -198,8 +195,8 @@ const TaskForm = () => {
             ))}
           </select>
         </div>
-        <div className="input-form">
-          <label htmlFor="task_cycle">Cycle</label>
+        <div className="div-input-row">
+          <label htmlFor="task_cycle" className="input-label">Cycle</label>
           <input
               type="text"
               id="task_cycle"
@@ -208,18 +205,18 @@ const TaskForm = () => {
               value={task.task_cycle}
               onChange={(e) => handleChange(e)}/>
         </div>
-        <div className="input-form">
-          <label htmlFor="task_name">Task Name</label>
+        <div className="div-input-row">
+          <label htmlFor="task_name" className="input-label">Task Name</label>
           <input
               type="text"
               id="task_name"
               name="task_name"
-              className="w-80"
+              className="w-full sm:w-160"
               value={task.task_name}
               onChange={(e) => handleChange(e)}/>
         </div>
-        <div className="input-form">
-          <label htmlFor="priority">Priority</label>
+        <div className="div-input-row">
+          <label htmlFor="priority" className="input-label">Priority</label>
           <select
               id="priority"
               name="priority"
@@ -234,8 +231,8 @@ const TaskForm = () => {
             ))}
           </select>
         </div>
-        <div className="input-form">
-          <label htmlFor="schedule_type">Schedule Type</label>
+        <div className="div-input-row">
+          <label htmlFor="schedule_type" className="input-label">Schedule Type</label>
           <select
               id="schedule_type"
               name="schedule_type"
@@ -250,8 +247,8 @@ const TaskForm = () => {
             ))}
           </select>
         </div>
-        <div className="input-form">
-          <label htmlFor="task_status">Status</label>
+        <div className="div-input-row">
+          <label htmlFor="task_status" className="input-label">Status</label>
           <select
               id="task_status"
               name="task_status"
@@ -265,8 +262,8 @@ const TaskForm = () => {
             ))}
           </select>
         </div>
-        <div className="input-form">
-          <label htmlFor="task_progress">Progress</label>
+        <div className="div-input-row">
+          <label htmlFor="task_progress" className="input-label">Progress</label>
           <input
               type="number"
               id="task_progress"
@@ -275,61 +272,69 @@ const TaskForm = () => {
               value={task.task_progress ?? ""}
               onChange={(e) => handleChange(e)}/>
         </div>
-        <div className="input-form">
-          <label htmlFor="action_count">Acted</label>
-          <button
-              className="button-plus"
-              onClick={handlePlus} >
-            <Plus />
-          </button>
-          <input
-              type="number"
-              id="action_count"
-              name="action_count"
-              className="numeric-field w-24"
-              value={task.action_count ?? ""}
-              onChange={handleChange} />
-          <PartialDateInput
-              name="last_acted_at"
-              value={formatDateTime(task.last_acted_at, "yyyy-MM-dd")}
-              onChange={handleChangeDate} />
+        <div className="div-input-row">
+          <label htmlFor="action_count" className="input-label">Acted</label>
+          <div className="div-input-left">
+            <button
+                className="button-plus"
+                onClick={handlePlus} >
+              <Plus />
+            </button>
+            <input
+                type="number"
+                id="action_count"
+                name="action_count"
+                className="numeric-field w-16 sm:w-24"
+                value={task.action_count ?? ""}
+                onChange={handleChange} />
+            <PartialDateInput
+                name="last_acted_at"
+                value={formatDateTime(task.last_acted_at, "yyyy-MM-dd")}
+                onChange={handleChangeDate} />
+          </div>
         </div>
-        <div className="input-form">
-          <label htmlFor="next_period">Next</label>
-          <input
-              type="number"
-              id="next_period"
-              name="next_period"
-              className="numeric-field w-31"
-              value={task.next_period ?? ""}
-              onChange={(e) => handleChange(e)}/>
-          <PartialDateInput
-              name="next_date"
-              value={formatDateTime(task.next_date, "yyyy-MM-dd")}
-              onChange={handleChangeDate} />
+        <div className="div-input-row">
+          <label htmlFor="next_period" className="input-label">Next</label>
+          <div className="div-input-left">
+            <input
+                type="number"
+                id="next_period"
+                name="next_period"
+                className="numeric-field w-23 sm:w-31"
+                value={task.next_period ?? ""}
+                onChange={(e) => handleChange(e)}/>
+            <PartialDateInput
+                name="next_date"
+                value={formatDateTime(task.next_date, "yyyy-MM-dd")}
+                onChange={handleChangeDate} />
+          </div>
         </div>
-        <div className="input-form">
-          <label htmlFor="buffer_period">Limit</label>
-          <input
-              type="number"
-              id="buffer_period"
-              name="buffer_period"
-              className="numeric-field w-31"
-              value={task.buffer_period ?? ""}
-              onChange={(e) => handleChange(e)}/>
-          <PartialDateInput
-              name="limit_date"
-              value={formatDateTime(task.limit_date, "yyyy-MM-dd")}
-              onChange={handleChangeDate} />
+        <div className="div-input-row">
+          <label htmlFor="buffer_period" className="input-label">Limit</label>
+          <div className="div-input-left">
+            <input
+                type="number"
+                id="buffer_period"
+                name="buffer_period"
+                className="numeric-field w-23 sm:w-31"
+                value={task.buffer_period ?? ""}
+                onChange={(e) => handleChange(e)}/>
+            <PartialDateInput
+                name="limit_date"
+                value={formatDateTime(task.limit_date, "yyyy-MM-dd")}
+                onChange={handleChangeDate} />
+          </div>
         </div>
-        <div className="input-form-full">
-          <label htmlFor="task_comment">Task Comment</label>
+        <div className="div-input-row">
+          <label htmlFor="task_comment" className="input-label">Task Comment</label>
           <textarea
               id="task_comment"
               name="task_comment"
               rows={3}
               value={task.task_comment ?? ""}
               onChange={(e) => handleChange(e)} />
+        </div>
+        <div className="div-input-row">
         </div>
       </div>
       <div className="footer-area">

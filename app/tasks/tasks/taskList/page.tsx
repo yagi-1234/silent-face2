@@ -194,7 +194,7 @@ const TaskList = () => {
             )}
           </select>
         </div>
-        <div>
+        <div className="div-input-row">
           <label htmlFor="task_status" className="input-label">Task Status</label>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {Object.entries(CodeTaskStatus)

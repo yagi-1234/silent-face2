@@ -55,7 +55,7 @@ const PartialDateInput: React.FC<PartialDateInputProps> = ({
           value={year}
           onChange={(e) => { setYear(e.target.value) }}
           placeholder="yyyy"
-          className="numeric-field w-20 border p-1" />
+          className="numeric-field w-16 sm:w-20 border p-1" />
       <span>/</span>
       <input type="number"
           value={month}
@@ -66,7 +66,7 @@ const PartialDateInput: React.FC<PartialDateInputProps> = ({
             // handleUpdate(year, padded, day)
           }}
           placeholder="mm"
-          className="numeric-field w-15 border p-1"
+          className="numeric-field w-12 sm:w-15 border p-1"
           disabled={mode === 'fullOnly'} />
       <span>/</span>
       <input type="number"
@@ -78,7 +78,7 @@ const PartialDateInput: React.FC<PartialDateInputProps> = ({
             handleUpdate(year, month, day)
           }}
           placeholder="dd"
-          className="numeric-field w-15 border p-1"
+          className="numeric-field w-12 sm:w-15 border p-1"
           disabled={mode === 'fullOnly'} />
     </div>
   )
