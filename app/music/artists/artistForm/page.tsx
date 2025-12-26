@@ -116,39 +116,38 @@ const ArtistForm = () => {
       <h2 className="header-title">Artist Form</h2>
       <p className="timestamp">{artist.artist_id ? "last updated at: " + formatDateTime(artist.updated_at, 'yyyy/MM/dd HH:mm') + " (" + artist.updated_count + ")" : '(Not registered)'}</p>
       <div>
-        <div className="input-form mb-2">
-          <label htmlFor="artist_name_0">Artist Name</label>
+        <div className="div-input-row">
+          <label htmlFor="artist_name_0" className="input-label">Artist Name</label>
           <input type="text"
               id="artist_name_0"
               name="artist_name_0"
-              className={errors.artist_name_0 ? "isError" : ""}
+              className={errors.artist_name_0 ? "isError w-full sm:w-160" : "w-full sm:w-160"}
               value={artist.artist_name_0}
               onChange={handleChange} />
         </div>
-        <div className="input-form mb-2">
-          <label htmlFor="artist_name_1"></label>
+        <div className="div-input-row">
           <input type="text"
               id="artist_name_1"
               name="artist_name_1"
-              className={errors.artist_name_1 ? "isError" : ""}
+              className={errors.artist_name_1 ? "isError w-full sm:w-160" : "w-full sm:w-160"}
               value={artist.artist_name_1}
               onChange={handleChange}
               onBlur={handleNameOneToZero} />
         </div>
-        <div className="input-form">
-          <label htmlFor="artist_name_2"></label>
+        <div className="div-input-row">
           <input type="text"
               id="artist_name_2"
               name="artist_name_2"
+              className="w-full sm:w-160"
               value={artist.artist_name_2 ?? ""}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="artist_type">Artist Type</label>
+        <div className="div-input-row">
+          <label htmlFor="artist_type" className="input-label">Artist Type</label>
           <select
               id="artist_type"
               name="artist_type"
-              className="w-80"
+              className="w-48"
               value={artist.artist_type ?? ""}
               onChange={handleChange} >
             <option key="" value=""></option>
@@ -158,32 +157,35 @@ const ArtistForm = () => {
             ))}
           </select>
         </div>
-        <div className="input-form">
-          <label htmlFor="origin_full_name_1">Origin</label>
-          <input type="text"
-              id="origin_full_name_1"
-              name="origin_full_name_1"
-              value={artist.origin_full_name_1 ?? ''}
-              readOnly />
-          <button className="button-normal"
-              onClick={() => setShowRegionModal(true)}>
-            <Search size={16} />
-          </button>
+        <div className="div-input-row">
+          <label htmlFor="origin_full_name_1" className="input-label">Origin</label>
+          <div className="div-input-left">
+            <input type="text"
+                id="origin_full_name_1"
+                name="origin_full_name_1"
+                className="flex-auto"
+                value={artist.origin_full_name_1 ?? ''}
+                readOnly />
+            <button className="button-normal"
+                onClick={() => setShowRegionModal(true)}>
+              <Search size={16} />
+            </button>
+          </div>
         </div>
-        <div className="input-form">
-          <label htmlFor="years_active">Years Active</label>
+        <div className="div-input-row">
+          <label htmlFor="years_active" className="input-label">Years Active</label>
           <input type="text"
               id="years_active"
               name="years_active"
               value={artist.years_active ?? ""}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="grade">Grade</label>
+        <div className="div-input-row">
+          <label htmlFor="grade" className="input-label">Grade</label>
           <select
               id="grade"
               name="grade"
-              className="w-80"
+              className="w-48"
               value={artist.grade ?? ""}
               onChange={handleChange} >
             <option key="" value=""></option>
@@ -193,16 +195,16 @@ const ArtistForm = () => {
             ))}
           </select>
         </div>
-        <div className="input-form">
-          <label htmlFor="last_listened_at">Last Listened At</label>
+        <div className="div-input-row">
+          <label htmlFor="last_listened_at" className="input-label">Last Listened At</label>
           <input type="text"
               id="last_listened_at"
               name="last_listened_at"
               value={formatDateTime(artist.last_listened_at, 'yyyy/MM/dd HH:mm')}
               readOnly />
         </div>
-        <div className="input-form-full">
-          <label htmlFor="artist_comment">Artist Comment</label>
+        <div className="div-input-row">
+          <label htmlFor="artist_comment" className="input-label">Artist Comment</label>
           <textarea id="artist_comment"
               name="artist_comment"
               rows={3}
@@ -219,7 +221,7 @@ const ArtistForm = () => {
               <ArrowLeft size={16} />
             </button>
           </div>
-          <div>
+          <div className="footer-right">
             <button className="button-save"
                 disabled={!isArtistEdited(originalArtist, artist)}
                 onClick={handleSave}>
