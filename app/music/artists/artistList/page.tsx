@@ -156,7 +156,7 @@ const ArtistList = () => {
                 }}
                 onChange={handleSearchChange} />
           </div>
-          <div className='div-row-right'>
+          <div className="div-row-right">
             <ToggleButton
                 name="artist_name_exact_match"
                 title="Exact Match"
@@ -219,7 +219,7 @@ const ArtistList = () => {
             <Search size={16} />
           </button>
         </div>
-     </div>
+      </div>
       <div className="hidden sm:block">
         <ArtistTable
             artists={artists}

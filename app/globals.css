@@ -213,6 +213,9 @@ button {
   .div-input-left {
     @apply flex justify-start
   }
+  .div-row-left {
+    @apply flex justify-start mb-2
+  }
   .div-row-right {
     @apply flex justify-end mb-2
   }
@@ -249,17 +252,17 @@ button {
     @apply bg-gray-100
   }
 
-  .button-sm {
-    @apply text-sm
-  }
   .button-md {
     @apply w-20 h-8 
   }
+  .button-sm {
+    @apply w-16 h-8
+  }
   .button-normal {
-    @apply bg-gray-300 text-gray-600 flex items-center justify-center w-16 h-8 p-2 rounded-sm mr-2
+    @apply bg-gray-300 text-gray-600 flex items-center justify-center rounded-sm mr-2
   }
   .button-search {
-    @apply bg-green-600 text-white flex items-center justify-center rounded-sm mb-2;
+    @apply bg-green-600 text-white flex items-center justify-center rounded-sm mr-2;
     &:hover {
       @apply bg-green-800;
     }
