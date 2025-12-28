@@ -161,57 +161,55 @@ const AlbumList = () => {
       <h2 className="header-title">Album Form</h2>
       <p className="timestamp">{album.album_id ? "last updated at: " + formatDateTime(album.updated_at, 'yyyy/MM/dd HH:mm') + " (" + album.updated_count + ")" : '(Not registered)'}</p>
       <div>
-        <div className="input-form">
+        <div className="div-input-row">
           <label htmlFor="artist_name_1"
-              className="label-fixed">
-            Artist Name
+              className="label-fixed input-label">Artist Name
           </label>
           <input type="text"
               id="artist_name_1"
               name="artist_name_1"
-              className="input-fixed"
+              className="input-fixed w-full sm:w-160"
               readOnly={true}
               value={album.artist_name_1 ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="album_artist_name">　Album Artist</label>
+        <div className="div-input-row">
+          <label htmlFor="album_artist_name" className="input-label">Album Artist</label>
           <input type="text"
               id="album_artist_name"
               name="album_artist_name"
+              className="w-full sm:w-160"
               value={album.album_artist_name ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form mb-2">
-          <label htmlFor="album_name_0">Album Name</label>
+        <div className="div-input-row">
+          <label htmlFor="album_name_0" className="input-label">Album Name</label>
           <input type="text"
               id="album_name_0"
               name="album_name_0"
-              className={errors.album_name_0 ? "isError" : ""}
+              className={errors.album_name_0 ? "isError w-full sm:w-160" : "w-full sm:w-160"}
               value={album.album_name_0}
               onChange={handleChange} />
         </div>
-        <div className="input-form mb-2">
-          <label htmlFor="album_name_1"></label>
+        <div className="div-input-row">
           <input type="text"
               id="album_name_1"
               name="album_name_1"
-              className={errors.album_name_1 ? "isError" : ""}
+              className={errors.album_name_1 ? "isError w-full sm:w-160" : "w-full sm:w-160"}
               value={album.album_name_1}
               onChange={handleChange} 
               onBlur={handleNameOneToZero} />
         </div>
-        <div className="input-form">
-          <label htmlFor="album_name_2"></label>
+        <div className="div-input-row">
           <input type="text"
               id="album_name_2"
               name="album_name_2"
-              className={errors.album_name_2 ? "isError" : ""}
+              className={errors.album_name_2 ? "isError w-full sm:w-160" : "w-full sm:w-160"}
               value={album.album_name_2}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="album_type">Album Type</label>
+        <div className="div-input-row">
+          <label htmlFor="album_type" className="input-label">Album Type</label>
           <select
               id="album_type"
               name="album_type"
@@ -231,55 +229,59 @@ const AlbumList = () => {
               value={album.album_no ?? ""}
               onChange={handleChangeNumber} />
         </div>
-        <div className="input-form">
-          <label htmlFor="released">Released</label>
+        <div className="div-input-row">
+          <label htmlFor="released" className="input-label">Released</label>
           <PartialDateInput
               name="released"
               value={album.released ?? ''}
               onChange={handleChangeDate}
               mode="flexible" />
         </div>
-        <div className="input-form">
-          <label htmlFor="owned_flag">Owned</label>
-          <select
-              id="owned_flag"
-              name="owned_flag"
-              className="w-24"
-              value={album.owned_flag}
-              onChange={handleChange} >
-            <option key="" value=""></option>
-            {Object.entries(CodeOwnedFlag)
-                .sort(([a], [b]) => a.localeCompare(b))
-                .map(([key, label]) => (<option key={key} value={key}>{label}</option>
-            ))}
-          </select>
-          <PartialDateInput
-              name="added_at"
-              value={formatDateTime(album.added_at, 'yyyy/MM/dd') ?? ''}
-              onChange={handleChangeDate}
-              mode="flexible" />
+        <div className="div-input-row">
+          <label htmlFor="owned_flag" className="input-label">Owned</label>
+          <div className="div-input-left">
+            <select
+                id="owned_flag"
+                name="owned_flag"
+                className="w-24 mr-2"
+                value={album.owned_flag}
+                onChange={handleChange} >
+              <option key="" value=""></option>
+              {Object.entries(CodeOwnedFlag)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+              ))}
+            </select>
+            <PartialDateInput
+                name="added_at"
+                value={formatDateTime(album.added_at, 'yyyy/MM/dd') ?? ''}
+                onChange={handleChangeDate}
+                mode="flexible" />
+          </div>
         </div>
-        <div className="input-form">
-          <label htmlFor="listening_count">Listened</label>
-          <button
-              className="button-plus"
-              onClick={handlePlus} >
-            <Plus />
-          </button>
-          <input type="number"
-              id="listening_count"
-              name="listening_count"
-              className="numeric-field text-sm"
-              value={album.listening_count ?? ''}
-              onChange={handleChange} />
-          <PartialDateInput
-              name="last_listened_at"
-              value={formatDateTime(album.last_listened_at, 'yyyy/MM/dd') ?? ''}
-              onChange={handleChangeDate}
-              mode="flexible" />
+        <div className="div-input-row">
+          <label htmlFor="listening_count" className="input-label">Listened</label>
+          <div className="div-input-left">
+            <button
+                className="button-plus"
+                onClick={handlePlus} >
+              <Plus />
+            </button>
+            <input type="number"
+                id="listening_count"
+                name="listening_count"
+                className="numeric-field w-18"
+                value={album.listening_count ?? ''}
+                onChange={handleChange} />
+            <PartialDateInput
+                name="last_listened_at"
+                value={formatDateTime(album.last_listened_at, 'yyyy/MM/dd') ?? ''}
+                onChange={handleChangeDate}
+                mode="flexible" />
+          </div>
         </div>
-        <div className="input-form-full">
-          <label htmlFor="album_comment">Comment</label>
+        <div className="div-input-row">
+          <label htmlFor="album_comment" className="input-label">Comment</label>
           <textarea id="album_comment"
               name="album_comment"
               rows={3}
