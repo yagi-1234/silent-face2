@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, FileText, Plus, Search, OctagonX } from "lucide-react"
+import { ArrowLeft, Calendar, Clock, FileText, History, Plus, Search, OctagonX, Star } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchTracks } from '@/actions/music/track-action'
@@ -10,10 +10,11 @@ import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
 import { useHistory } from '@/contexts/HistoryContext'
 import MessageBanner from '@/components/MessageBanner'
+import { ToggleButton } from '@/components/ToggleButton'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { TrackView, TrackCondition, initialTrackCondition } from '@/types/music/track-types'
-import { formatDateTime } from "@/utils/dateFormat"
+import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { ellipsis } from '@/utils/viewUtils'
 
@@ -128,123 +129,250 @@ const TrackList = () => {
           onClose={() => setMessage('')} />
       <Breadcrumb />
       <h2 className="header-title">Track List</h2>
-      <div className="searchPanel">
-        <div className="input-form">
-          <label htmlFor="artist_name"
-              className={condition.artist_id ? "text-blue-600" : ""}>
-            Artist Name
-          </label>
-          <input type="text"
-              id="artist_name"
-              name="artist_name"
-              value={condition.artist_name}
-              className={condition.artist_id ? "input-fixed" : ""}
-              readOnly={!!condition.artist_id}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch()
-              }}
-              onChange={handleSearchChange} />
-          <label className="input-check-label">
-            <input type="checkbox"
-                id="artist_name_exact_match"
-                name="artist_name_exact_match"
-                checked={condition.artist_name_exact_match}
-                onChange={handleSearchChange} />
-            <span>Exact Match</span>
-          </label>
+      <div>
+        <div className="hidden sm:block">
+          <div className="div-input-row">
+            <label htmlFor="artist_name"
+                className={condition.artist_id ? "text-blue-600 input-label" : "input-label"}>
+              Artist Name
+            </label>
+            <div className="div-row-between">
+              <input type="text"
+                  id="artist_name"
+                  name="artist_name"
+                  value={condition.artist_name}
+                  className={condition.artist_id ? "input-fixed w-full sm:w-160" : "w-full sm:w-160"}
+                  readOnly={!!condition.artist_id}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSearch()
+                  }}
+                  onChange={handleSearchChange} />
+              <div className="flex-2">
+                <ToggleButton
+                    name="artist_name_exact_match"
+                    title="Exact Match"
+                    checked={condition.artist_name_exact_match}
+                    onChange={handleSearchChange} />
+              </div>
+            </div>
+          </div>
+          <div className="div-input-row">
+            <label htmlFor="album_name"
+                className={condition.artist_id ? "text-blue-600 input-label" : "input-label"}>
+              Album Name
+            </label>
+            <div className="div-row-between">
+              <input type="text"
+                  id="album_name"
+                  name="album_name"
+                  value={condition.album_name}
+                  className={condition.album_id ? "input-fixed w-full sm:w-160" : "w-full sm:w-160"}
+                  readOnly={!!condition.album_id}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSearch()
+                  }}
+                  onChange={handleSearchChange} />
+              <div className="flex-2">
+                <ToggleButton
+                    name="album_name_exact_match"
+                    title="Exact Match"
+                    checked={condition.album_name_exact_match}
+                    onChange={handleSearchChange} />
+              </div>
+            </div>
+          </div>
+          <div className="div-input-row">
+            <label htmlFor="track_name" className="input-label">Track Name</label>
+            <div className="div-row-between">
+              <input type="text"
+                  id="track_name"
+                  name="track_name"
+                  value={condition.track_name}
+                  className={condition.track_id ? "input-fixed w-full sm:w-160" : "w-full sm:w-160"}
+                  readOnly={!!condition.track_id}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSearch()
+                  }}
+                  onChange={handleSearchChange} />
+              <div className="flex-2">
+                <ToggleButton
+                    name="track_name_exact_match"
+                    title="Exact Match"
+                    checked={condition.track_name_exact_match}
+                    onChange={handleSearchChange} />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="input-form">
-          <label htmlFor="album_name"
-              className={condition.album_id ? "text-blue-600" : ""}>
-            Album Name
-          </label>
-          <input type="text"
-              id="album_name"
-              name="album_name"
-              value={condition.album_name}
-              className={condition.album_id ? "input-fixed" : ""}
-              readOnly={!!condition.album_id}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSearch()
-              }}
-              onChange={handleSearchChange} />
-          <label className="input-check-label">
-            <input type="checkbox"
-                id="album_name_exact_match"
-                name="album_name_exact_match"
-                checked={condition.album_name_exact_match}
+        <div className="block sm:hidden">
+          <div className="div-input-row">
+            <label htmlFor="artist_name"
+                className={condition.artist_id ? "text-blue-600 input-label" : "input-label"}>
+              Artist Name
+            </label>
+            <input type="text"
+                id="artist_name"
+                name="artist_name"
+                value={condition.artist_name}
+                className={condition.artist_id ? "input-fixed w-full sm:w-160" : "w-full sm:w-160"}
+                readOnly={!!condition.artist_id}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch()
+                }}
                 onChange={handleSearchChange} />
-            <span>Exact Match</span>
-          </label>
-        </div>
-        <div className="input-form">
-          <label htmlFor="track_name">Track Name</label>
-          <input type="text"
-              id="track_name"
-              name="track_name"
-              value={condition.track_name}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSearch()
-              }}
-              onChange={handleSearchChange} />
-          <label className="input-check-label">
-            <input type="checkbox"
-                id="track_name_exact_match"
-                name="track_name_exact_match"
-                checked={condition.track_name_exact_match}
+          </div>
+          <div className="div-input-row">
+            <div className="div-row-right">
+              <ToggleButton
+                  name="artist_name_exact_match"
+                  title="Exact Match"
+                  checked={condition.artist_name_exact_match}
+                  onChange={handleSearchChange} />
+            </div>
+          </div>
+          <div className="div-input-row">
+            <label htmlFor="album_name"
+                className="input-label">
+              Album Name
+            </label>
+            <input type="text"
+                id="album_name"
+                name="album_name"
+                value={condition.album_name}
+                className={condition.album_id ? "input-fixed w-full sm:w-160" : "w-full sm:w-160"}
+                readOnly={!!condition.album_id}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch()
+                }}
                 onChange={handleSearchChange} />
-            <span>Exact Match</span>
-          </label>
-          <button className="button-search button-md"
-              onClick={handleSearch}>
-            <Search size={16} />
-          </button>
-          <button className="button-normal"
-              onClick={handleClear}>
-            <OctagonX size={16} />
-          </button>
+          </div>
+          <div className="div-input-row">
+            <div className="div-row-right">
+              <ToggleButton
+                  name="album_name_exact_match"
+                  title="Exact Match"
+                  checked={condition.album_name_exact_match}
+                  onChange={handleSearchChange} />
+            </div>
+          </div>
+          <div className="div-input-row">
+            <label htmlFor="track_name"
+                className="input-label">
+              Track Name
+            </label>
+            <input type="text"
+                id="track_name"
+                name="track_name"
+                value={condition.track_name}
+                className={condition.track_id ? "input-fixed w-full sm:w-160" : "w-full sm:w-160"}
+                readOnly={!!condition.track_id}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch()
+                }}
+                onChange={handleSearchChange} />
+          </div>
+          <div className="div-input-row">
+            <div className="div-row-right">
+              <ToggleButton
+                  name="track_name_exact_match"
+                  title="Exact Match"
+                  checked={condition.track_name_exact_match}
+                  onChange={handleSearchChange} />
+            </div>
+          </div>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Artist Name</th>
-            <th>Album Name</th>
-            <th>Track No</th>
-            <th>Track Name</th>
-            <th>Point</th>
-            <th>Single</th>
-            <th>Year</th>
-            <th>Length</th>
-            <th>Last Listened</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {tracks.map(track => (
-            <tr key={track.track_id} className="leading-none">
-              <td>{ellipsis(track.track_artist_name_1, 24)}</td>
-              <td>{ellipsis(track.album_name_1, 32)}</td>
-              <td className="numeric-field">
-                {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}
-              </td>
-              <td>{ellipsis(track.track_name_1, 40)}</td>
-              <td className="numeric-field">{track.is_point_except === "1" ? "-" : track.track_point}</td>
-              <td className="numeric-field">{!!track.single_no ? track.single_no : track.is_single === "1" ? "◯" : ""}</td>
-              <td className="numeric-field">{!!track.track_year ? track.track_year : track.album_year}</td>
-              <td>{track.track_length}</td>
-              <td>{formatDateTime(track.last_listened_at, "yyyy/MM/dd")}</td>
-              <td>
-                <button
-                    className="button-page"
-                    onClick={() => handleShowForm(track.track_id ?? "")} >
-                  <FileText className="w-5 h-5" />
-                </button>
-              </td>
+      <div className="div-row-right">
+        <button className="button-normal button-sm"
+            onClick={handleClear}>
+          <OctagonX size={16} />
+        </button>
+        <button className="button-search button-md"
+            onClick={handleSearch}>
+          <Search size={16} />
+        </button>
+      </div>
+      <div className="hidden sm:block">
+        <table>
+          <thead>
+            <tr>
+              <th>Artist Name</th>
+              <th>Album Name</th>
+              <th>Track No</th>
+              <th>Track Name</th>
+              <th>Point</th>
+              <th>Single</th>
+              <th>Year</th>
+              <th>Length</th>
+              <th>Last Listened</th>
+              <th />
             </tr>
+          </thead>
+          <tbody>
+            {tracks.map(track => (
+              <tr key={track.track_id} className="leading-none">
+                <td>{ellipsis(track.track_artist_name_1, 24)}</td>
+                <td>{ellipsis(track.album_name_1, 32)}</td>
+                <td className="numeric-field">
+                  {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}
+                </td>
+                <td>{ellipsis(track.track_name_1, 40)}</td>
+                <td className="numeric-field">{track.is_point_except === "1" ? "-" : track.track_point}</td>
+                <td className="numeric-field">{!!track.single_no ? track.single_no : track.is_single === "1" ? "◯" : ""}</td>
+                <td className="numeric-field">{!!track.track_year ? track.track_year : track.album_year}</td>
+                <td>{track.track_length}</td>
+                <td>{formatDateTime(track.last_listened_at, "yyyy/MM/dd")}</td>
+                <td>
+                  <button
+                      className="button-page"
+                      onClick={() => handleShowForm(track.track_id ?? "")} >
+                    <FileText className="w-5 h-5" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="block sm:hidden">
+        <div className="div-card-area">
+          {tracks.map(track => (
+            <div key={track.track_id}
+                className="div-card">
+              <div className="div-card-row">
+                {track.artist_name_1}
+              </div>
+              <div className="div-card-row">
+                {track.album_name_1}
+              </div>
+              <div className="div-card-row">
+                {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}
+                <span>&ensp;</span>
+                <button
+                    className="button-link card-title"
+                    onClick={() => handleShowForm(track.track_id ?? '')}>
+                  {track.track_name_1}
+                </button>
+              </div>
+              <div className="div-card-row">
+                <Clock size={14} />
+                {track.track_length}
+                <Star size={14} />
+                {track.is_point_except === "1" ? "-" : track.track_point}
+                <span>&ensp;</span>
+                {!!track.single_no ? track.single_no : track.is_single === "1" ? "◯" : ""}
+                <span>&ensp;</span>
+                <Calendar size={14} />
+                {!!track.track_year ? track.track_year : track.album_year}
+              </div>
+              <div className="div-card-row">
+                <History size={14} />
+                {formatDateTime(track.last_listened_at, "yyyy/MM/dd")}
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">

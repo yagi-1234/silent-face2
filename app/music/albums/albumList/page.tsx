@@ -132,7 +132,10 @@ const AlbumList = () => {
       <div>
         <div className="hidden sm:block">
           <div className="div-input-row">
-            <label htmlFor="artist_name" className="input-label">Artist Name</label>
+            <label htmlFor="artist_name"
+                className={condition.artist_id ? "text-blue-600 input-label" : "input-label"}>
+              Artist Name
+            </label>
             <div className="div-row-between">
               <input type="text"
                   id="artist_name"
@@ -178,7 +181,10 @@ const AlbumList = () => {
         </div>
         <div className="block sm:hidden">
           <div className="div-input-row">
-            <label htmlFor="artist_name" className="input-label">Artist Name</label>
+            <label htmlFor="artist_name"
+                className={condition.artist_id ? "text-blue-600 input-label" : "input-label"}>
+              Artist Name
+            </label>
             <input type="text"
                 id="artist_name"
                 name="artist_name"
