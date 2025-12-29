@@ -259,10 +259,13 @@ button {
     @apply w-16 h-8
   }
   .button-normal {
-    @apply bg-gray-300 text-gray-600 flex items-center justify-center rounded-sm mr-2
+    @apply bg-gray-300 text-gray-600 flex items-center justify-center rounded-sm w-16 h-8 mr-2;
+    &:hover {
+      @apply bg-gray-400;
+    }
   }
   .button-search {
-    @apply bg-green-600 text-white flex items-center justify-center rounded-sm mr-2;
+    @apply bg-green-600 text-white flex items-center justify-center rounded-sm w-20 h-8 mr-2;
     &:hover {
       @apply bg-green-800;
     }
@@ -274,7 +277,7 @@ button {
     @apply w-7
   }
   .button-save {
-    @apply bg-blue-600 text-white flex items-center justify-center w-20 h-8 px-4 py-2 rounded-sm;
+    @apply bg-blue-600 text-white flex items-center justify-center rounded-sm w-20 h-8;
     &:hover {
       @apply bg-blue-800;
     }
@@ -292,7 +295,7 @@ button {
     }
   }
   .button-back {
-    @apply bg-gray-500 text-white flex items-center justify-center w-16 h-8 px-4 py-2 rounded-sm
+    @apply bg-gray-500 text-white flex items-center justify-center rounded-sm w-16 h-8
   }
   .button-back:hover {
     @apply bg-gray-800

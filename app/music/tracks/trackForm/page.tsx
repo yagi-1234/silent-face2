@@ -217,35 +217,37 @@ const TrackForm = () => {
       <h2 className="header-title">Track Form</h2>
       <p className="timestamp">{track.track_id ? "last updated at: " + formatDateTime(track.updated_at, 'yyyy/MM/dd HH:mm') + " (" + track.updated_count + ")" : '(Not registered)'}</p>
       <div>
-        <div className="input-form mb-2">
+        <div className="div-input-row">
           <label htmlFor="artist_name_1"
-              className="label-fixed">
-            Artist Name
+              className="label-fixed input-label">Artist Name
           </label>
           <input type="text"
               id="artist_name_1"
               name="artist_name_1"
-              className="input-fixed"
+              className="input-fixed w-full sm:w-160"
+              readOnly={true}
               value={track.artist_name_1 ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="track_artist_name">　Track Artist</label>
+        <div className="div-input-row">
+          <label htmlFor="track_artist_name"
+              className="input-label">Track Artist
+          </label>
           <input type="text"
               id="track_artist_name"
               name="track_artist_name"
+              className="w-full sm:w-160"
               value={track.track_artist_name ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
+        <div className="div-input-row">
           <label htmlFor="album_name_1"
-              className={track.album_id ? "label-fixed" : ""}>
-            Album Name
+              className="label-fixed input-label">Album Name
           </label>
           <select
               id="album_id"
               name="album_id"
-              className="w-80"
+              className="w-full sm:w-160"
               value={track.album_id ?? ""}
               onChange={handleChange}>
             <option key="" value=""></option>
@@ -256,153 +258,198 @@ const TrackForm = () => {
             ))}
           </select>
         </div>
-        <div className="input-form">
-          <label htmlFor="track_no">Track No</label>
-          <input type="number"
-              id="track_no"
-              name="track_no"
-              className={errors.track_no ? "numeric-field text-sm isError" : "numeric-field text-sm"}
-              value={track.track_no ?? ''}
-              onChange={handleChange} />
-          <span>　/　</span>
-          <input type="number"
-              id="track_count"
-              name="track_count"
-              className="numeric-field text-sm"
-              readOnly
-              value={track.track_count ?? ''} />
-          <label htmlFor="disc_no" className="w-16 ml-6">Disc No</label>
-          <input type="number"
-              id="disc_no"
-              name="disc_no"
-              className={errors.disc_no ? "numeric-field text-sm isError" : "numeric-field text-sm"}
-              value={track.disc_no ?? ''}
-              onChange={handleChange} />
+        <div className="div-input-row">
+          <div className="div-row-left">
+            <div className="flex-1">
+              <label htmlFor="track_no" className="input-label">Track No</label>
+              <input type="number"
+                  id="track_no"
+                  name="track_no"
+                  className={errors.track_no ? "numeric-field isError w-24" : "numeric-field w-24"}
+                  value={track.track_no ?? ''}
+                  onChange={handleChange} />
+              <span>/&ensp;</span>
+              <span>{track.track_count ?? ''}</span>
+            </div>
+            <div className="flex-1">
+              <label htmlFor="disc_no" className="input-label">Disc No</label>
+              <input type="number"
+                  id="disc_no"
+                  name="disc_no"
+                  className={errors.disc_no ? "numeric-field text-sm isError w-24" : "numeric-field text-sm w-24"}
+                  value={track.disc_no ?? ''}
+                  onChange={handleChange} />
+            </div>
+          </div>
         </div>
-        <div className="input-form mb-2">
-          <label htmlFor="track_name_0">Track Name</label>
+        <div className="div-input-row">
+          <label htmlFor="track_name_0" className="input-label">Track Name</label>
           <input type="text"
               id="track_name_0"
               name="track_name_0"
-              className={errors.track_name_0 ? "isError" : ""}
+              className={errors.track_name_0 ? "isError w-full sm:w-160" : "w-full sm:w-160"}
               value={track.track_name_0}
               onChange={handleChange} />
         </div>
-        <div className="input-form mb-2">
-          <label htmlFor="track_name_1"></label>
+        <div className="div-input-row">
           <input type="text"
               id="track_name_1"
               name="track_name_1"
-              className={errors.track_name_1 ? "isError" : ""}
+              className={errors.track_name_1 ? "isError w-full sm:w-160" : "w-full sm:w-160"}
               value={track.track_name_1}
               onChange={handleChange}
               onBlur={handleNameOneToZero} />
         </div>
-        <div className="input-form">
-          <label htmlFor="track_name_2"></label>
+        <div className="div-input-row">
           <input type="text"
               id="track_name_2"
               name="track_name_2"
-              className={errors.track_name_2 ? "isError" : ""}
+              className={errors.track_name_2 ? "isError w-full sm:w-160" : "w-full sm:w-160"}
               value={track.track_name_2 ?? ""}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="track_length">Length</label>
-          <input type="text"
-              id="track_length"
-              name="track_length"
-              className="text-sm"
-              value={track.track_length ?? ''}
-              onChange={handleChange} />
-          <span>　/　</span>
-          <input type="text"
-              id="album_track_length"
-              name="album_track_length"
-              className="text-sm"
-              value={track.album_track_length ?? ''}
-              readOnly
-              onChange={handleChange} />
-          <label htmlFor="track_year"
-              className={!track.track_year && !!track.album_year ? "label-fixed w-16 ml-6" : "w-16 ml-6"}>
-            Year
-          </label>
-          <input type="number"
-              id="track_year"
-              name="track_year"
-              className={!track.track_year && !!track.album_year ? "w-30 bg-blue-100" : "w-30 "}
-              value={!!track.track_year ? track.track_year : track.album_year ? track.album_year : ""}
-              onChange={handleChange} />
+        <div className="div-input-row">
+          <div className="div-row-left">
+            <div className="flex-1">
+              <label htmlFor="track_length" className="input-label">Length</label>
+              <input type="text"
+                  id="track_length"
+                  name="track_length"
+                  className="w-24"
+                  value={track.track_length ?? ""}
+                  onChange={handleChange} />
+              <span>/&ensp;</span>
+              <span>{track.album_track_length ?? ''}</span>
+            </div>
+            <div className="flex-1">
+              <label htmlFor="track_year"
+                  className={!track.track_year && !!track.album_year ? "label-fixed input-label" : "input-label"}>
+                Year
+              </label>
+              <input type="number"
+                  id="track_year"
+                  name="track_year"
+                  className={!track.track_year && !!track.album_year ? "w-24 bg-blue-100" : "w-24 "}
+                  value={!!track.track_year ? track.track_year : track.album_year ? track.album_year : ""}
+                  onChange={handleChange} />
+            </div>
+          </div>
         </div>
-        <div className="input-form">
-          <label htmlFor="is_single">Single</label>
-          <input type="checkbox"
-              id="is_single"
-              name="is_single"
-              className="w-5"
-              checked={track.is_single === '1'}
-              value={track.is_single}
-              onChange={handleChange} />
-          <input type="number"
-              id="single_no"
-              name="single_no"
-              className="numeric-field text-sm"
-              value={track.single_no ?? ''}
-              onChange={handleChange} />
-          <label className="w-24 ml-6" htmlFor="is_single">Bonus Track</label>
-          <label className="input-check-label">
+        <div className="div-input-row">
+          <div className="div-row-left">
+            <div className="flex-1">
+              <label htmlFor="is_single" className="input-label">Single</label>
+              <div className="div-row-left">
+                <input type="checkbox"
+                    id="is_single"
+                    name="is_single"
+                    className="w-5"
+                    checked={track.is_single === '1'}
+                    value={track.is_single}
+                    onChange={handleChange} />
+                <input type="number"
+                    id="single_no"
+                    name="single_no"
+                    className="numeric-field w-24"
+                    value={track.single_no ?? ''}
+                    onChange={handleChange} />
+              </div>
+            </div>
+            <div className="flex-1">
+              <label htmlFor="is_bonus_track" className="input-label">Bonus Track</label>
+              <div className="div-row-left">
+                <label className="input-check-label">
+                  <input type="checkbox"
+                      id="is_bonus_track"
+                      name="is_bonus_track"
+                      checked={track.is_bonus_track === '1'}
+                      value={track.is_bonus_track}
+                      onChange={handleChange} />
+                </label>
+                <span>&emsp;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="div-input-row">
+          <label htmlFor="track_point" className="input-label">Point</label>
+          <div className="div-row-left">
             <input type="checkbox"
-                id="is_bonus_track"
-                name="is_bonus_track"
-                checked={track.is_bonus_track === '1'}
-                value={track.is_bonus_track}
+                id="is_point_except"
+                name="is_point_except"
+                className="w-5"
+                checked={track.is_point_except === '1'}
+                value={track.is_point_except}
                 onChange={handleChange} />
-          </label>
+            <input type="number"
+                id="track_point"
+                name="track_point"
+                className="numeric-field w-24"
+                value={track.track_point ?? ''}
+                onChange={handleChange} />
+          </div>
         </div>
-        <div className="input-form">
-          <label htmlFor="track_point">Point</label>
-          <input type="checkbox"
-              id="is_point_except"
-              name="is_point_except"
-              className="w-5"
-              checked={track.is_point_except === '1'}
-              value={track.is_point_except}
-              onChange={handleChange} />
-          <input type="number"
-              id="track_point"
-              name="track_point"
-              className="numeric-field w-24"
-              value={track.track_point ?? ''}
-              onChange={handleChange} />
+        <div className="div-input-row hidden sm:block">
+          <label htmlFor="listening_count" className="input-label">Listened</label>
+          <div className="div-row-left">
+            <button
+                className="button-plus"
+                onClick={handlePlus} >
+              <Plus />
+            </button>
+            <input type="number"
+                id="listening_count"
+                name="listening_count"
+                className="numeric-field w-24"
+                value={track.listening_count ?? ''}
+                onChange={handleChange} />
+            <PartialDateInput
+                name="last_listened_at"
+                value={formatDateTime(track.last_listened_at, "yyyy/MM/dd")}
+                onChange={handleChangeDate}
+                mode="flexible" />
+            <span>{formatDateTime(track.last_listened_at, "HH:mm")}</span>
+          </div>
         </div>
-        <div className="input-form">
-          <label htmlFor="listening_count">Listened</label>
-          <button
-              className="button-plus"
-              onClick={handlePlus} >
-            <Plus />
-          </button>
-          <input type="number"
-              id="listening_count"
-              name="listening_count"
-              className="numeric-field text-sm"
-              value={track.listening_count ?? ''}
-              onChange={handleChange} />
-          <PartialDateInput
-              name="last_listened_at"
-              value={formatDateTime(track.last_listened_at, "yyyy/MM/dd")}
-              onChange={handleChangeDate}
-              mode="flexible" />
-          <span>{formatDateTime(track.last_listened_at, "HH:mm")}</span>
+        <div className="div-input-row block sm:hidden">
+          <label htmlFor="listening_count" className="input-label">Listened</label>
+          <div className="div-row-left">
+            <button
+                className="button-plus"
+                onClick={handlePlus} >
+              <Plus />
+            </button>
+            <input type="number"
+                id="listening_count"
+                name="listening_count"
+                className="numeric-field w-24"
+                value={track.listening_count ?? ''}
+                onChange={handleChange} />
+          </div>
         </div>
-        <div className="input-form-full">
-          <label htmlFor="track_comment">Comment</label>
-          <textarea id="track_comment"
-              name="track_comment"
-              rows={3}
-              value={track.track_comment ?? ''}
-              onChange={handleChange} >
-          </textarea>
+        <div className="div-input-row block sm:hidden">
+          <div className="div-row-left">
+            <span className="w-7"></span>
+            <PartialDateInput
+                name="last_listened_at"
+                value={formatDateTime(track.last_listened_at, "yyyy/MM/dd")}
+                onChange={handleChangeDate}
+                mode="flexible" />
+            <span>{formatDateTime(track.last_listened_at, "HH:mm")}</span>
+          </div>
+        </div>
+        <div className="div-input-row">
+          <div className="input-form-full">
+            <label htmlFor="track_comment">Comment</label>
+            <textarea id="track_comment"
+                name="track_comment"
+                rows={3}
+                value={track.track_comment ?? ''}
+                onChange={handleChange} >
+            </textarea>
+          </div>
+        </div>
+        <div className="div-input-row">
         </div>
       </div>
       <div className="footer-area">
