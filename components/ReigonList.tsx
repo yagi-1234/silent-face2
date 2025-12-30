@@ -84,94 +84,117 @@ export function RegionList({ onSelect }: Props) {
     <>
       {!showEditPanel && (
         <>
-          <div className="searchPanel">
-            <div className="input-form">
-              <label htmlFor="region_code">Region Code/Name</label>
-              <input type="text"
-                  id="region_code"
-                  name="region_code"
-                  className="w-30"
-                  value={condition.region_code} 
-                  onChange={handleSearchChange} />
-              <input type="text"
-                  id="region_name"
-                  name="region_name"
-                  className="w-60"
-                  value={condition.region_name} 
-                  onChange={handleSearchChange}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSearch()
-                  }} />
-              <button className="button-search button-md w-20"
-                  onClick={handleSearch}>
-                <Search size={16} />
-              </button>
-            </div>
-            <div className="input-form">
-              <label htmlFor="region_level">Region Level</label>
-              <select
-                  id="region_level"
-                  name="region_level"
-                  className="w-30"
-                  value={condition.region_level ?? ''}
-                  onChange={handleSearchChange} >
-                <option key="" value=""></option>
-                <option key="1" value="1">1</option>
-                <option key="2" value="2">2</option>
-                <option key="3" value="3">3</option>
-                <option key="4" value="4">4</option>
-                <option key="5" value="5">5</option>
-              </select>
-              <label className="input-check-label ml-2">
-                <label htmlFor="priority">Priority</label>
+          <div className="div-input-row">
+            <label htmlFor="region_code" className="input-label">Region Code</label>
+            <input type="text"
+                id="region_code"
+                name="region_code"
+                className="w-30"
+                value={condition.region_code} 
+                onChange={handleSearchChange} />
+          </div>
+          <div className="div-input-row">
+            <label htmlFor="region_code" className="input-label">Region Name</label>
+            <input type="text"
+                id="region_name"
+                name="region_name"
+                className="w-full sm:w-120"
+                value={condition.region_name} 
+                onChange={handleSearchChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSearch()
+                }} />
+          </div>
+          <div className="div-input-row">
+            <div className="div-row-left">
+              <div className="flex-1">
+                <label htmlFor="region_level" className="input-label">Region Level</label>
+                <select
+                    id="region_level"
+                    name="region_level"
+                    className="w-24"
+                    value={condition.region_level ?? ''}
+                    onChange={handleSearchChange} >
+                  <option key="" value=""></option>
+                  <option key="1" value="1">1</option>
+                  <option key="2" value="2">2</option>
+                  <option key="3" value="3">3</option>
+                  <option key="4" value="4">4</option>
+                  <option key="5" value="5">5</option>
+                </select>
+              </div>
+              <div className="flex-1">
+                <label htmlFor="region_level" className="input-label">Priority</label>
                 <input type="checkbox"
                     id="priority"
                     name="priority"
+                    className="w-5"
                     checked={condition.priority}
                     onChange={handleSearchChange} />
-              </label>
+              </div>
             </div>
           </div>
-          <div className="rounded overflow-y-auto max-h-[calc(100vh-220px)]">
-            <table>
-              <thead>
-                <tr>
-                  <th>Region Name</th>
-                  <th></th>
-                  <th>Disp Order</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {regions.map(region => (
-                  <tr key={region.region_code} className='h-7'>
-                    <td
-                        onDoubleClick={() => onSelect(region.region_code ?? '', region.region_full_name_1)}>
-                      {region.region_full_name_1}
-                    </td>
-                    <td>{region.region_name_2}</td>
-                    <td>{region.disp_order}</td>
-                    <td className='flex'>
-                      <div>
-                        <button
-                            className="button-page"
-                            onClick={() => handleShowEdit(region.region_code ?? '')} >
-                          <FileText className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div>
-                        <button
-                            className="button-page"
-                            onClick={() => handleShowPlus(region.region_code ?? '')} >
-                          <ListPlus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
+          <div className="div-row-right">
+            <button className="button-search h-6 w-16"
+                onClick={handleSearch}>
+              <Search size={16} />
+            </button>
+          </div>
+          <div className="hidden sm:block">
+            <div className="rounded overflow-y-auto max-h-[calc(80vh-220px)]">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Region Name</th>
+                    <th></th>
+                    <th>Disp Order</th>
+                    <th></th>
                   </tr>
-                ))}
-                <div>　</div>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {regions.map(region => (
+                    <tr key={region.region_code} className='h-7'>
+                      <td
+                          onDoubleClick={() => onSelect(region.region_code ?? '', region.region_full_name_1)}>
+                        {region.region_full_name_1}
+                      </td>
+                      <td>{region.region_name_2}</td>
+                      <td>{region.disp_order}</td>
+                      <td className='flex'>
+                        <div>
+                          <button
+                              className="button-page"
+                              onClick={() => handleShowEdit(region.region_code ?? '')} >
+                            <FileText className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div>
+                          <button
+                              className="button-page"
+                              onClick={() => handleShowPlus(region.region_code ?? '')} >
+                            <ListPlus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  <div>　</div>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="block sm:hidden">
+            <div className="div-card-area overflow-y-auto max-h-[calc(80vh-220px)]">
+              {regions.map(region => (
+                <div key={region.region_code} className="div-card">
+                  <button
+                      className="button-link card-title"
+                      onClick={() => onSelect(region.region_code ?? '', region.region_full_name_1)}>
+                    {region.region_full_name_1}
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
           <div className="flex justify-end mt-2">
             <button className="button-save h-6 w-16"

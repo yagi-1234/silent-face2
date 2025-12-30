@@ -320,7 +320,7 @@ button {
     @apply flex items-center gap-1
   }
   .card-title {
-    @apply text-lg font-bold
+    @apply text-left text-lg font-bold
   }
   .card-label {
     @apply rounded-sm px-2

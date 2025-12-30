@@ -283,11 +283,11 @@ const TrackList = () => {
         </div>
       </div>
       <div className="div-row-right">
-        <button className="button-normal button-sm"
+        <button className="button-normal"
             onClick={handleClear}>
           <OctagonX size={16} />
         </button>
-        <button className="button-search button-md"
+        <button className="button-search"
             onClick={handleSearch}>
           <Search size={16} />
         </button>
@@ -337,14 +337,9 @@ const TrackList = () => {
       <div className="block sm:hidden">
         <div className="div-card-area">
           {tracks.map(track => (
-            <div key={track.track_id}
-                className="div-card">
-              <div className="div-card-row">
-                {track.artist_name_1}
-              </div>
-              <div className="div-card-row">
-                {track.album_name_1}
-              </div>
+            <div key={track.track_id} className="div-card">
+              <div className="div-card-row">{track.artist_name_1}</div>
+              <div className="div-card-row">{track.album_name_1}</div>
               <div className="div-card-row">
                 {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}
                 <span>&ensp;</span>

@@ -183,8 +183,8 @@ const PlaylistTrackList = () => {
       <Breadcrumb />
       <h2 className="header-title">PlaylistTracks</h2>
       <div>
-        <div className="input-form">
-          <label htmlFor="playlist_name">
+        <div className="div-input-row">
+          <label htmlFor="playlist_name" className="input-label">
             Playlist Name
           </label>
           <input type="text"
@@ -196,76 +196,89 @@ const PlaylistTrackList = () => {
       </div>
       <div className="searchPanel">
       </div>
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext
-            items={playlistTracks.map(playlistTrack => playlistTrack.playlist_track_id ?? "")}
-            strategy={verticalListSortingStrategy}>
-          <table>
-            <thead>
-              <tr>
-                <th>Play Order</th>
-                <th>Artist Name</th>
-                <th>Album Name</th>
-                <th>Track Name</th>
-                <th>Entry</th>
-                <th>Rank</th>
-                <th>+/-</th>
-                <th>Max</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {playlistTracks
-                  .map((playlistTrack) => (
-                <SortableRow
-                    key={playlistTrack.playlist_track_id}
-                    playlistTrack={playlistTrack} 
-                    onDelete={id => handleDelete(id, playlistTrack.play_order ?? 0)} />
-              ))}
-              <tr>
-                <td>
-                  <input type="number"
-                      name="play_order"
-                      className='w-20 numeric-field'
-                      value={newPlaylistTrack.play_order ?? ""}
-                      onChange={handleChangeTrack} />
-                </td>
-                <td>
-                  <input type="text"
-                      name="artist_name_1"
-                      value={newPlaylistTrack.artist_name_1 ?? ""}
-                      onChange={handleChangeTrack} />
-                </td>
-                <td>
-                  <input type="text"
-                      name="album_name_1"
-                      value={newPlaylistTrack.album_name_1 ?? ""}
-                      onChange={handleChangeTrack} />
-                </td>
-                <td>
-                  <input type="text"
-                      name="track_name_1"
-                      value={newPlaylistTrack.track_name_1 ?? ""}
-                      onChange={handleChangeTrack} />
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                  <button
-                      className="button-page"
-                      onClick={() => handleAdd()}>
-                    <CirclePlus className='w-5 h-5' />
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </SortableContext>
-      </DndContext>
+      <div className="hidden sm:block">
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext
+              items={playlistTracks.map(playlistTrack => playlistTrack.playlist_track_id ?? "")}
+              strategy={verticalListSortingStrategy}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Play Order</th>
+                  <th>Artist Name</th>
+                  <th>Album Name</th>
+                  <th>Track Name</th>
+                  <th>Entry</th>
+                  <th>Rank</th>
+                  <th>+/-</th>
+                  <th>Max</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {playlistTracks
+                    .map((playlistTrack) => (
+                  <SortableRow
+                      key={playlistTrack.playlist_track_id}
+                      playlistTrack={playlistTrack} 
+                      onDelete={id => handleDelete(id, playlistTrack.play_order ?? 0)} />
+                ))}
+                <tr>
+                  <td>
+                    <input type="number"
+                        name="play_order"
+                        className='w-20 numeric-field'
+                        value={newPlaylistTrack.play_order ?? ""}
+                        onChange={handleChangeTrack} />
+                  </td>
+                  <td>
+                    <input type="text"
+                        name="artist_name_1"
+                        value={newPlaylistTrack.artist_name_1 ?? ""}
+                        onChange={handleChangeTrack} />
+                  </td>
+                  <td>
+                    <input type="text"
+                        name="album_name_1"
+                        value={newPlaylistTrack.album_name_1 ?? ""}
+                        onChange={handleChangeTrack} />
+                  </td>
+                  <td>
+                    <input type="text"
+                        name="track_name_1"
+                        value={newPlaylistTrack.track_name_1 ?? ""}
+                        onChange={handleChangeTrack} />
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <button
+                        className="button-page"
+                        onClick={() => handleAdd()}>
+                      <CirclePlus className='w-5 h-5' />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </SortableContext>
+        </DndContext>
+      </div>
+      <div className="block sm:hidden">
+        <div className="div-card-area">
+          {playlistTracks.map(playlistTrack => (
+            <div key={playlistTrack.playlist_track_id} className="div-card">
+              <div className="div-card-row card-title">{playlistTrack.artist_name_1}</div>
+              <div className="div-card-row">{playlistTrack.album_name_1}</div>
+              <div className="div-card-row card-title">{playlistTrack.track_name_1}</div>
+            </div>
+          ))}
+        </div>
+      </div>
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">
