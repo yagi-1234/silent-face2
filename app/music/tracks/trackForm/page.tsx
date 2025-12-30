@@ -242,7 +242,7 @@ const TrackForm = () => {
         </div>
         <div className="div-input-row">
           <label htmlFor="album_name_1"
-              className="label-fixed input-label">Album Name
+              className={track.album_id ? "label-fixed input-label" : "input-label"}>Album Name
           </label>
           <select
               id="album_id"

@@ -41,12 +41,14 @@ const Page: NextPage = () => {
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-10 text-center">
-          <HomeIconButton icon={Users} label="Artists" path="/music/artists/artistList" />
-          <HomeIconButton icon={Disc3} label="Albums" path="/music/albums/albumList" />
-          <HomeIconButton icon={Music} label="Tracks" path="/music/tracks/trackList" />
-          <HomeIconButton icon={MicVocal} label="Lives" path="" />
-          <HomeIconButton icon={SquareLibrary} label="Playlists" path="/music/playlists/playlistsList" />
+        <HomeIconButton icon={Users} label="Artists" path="/music/artists/artistList" />
+        <HomeIconButton icon={Disc3} label="Albums" path="/music/albums/albumList" />
+        <HomeIconButton icon={Music} label="Tracks" path="/music/tracks/trackList" />
+        <HomeIconButton icon={MicVocal} label="Lives" path="" />
+        <HomeIconButton icon={SquareLibrary} label="Playlists" path="/music/playlists/playlistsList" />
+        <div className="hidden sm:block">
           <HomeIconButton icon={Download} label="Track Import" path="/music/tracks/trackImport" />
+        </div>
       </div>
 
       <div className="flex items-center my-6">

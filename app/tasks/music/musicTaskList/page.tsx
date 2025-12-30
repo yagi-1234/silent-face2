@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
-import { ArrowLeft, FileText, Plus, Search, RotateCw } from "lucide-react"
+import { AlarmClockCheck, ArrowLeft, FileText, Plus, Search, RotateCw } from 'lucide-react'
 
 import { fetchMusicTasks, updateMusicTaskStatus, refreshMusicTask } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -95,6 +95,15 @@ const MusicTaskList = () => {
     loadData()
   }, [])
 
+  const getTaskStatusClass = (taskStatus: string): string => {
+    if (taskStatus === '0') return "bg-gray-200"
+    if (taskStatus === '1') return "bg-red-200"
+    if (taskStatus === '2') return "bg-green-200"
+    if (taskStatus === '8') return "bg-yellow-100"
+    if (taskStatus === '9') return "bg-blue-200"
+    return ""
+  }
+
   return (
     <div className="root-panel">
       <MessageBanner
@@ -102,33 +111,34 @@ const MusicTaskList = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <div className="flex justify-between">
-        <Breadcrumb />
-        <LogoffButton />
-      </div>
+      <Breadcrumb />
       <h2 className="header-title">Task List (Music)</h2>
-      <div className="searchPanel">
-        <div className="input-form">
-          <label htmlFor="task_status">Task Status</label>
-          {Object.entries(CodeTaskStatus)
-              .sort(([a], [b]) => a.localeCompare(b))
-              .map(([key, label]) => (
-                <label key={key} className="input-check-label">
-                  <input type="checkbox"
-                      className=""
-                      value={key}
-                      checked={condition?.taskStatusList.includes(key)}
-                      onChange={(e) => {
-                        setCondition(prev => ({
-                          ...prev,
-                          taskStatusList: e.target.checked ? [...prev.taskStatusList, key] : prev.taskStatusList.filter(status => status !== key)
-                        }))
-                      }}
-                  />
-                  <span>{label}</span>
-                </label>
-          ))}
-          <button className="button-search button-md"
+      <div>
+        <div className="div-input-row">
+          <label htmlFor="task_status" className="input-label">Task Status</label>
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
+            {Object.entries(CodeTaskStatus)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([key, label]) => (
+                  <label key={key} className="input-check-label">
+                    <input type="checkbox"
+                        className=""
+                        value={key}
+                        checked={condition?.taskStatusList.includes(key)}
+                        onChange={(e) => {
+                          setCondition(prev => ({
+                            ...prev,
+                            taskStatusList: e.target.checked ? [...prev.taskStatusList, key] : prev.taskStatusList.filter(status => status !== key)
+                          }))
+                        }}
+                    />
+                    <span>{label}</span>
+                  </label>
+            ))}
+          </div>
+        </div>
+        <div className="div-row-right">
+          <button className="button-search"
               onClick={handleSearch}>
             <Search size={16} />
           </button>
@@ -138,48 +148,83 @@ const MusicTaskList = () => {
           </button>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Type</th>
-            <th>Priority</th>
-            <th>Artist</th>
-            <th>Album</th>
-            <th>Act Count</th>
-            <th>Last Acted At</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => (
-            <tr key={task.task_sub_id}>
-              <td>
-                <select
-                    value={task.task_status ?? ""}
-                    onChange={(e) => handleStatusChange(task.task_sub_id ?? "", e.target.value) } >
-                    {Object.entries(CodeTaskStatus).map(([key, label]) => (
-                        <option key={key} value={key}>{label}</option>
-                    ))}
-                </select>
-              </td>
-              <td>{CodeMusicTaskType[task.task_sub_type ?? ""]}</td>
-              <td className="numeric-field">{task.task_priority}</td>
-              <td>{task.artist_name}</td>
-              <td>{task.album_name}</td>
-              <td className="numeric-field">{task.action_count}</td>
-              <td>{formatDateTime(task.last_acted_at, "yyyy/MM/dd")}</td>
-              <td>
-                <button
-                    className="button-page"
-                    onClick={() => handleShowForm(task.task_sub_id || "")} >
-                  <FileText className="w-5 h-5" />
-                </button>
-              </td>
+      <div className="hidden sm:block">
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Type</th>
+              <th>Priority</th>
+              <th>Artist</th>
+              <th>Album</th>
+              <th>Act Count</th>
+              <th>Last Acted At</th>
+              <th />
             </tr>
+          </thead>
+          <tbody>
+            {tasks.map(task => (
+              <tr key={task.task_sub_id}>
+                <td>
+                  <select
+                      value={task.task_status ?? ""}
+                      onChange={(e) => handleStatusChange(task.task_sub_id ?? "", e.target.value) } >
+                      {Object.entries(CodeTaskStatus).map(([key, label]) => (
+                          <option key={key} value={key}>{label}</option>
+                      ))}
+                  </select>
+                </td>
+                <td>{CodeMusicTaskType[task.task_sub_type ?? ""]}</td>
+                <td className="numeric-field">{task.task_priority}</td>
+                <td>{task.artist_name}</td>
+                <td>{task.album_name}</td>
+                <td className="numeric-field">{task.action_count}</td>
+                <td>{formatDateTime(task.last_acted_at, "yyyy/MM/dd")}</td>
+                <td>
+                  <button
+                      className="button-page"
+                      onClick={() => handleShowForm(task.task_sub_id || "")} >
+                    <FileText className="w-5 h-5" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="block sm:hidden">
+        <div className="div-card-area">
+          {tasks.map(task => (
+            <div key={task.task_id} className="div-card">
+              <div className="div-card-row">
+                <label className={"card-label w-30 " + getTaskStatusClass(task.task_status ?? "")}>
+                  {CodeTaskStatus[task.task_status ?? ""] + (task.task_status !== "0" ? " (" + task.task_priority + ")" : "")}
+                </label>
+                <div className="flex items-center card-label bg-blue-100 w-30">
+                  {CodeMusicTaskType[task.task_sub_type ?? ""] + (task.task_status === "0" ? " (" + task.task_priority + ")" : "")}
+                </div>
+              </div>
+              <div className="div-card-row">
+                {task.artist_name}
+              </div>
+              <div className="div-card-row">
+                <button
+                    className="button-link card-title"
+                    onClick={() => handleShowForm(task.task_id ?? "")}>
+                  {task.album_name}
+                </button>
+              </div>
+              {task.last_acted_at && (
+                <div className="div-card-row">
+                  <AlarmClockCheck size={14} />
+                  {formatDateTime(task.last_acted_at, "yyyy/MM/dd")}
+                  <span>&ensp;{"(" + task.action_count + ")"}</span>
+                </div>
+              )}
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">
