@@ -449,8 +449,6 @@ const TrackForm = () => {
             </textarea>
           </div>
         </div>
-        <div className="div-input-row">
-        </div>
       </div>
       <div className="footer-area">
         <div className="footer-area-sub">
