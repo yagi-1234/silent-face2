@@ -1,7 +1,6 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import type { NextPage } from 'next'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Check, Clock, Plus } from 'lucide-react'
 
@@ -124,214 +123,236 @@ const LibraryForm = () => {
       <Breadcrumb />
       <h2 className="header-title">{CodeTaskType[item.library_type]} Form</h2>
       <p className="timestamp">{item.item_id ? "last updated at: " + formatDateTime(item.updated_at, 'yyyy/MM/dd HH:mm') + " (" + item.updated_count + ")" : '(Not registered)'}</p>
-      <div className="input-form">
-        <label htmlFor="item_type">{itemMst?.item_type}</label>
-        <input type="text"
-            id="item_type"
-            name="item_type"
-            value={item.item_type ?? ''}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="item_name_1">{itemMst?.item_name}</label>
-        <input type="text"
-            id="item_name_1"
-            name="item_name_1"
-            value={item.item_name_1 ?? ''}
-            onChange={handleChange} />
-      </div>
-      {itemMst?.item_name_2 &&
-        <div className="input-form">
-          <label htmlFor="item_name_2"></label>
+      <div>
+        {itemMst?.item_type &&
+          <div className="div-input-row">
+            <label htmlFor="item_type" className="input-label">{itemMst?.item_type}</label>
+            <input type="text"
+                id="item_type"
+                name="item_type"
+                className="w-24"
+                value={item.item_type ?? ""}
+                onChange={handleChange} />
+          </div>
+        }
+        <div className="div-input-row">
+          <label htmlFor="item_name_1" className="input-label">{itemMst?.item_name}</label>
           <input type="text"
-              id="item_name_2"
-              name="item_name_2"
-              value={item.item_name_2 ?? ''}
+              id="item_name_1"
+              name="item_name_1"
+              className="w-full sm:w-160"
+              value={item.item_name_1 ?? ""}
               onChange={handleChange} />
         </div>
-      }
-      {itemMst?.author_name && 
-        <div className="input-form">
-          <label htmlFor="author_name_1">{itemMst?.author_name}</label>
-          <input type="text"
-              id="author_name_1"
-              name="author_name_1"
-              value={item.author_name_1 ?? ''}
-              onChange={handleChange} />
+        {itemMst?.item_name_2 &&
+          <div className="div-input-row">
+            <input type="text"
+                id="item_name_2"
+                name="item_name_2"
+                className="w-full sm:w-160"
+                value={item.item_name_2 ?? ''}
+                onChange={handleChange} />
+          </div>
+        }
+        {itemMst?.author_name &&
+          <div className="div-input-row">
+            <label htmlFor="author_name_1" className="input-label">{itemMst?.author_name}</label>
+            <input type="text"
+                id="author_name_1"
+                name="author_name_1"
+                className="w-full sm:w-160"
+                value={item.author_name_1 ?? ''}
+                onChange={handleChange} />
+          </div>
+        }
+        {itemMst?.author_name_2 && 
+          <div className="div-input-row">
+            <label htmlFor="author_name_2" className="input-label">{itemMst?.author_name_2}</label>
+            <input type="text"
+                id="author_name_2"
+                name="author_name_2"
+                className="w-full sm:w-160"
+                value={item.author_name_2 ?? ''}
+                onChange={handleChange} />
+          </div>
+        }
+        {itemMst?.owner_name &&
+          <div className="div-input-row">
+            <label htmlFor="owner_name" className="input-label">{itemMst?.owner_name}</label>
+            <input type="text"
+                id="owner_name"
+                name="owner_name"
+                className="w-full sm:w-160"
+                value={item.owner_name ?? ''}
+                onChange={handleChange} />
+          </div>
+        }
+        {itemMst?.source_name && 
+          <div className="div-input-row">
+            <label htmlFor="source_name" className="input-label">{itemMst?.source_name}</label>
+            <input type="text"
+                id="source_name"
+                name="source_name"
+                className="w-full sm:w-160"
+                value={item.source_name ?? ''}
+                onChange={handleChange} />
+          </div>
+        }
+        {itemMst?.actors_1 && 
+          <div className="div-input-row">
+            <label htmlFor="actors_1" className="input-label">{itemMst?.actors_1}</label>
+            <input type="text"
+                id="actors_1"
+                name="actors_1"
+                className="w-full sm:w-160"
+                value={item.actors_1 ?? ''}
+                onChange={handleChange} />
+          </div>
+        }
+        {itemMst?.actors_2 && 
+          <div className="div-input-row">
+            <label htmlFor="actors_2" className="input-label">{itemMst?.actors_2}</label>
+            <input type="text"
+                id="actors_2"
+                name="actors_2"
+                className="w-full sm:w-160"
+                value={item.actors_2 ?? ''}
+                onChange={handleChange} />
+          </div>
+        }
+        {itemMst?.music && 
+          <div className="div-input-row">
+            <label htmlFor="music" className="input-label">{itemMst?.music}</label>
+            <input type="text"
+                id="music"
+                name="music"
+                className="w-full sm:w-160"
+                value={item.music ?? ''}
+                onChange={handleChange} />
+          </div>
+        }
+        <div className="div-input-row">
+          <label htmlFor="released" className="input-label">{itemMst?.released}</label>
+          <PartialDateInput
+              name="released"
+              value={item.released ?? ''}
+              onChange={handleChangeDate}
+              mode="flexible" />
         </div>
-      }
-      {itemMst?.author_name_2 && 
-        <div className="input-form">
-          <label htmlFor="author_name_2">{itemMst?.author_name_2}</label>
-          <input type="text"
-              id="author_name_2"
-              name="author_name_2"
-              value={item.author_name_2 ?? ''}
-              onChange={handleChange} />
-        </div>
-      }
-      {itemMst?.owner_name &&
-        <div className="input-form">
-          <label htmlFor="owner_name">{itemMst?.owner_name}</label>
-          <input type="text"
-              id="owner_name"
-              name="owner_name"
-              value={item.owner_name ?? ''}
-              onChange={handleChange} />
-        </div>
-      }
-      {itemMst?.source_name && 
-        <div className="input-form">
-          <label htmlFor="source_name">{itemMst?.source_name}</label>
-          <input type="text"
-              id="source_name"
-              name="source_name"
-              value={item.source_name ?? ''}
-              onChange={handleChange} />
-        </div>
-      }
-      {itemMst?.actors_1 && 
-        <div className="input-form">
-          <label htmlFor="actors_1">{itemMst?.actors_1}</label>
-          <input type="text"
-              id="actors_1"
-              name="actors_1"
-              value={item.actors_1 ?? ''}
-              onChange={handleChange} />
-        </div>
-      }
-      {itemMst?.actors_2 && 
-        <div className="input-form">
-          <label htmlFor="actors_2">{itemMst?.actors_2}</label>
-          <input type="text"
-              id="actors_2"
-              name="actors_2"
-              value={item.actors_2 ?? ''}
-              onChange={handleChange} />
-        </div>
-      }
-      {itemMst?.music && 
-        <div className="input-form">
-          <label htmlFor="music">{itemMst?.music}</label>
-          <input type="text"
-              id="music"
-              name="music"
-              value={item.music ?? ''}
-              onChange={handleChange} />
-        </div>
-      }
-      <div className="input-form">
-        <label htmlFor="released">{itemMst?.released}</label>
-        <PartialDateInput
-            name="released"
-            value={item.released ?? ''}
-            onChange={handleChangeDate}
-            mode="flexible" />
-      </div>
-      {itemMst?.volumes &&
-        <div className="input-form">
-          <label htmlFor="volumes">{itemMst?.volumes}</label>
-          <input type="number"
-              id="volumes"
-              name="volumes"
-              className="numeric-field text-sm"
-              value={item.volumes ?? ''}
-              onChange={handleChange} />
-          {itemMst?.completed_flag &&
-            <div>
-              <label htmlFor="completed_flag">Completed</label>
-              <input type="checkbox"
-                  id="completed_flag"
-                  name="completed_flag"
-                  className="w-5"
-                  checked={item.completed_flag === '1'}
-                  value={item.completed_flag}
-                  onChange={handleChange} />
+        {itemMst?.volumes &&
+          <div className="div-input-row">
+            <div className="div-row-left">
+              <div className="flex-1">
+                <label htmlFor="volumes" className="input-label">{itemMst?.volumes}</label>
+                <input type="number"
+                    id="volumes"
+                    name="volumes"
+                    className="numeric-field w-24"
+                    value={item.volumes ?? ''}
+                    onChange={handleChange} />
+              </div>
+              {itemMst?.completed_flag &&
+                <div className="flex-1">
+                  <label htmlFor="completed_flag" className="input-label">Completed</label>
+                  <input type="checkbox"
+                      id="completed_flag"
+                      name="completed_flag"
+                      className="w-5"
+                      checked={item.completed_flag === '1'}
+                      value={item.completed_flag}
+                      onChange={handleChange} />
+                </div>
+              }
             </div>
-          }
+          </div>
+        }
+        <div className="div-input-row">
+          <label htmlFor="genre" className="input-label">Genre</label>
+          <input type="text"
+              id="genre"
+              name="genre"
+              className="w-full sm:w-160"
+              value={item.genre ?? ''}
+              onChange={handleChange} />
         </div>
-      }
-      <div className="input-form">
-        <label htmlFor="genre">Genre</label>
-        <input type="text"
-            id="genre"
-            name="genre"
-            value={item.genre ?? ''}
-            onChange={handleChange} />
-      </div>
-      {itemMst?.owned_flag && 
-        <div className="input-form">
-          <label htmlFor="owned_flag">Owned</label>
+        {itemMst?.owned_flag && 
+          <div className="div-input-row">
+            <label htmlFor="owned_flag" className="input-label">Owned</label>
+            <div className="div-input-left">
+              <select
+                  id="owned_flag"
+                  name="owned_flag"
+                  className="w-24 mr-2"
+                  value={item.owned_flag}
+                  onChange={handleChange} >
+                <option key="" value=""></option>
+                {Object.entries(CodeOwnedFlag)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+              <PartialDateInput
+                  name="added_at"
+                  value={formatDateTime(item.added_at, 'yyyy/MM/dd') ?? ''}
+                  onChange={handleChangeDate}
+                  mode="flexible" />
+            </div>
+          </div>
+        }
+        <div className="div-input-row">
+          <label htmlFor="grade" className="input-label">Grade</label>
           <select
-              id="owned_flag"
-              name="owned_flag"
+              id="grade"
+              name="grade"
               className="w-24"
-              value={item.owned_flag}
+              value={item.grade ?? ""}
               onChange={handleChange} >
             <option key="" value=""></option>
-            {Object.entries(CodeOwnedFlag)
+            {Object.entries(CodeLibraryGrade)
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([key, label]) => (<option key={key} value={key}>{label}</option>
             ))}
           </select>
-          <PartialDateInput
-              name="added_at"
-              value={formatDateTime(item.added_at, 'yyyy/MM/dd') ?? ''}
-              onChange={handleChangeDate}
-              mode="flexible" />
         </div>
-      }
-      <div className="input-form">
-        <label htmlFor="grade">Grade</label>
-        <select
-            id="grade"
-            name="grade"
-            className="w-24"
-            value={item.grade ?? ""}
-            onChange={handleChange} >
-          <option key="" value=""></option>
-          {Object.entries(CodeLibraryGrade)
-              .sort(([a], [b]) => a.localeCompare(b))
-              .map(([key, label]) => (<option key={key} value={key}>{label}</option>
-          ))}
-        </select>
-      </div>
-      <div className="input-form">
-        <label htmlFor="progress">Progress</label>
-        <input type="number"
-            id="progress"
-            name="progress"
-            className="numeric-field text-sm"
-            value={item.progress ?? ''}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="action_count">{itemMst?.action_count}</label>
-        <button
-            className="button-plus"
-            onClick={handlePlus} >
-          <Plus />
-        </button>
-        <input type="number"
-            id="action_count"
-            name="action_count"
-            className="numeric-field text-sm"
-            value={item.action_count ?? ''}
-            onChange={handleChange} />
-        <PartialDateInput
-            name="last_actioned_at"
-            value={formatDateTime(item.last_actioned_at, 'yyyy/MM/dd') ?? ''}
-            onChange={handleChangeDate}
-            mode="flexible" />
-      </div>
-      <div className="input-form-full">
-        <label htmlFor="item_comment">Comment</label>
-        <textarea id="item_comment"
-            name="item_comment"
-            rows={3}
-            value={item.item_comment ?? ''}
-            onChange={handleChange} >
-        </textarea>
+        <div className="div-input-row">
+          <label htmlFor="progress" className="input-label">Progress</label>
+          <input type="number"
+              id="progress"
+              name="progress"
+              className="numeric-field w-24"
+              value={item.progress ?? ''}
+              onChange={handleChange} />
+        </div>
+        <div className="div-input-row">
+          <label htmlFor="action_count" className="input-label">{itemMst?.action_count}</label>
+          <div className="div-input-left">
+            <button
+                className="button-plus"
+                onClick={handlePlus} >
+              <Plus />
+            </button>
+            <input type="number"
+                id="action_count"
+                name="action_count"
+                className="numeric-field w-18"
+                value={item.action_count ?? ''}
+                onChange={handleChange} />
+            <PartialDateInput
+                name="last_listened_at"
+                value={formatDateTime(item.last_actioned_at, 'yyyy/MM/dd') ?? ''}
+                onChange={handleChangeDate}
+                mode="flexible" />
+          </div>
+        </div>
+        <div className="div-input-row">
+          <label htmlFor="item_comment" className="input-label">Comment</label>
+          <textarea id="item_comment"
+              name="item_comment"
+              rows={3}
+              value={item.item_comment ?? ''}
+              onChange={handleChange} >
+          </textarea>
+        </div>
       </div>
       <div className="footer-area">
         <div className="footer-area-sub">

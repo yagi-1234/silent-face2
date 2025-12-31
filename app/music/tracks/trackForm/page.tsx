@@ -218,9 +218,7 @@ const TrackForm = () => {
       <p className="timestamp">{track.track_id ? "last updated at: " + formatDateTime(track.updated_at, 'yyyy/MM/dd HH:mm') + " (" + track.updated_count + ")" : '(Not registered)'}</p>
       <div>
         <div className="div-input-row">
-          <label htmlFor="artist_name_1"
-              className="label-fixed input-label">Artist Name
-          </label>
+          <label htmlFor="artist_name_1" className="label-fixed input-label">Artist Name</label>
           <input type="text"
               id="artist_name_1"
               name="artist_name_1"
