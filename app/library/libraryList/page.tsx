@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ArrowLeft, FileText, Plus, Search } from 'lucide-react'
+import { AlarmClockCheck, ArrowLeft, AtSign, CalendarCheck, FileText, Pen, Plus, Search, Spotlight, Star } from 'lucide-react'
 
 import { fetchItems, fetchItemMst } from '@/actions/library/library-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -108,10 +108,10 @@ const LibraryList = () => {
           onClose={() => setMessage('')} />
       <Breadcrumb />
       <h2 className="header-title">{CodeTaskType[inLibraryType]} List</h2>
-      <div className="searchPanel">
-        {itemMst?.item_type && 
-          <div className="input-form">
-            <label htmlFor="item_type">{itemMst?.item_type}</label>
+      <div>
+        {itemMst?.item_type &&
+          <div className="div-input-row">
+            <label htmlFor="item_type" className="input-label">{itemMst?.item_type}</label>
             <input type="text"
                 id="item_type"
                 name="item_type"
@@ -123,19 +123,20 @@ const LibraryList = () => {
                 onChange={handleSearchChange} />
           </div>
         }
-        <div className="input-form">
-          <label htmlFor="item_name">{itemMst?.item_name}</label>
+        <div className="div-input-row">
+          <label htmlFor="item_name" className="input-label">{itemMst?.item_name}</label>
           <input type="text"
               id="item_name"
               name="item_name"
+              className="w-full sm:w-160"
               value={condition.item_name ?? ''}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSearch()
               }}
               onChange={handleSearchChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="task_status">Task Status</label>
+        <div className="div-input-row">
+          <label htmlFor="task_status" className="input-label">Task Status</label>
           <select
               id="task_status"
               name="task_status"
@@ -151,78 +152,153 @@ const LibraryList = () => {
                   </option>
             ))}
           </select>
-          <button className="button-search button-md"
+        </div>
+        <div className="div-row-right">
+          <button className="button-search"
               onClick={handleSearch}>
             <Search size={16} />
           </button>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            {itemMst?.item_type && <th>{itemMst.item_type}</th> }
-            <th>{itemMst?.item_name}</th>
-            {itemMst?.item_name_2 && <th></th> }
-            <th>{itemMst?.author_name}</th>
-            <th>{itemMst?.author_name_2}</th>
-            <th>{itemMst?.owner_name}</th>
-            <th>{itemMst?.actors_1}</th>
-            <th>{itemMst?.released}</th>
-            {itemMst?.volumes && <th>{itemMst.volumes}</th> }
-            {itemMst?.completed_flag && <th>{itemMst.completed_flag}</th> }
-            <th>{itemMst?.genre}</th>
-            {itemMst?.owned_flag && <th>{itemMst.owned_flag}</th> }
-            <th>Grade</th>
-            <th>Progress</th>
-            <th>{itemMst?.action_count}</th>
-            <th>{itemMst?.last_actioned_at}</th>
-            <th>Tasked</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.item_id}>
-              {itemMst?.item_type && 
-                <td>{item.item_type}</td>
-              }
-              <td>{item.item_name_1}</td>
-              {itemMst?.item_name_2 && 
-                <td>{ellipsis(item.item_name_2, 24)}</td> 
-              }
-              <td>{item.author_name_1}</td>
-              <td>{item.author_name_2}</td>
-              <td>{item.owner_name}</td>
-              <td>{item.actors_1}</td>
-              <td>{formatDateTime(item.released, "yyyy/MM/dd")}</td>
-              {itemMst?.volumes && <td className="numeric-field">{item.volumes}</td> }
-              {itemMst?.completed_flag && <td className="numeric-field">{CodeCompletedFlag[item.completed_flag]}</td> }
-              <td>{item.genre}</td>
-              {itemMst?.owned_flag && 
-                <td className="text-center">{CodeOwnedFlag[item.owned_flag]}</td>
-              }
-              <td>{CodeLibraryGrade[item.grade ?? ""]}</td>
-              <td className="numeric-field">{item.progress}</td>
-              <td className="numeric-field">{item.action_count}</td>
-              <td>{formatDateTime(item.last_actioned_at, "yyyy/MM/dd")}</td>
-              <td className="numeric-field">
-                <button
-                    className="button-link"
-                    onClick={() => handleShowTask(item.task_id ?? "")}>
-                  {CodeTaskStatus[item.task_status ?? ""]}
-                </button>
-              </td>
-              <td>
-                <button
-                    className="button-page"
-                    onClick={() => handleShowForm(item.item_id)} >
-                  <FileText className="w-5 h-5" />
-                </button>
-              </td>
+      <div className="hidden sm:block">
+        <table>
+          <thead>
+            <tr>
+              {itemMst?.item_type && <th>{itemMst.item_type}</th> }
+              <th>{itemMst?.item_name}</th>
+              {itemMst?.item_name_2 && <th></th> }
+              <th>{itemMst?.author_name}</th>
+              <th>{itemMst?.author_name_2}</th>
+              <th>{itemMst?.owner_name}</th>
+              <th>{itemMst?.actors_1}</th>
+              <th>{itemMst?.released}</th>
+              {itemMst?.volumes && <th>{itemMst.volumes}</th> }
+              {itemMst?.completed_flag && <th>{itemMst.completed_flag}</th> }
+              <th>{itemMst?.genre}</th>
+              {itemMst?.owned_flag && <th>{itemMst.owned_flag}</th> }
+              <th>Grade</th>
+              <th>Progress</th>
+              <th>{itemMst?.action_count}</th>
+              <th>{itemMst?.last_actioned_at}</th>
+              <th>Tasked</th>
+              <th></th>
             </tr>
+          </thead>
+          <tbody>
+            {items.map(item => (
+              <tr key={item.item_id}>
+                {itemMst?.item_type && 
+                  <td>{item.item_type}</td>
+                }
+                <td>{item.item_name_1}</td>
+                {itemMst?.item_name_2 && 
+                  <td>{ellipsis(item.item_name_2, 24)}</td> 
+                }
+                <td>{item.author_name_1}</td>
+                <td>{item.author_name_2}</td>
+                <td>{item.owner_name}</td>
+                <td>{item.actors_1}</td>
+                <td>{formatDateTime(item.released, "yyyy/MM/dd")}</td>
+                {itemMst?.volumes && <td className="numeric-field">{item.volumes}</td> }
+                {itemMst?.completed_flag && <td className="numeric-field">{CodeCompletedFlag[item.completed_flag]}</td> }
+                <td>{item.genre}</td>
+                {itemMst?.owned_flag && 
+                  <td className="text-center">{CodeOwnedFlag[item.owned_flag]}</td>
+                }
+                <td>{CodeLibraryGrade[item.grade ?? ""]}</td>
+                <td className="numeric-field">{item.progress}</td>
+                <td className="numeric-field">{item.action_count}</td>
+                <td>{formatDateTime(item.last_actioned_at, "yyyy/MM/dd")}</td>
+                <td className="numeric-field">
+                  <button
+                      className="button-link"
+                      onClick={() => handleShowTask(item.task_id ?? "")}>
+                    {CodeTaskStatus[item.task_status ?? ""]}
+                  </button>
+                </td>
+                <td>
+                  <button
+                      className="button-page"
+                      onClick={() => handleShowForm(item.item_id)} >
+                    <FileText className="w-5 h-5" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="block sm:hidden">
+        <div className="div-card-area">
+          {items.map(item => (
+            <div key={item.item_id} className="div-card">
+              <div className="div-card-row">
+                <button
+                    className="button-link card-title"
+                    onClick={() => handleShowForm(item.item_id)}>
+                  {item.item_name_1}
+                </button>
+              </div>
+              {itemMst?.item_name_2 &&
+                <div className="div-card-row">{item.item_name_2}</div>
+              }
+              {item.author_name_1 &&
+                <div className="div-card-row">
+                  <Pen size={14} />
+                  {item.author_name_1}
+                  {item.author_name_2 &&
+                    <>
+                      <span>&ensp;/&ensp;</span>
+                      {item.author_name_2}
+                    </>
+                  }
+                </div>
+              }
+              {item.owner_name &&
+                <div className="div-card-row">
+                  <AtSign size={14} />
+                  {item.owner_name}
+                </div>
+              }
+              {item.actors_1 &&
+                <div className="div-card-row">
+                  <Spotlight size={14} />
+                  {item.actors_1}
+                </div>
+              }
+              <div className="div-card-row">
+                <CalendarCheck size={14} />
+                {formatDateTime(item.released, "yyyy/MM/dd")}
+                {itemMst?.volumes &&
+                  <>
+                    <span>&ensp;</span>
+                    Vol.{item.volumes}
+                  </>
+                }
+                {itemMst?.completed_flag &&
+                  <>
+                    {item.completed_flag === "1" ? "Completed" : ""}
+                  </>
+                }
+                {itemMst?.owned_flag &&
+                  <>
+                    <span>&ensp;</span>
+                    {"Owned " + CodeOwnedFlag[item.owned_flag]}
+                  </>
+                }
+              </div>
+              <div className="div-card-row">
+                <Star size={14} />
+                {CodeLibraryGrade[item.grade ?? ""]}
+                <span>&ensp;</span>
+                <AlarmClockCheck size={14} />
+                {formatDateTime(item.last_actioned_at, "yyyy/MM/dd")}
+                <span>&ensp;{"(" + item.action_count + ")"}</span>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">
