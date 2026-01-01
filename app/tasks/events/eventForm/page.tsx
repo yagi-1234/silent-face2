@@ -90,103 +90,106 @@ const EventForm = () => {
       <Breadcrumb />
       <h2 className="header-title">Event Form</h2>
       <p className="timestamp">{event.event_id ? "last updated at: " + formatDateTime(event.updated_at, 'yyyy/MM/dd HH:mm') + " (" + event.updated_count + ")" : '(Not registered)'}</p>
-      <div className="input-form">
-        <label htmlFor="event_type">Event Type</label>
-        <select
-            id="event_type"
-            name="event_type"
-            className="w-48"
-            value={event.event_type}
-            onChange={(e) => handleChange(e)}>
-          <option value=""></option>
-          {Object.entries(CodeEventType).map(([key, label]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="input-form">
-        <label htmlFor="event_name">Event Name</label>
-        <input type="text"
-            id="event_name"
-            name="event_name"
-            value={event.event_name ?? ''}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="event_name_2"></label>
-        <input type="text"
-            id="event_name_2"
-            name="event_name_2"
-            value={event.event_name_2 ?? ''}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="location">Location</label>
-        <input type="text"
-            id="location"
-            name="location"
-            value={event.location ?? ''}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="start_at">Start</label>
-        <PartialDateInput
-            name="start_at"
-            value={formatDateTime(event.start_at,'yyyy/MM/dd') ?? ''}
-            onChange={handleChangeDate}
-            mode="flexible" />
-      </div>
-      <div className="input-form">
-        <label htmlFor="start_time">Time</label>
-        <input type="text"
-            id="start_time"
-            name="start_time"
-            className="w-24"
-            value={event.start_time ?? ''}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="organized">Organized</label>
-        <input type="text"
-            id="organized"
-            name="organized"
-            value={event.organized ?? ''}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="event_url">Website</label>
-        <input type="text"
-            id="event_url"
-            name="event_url"
-            value={event.event_url ?? ''}
-            onChange={handleChange} />
-      </div>
-      <div className="input-form">
-        <label htmlFor="priority">Priority</label>
-        <select
-            id="priority"
-            name="priority"
-            className="w-48"
-            value={event.priority}
-            onChange={(e) => handleChange(e)}>
-          <option value=""></option>
-          {Object.entries(CodePriorityType).map(([key, label]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="input-form-full">
-        <label htmlFor="event_comment">Comment</label>
-        <textarea id="event_comment"
-            name="event_comment"
-            rows={3}
-            value={event.event_comment ?? ''}
-            onChange={handleChange} >
-        </textarea>
+
+      <div className="hidden sm:block">
+        <div className="input-form">
+          <label htmlFor="event_type">Event Type</label>
+          <select
+              id="event_type"
+              name="event_type"
+              className="w-48"
+              value={event.event_type}
+              onChange={(e) => handleChange(e)}>
+            <option value=""></option>
+            {Object.entries(CodeEventType).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="input-form">
+          <label htmlFor="event_name">Event Name</label>
+          <input type="text"
+              id="event_name"
+              name="event_name"
+              value={event.event_name ?? ''}
+              onChange={handleChange} />
+        </div>
+        <div className="input-form">
+          <label htmlFor="event_name_2"></label>
+          <input type="text"
+              id="event_name_2"
+              name="event_name_2"
+              value={event.event_name_2 ?? ''}
+              onChange={handleChange} />
+        </div>
+        <div className="input-form">
+          <label htmlFor="location">Location</label>
+          <input type="text"
+              id="location"
+              name="location"
+              value={event.location ?? ''}
+              onChange={handleChange} />
+        </div>
+        <div className="input-form">
+          <label htmlFor="start_at">Start</label>
+          <PartialDateInput
+              name="start_at"
+              value={formatDateTime(event.start_at,'yyyy/MM/dd') ?? ''}
+              onChange={handleChangeDate}
+              mode="flexible" />
+        </div>
+        <div className="input-form">
+          <label htmlFor="start_time">Time</label>
+          <input type="text"
+              id="start_time"
+              name="start_time"
+              className="w-24"
+              value={event.start_time ?? ''}
+              onChange={handleChange} />
+        </div>
+        <div className="input-form">
+          <label htmlFor="organized">Organized</label>
+          <input type="text"
+              id="organized"
+              name="organized"
+              value={event.organized ?? ''}
+              onChange={handleChange} />
+        </div>
+        <div className="input-form">
+          <label htmlFor="event_url">Website</label>
+          <input type="text"
+              id="event_url"
+              name="event_url"
+              value={event.event_url ?? ''}
+              onChange={handleChange} />
+        </div>
+        <div className="input-form">
+          <label htmlFor="priority">Priority</label>
+          <select
+              id="priority"
+              name="priority"
+              className="w-48"
+              value={event.priority}
+              onChange={(e) => handleChange(e)}>
+            <option value=""></option>
+            {Object.entries(CodePriorityType).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="input-form-full">
+          <label htmlFor="event_comment">Comment</label>
+          <textarea id="event_comment"
+              name="event_comment"
+              rows={3}
+              value={event.event_comment ?? ''}
+              onChange={handleChange} >
+          </textarea>
+        </div>
       </div>
       <div className="footer-area">
         <div className="footer-area-sub">

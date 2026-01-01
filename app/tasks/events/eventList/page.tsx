@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ArrowLeft, CalendarDays, FileText, List, Plus } from 'lucide-react'
+import { ArrowLeft, Briefcase, CalendarDays, FileText, Flower2, List, MicVocal, Plus, ShoppingCart } from 'lucide-react'
 
 import { fetchEvents } from '@/actions/tasks/event-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -46,6 +46,7 @@ const EventList = () => {
 
   const [events, setEvents] = useState<EventItem[]>([])
   const [isListView, setIsListView] = useState<boolean>(false)
+  const [selectMonth, setSelectMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
 
   const handleShowForm = (eventId: string) => {
     addToHistory({ title: 'eventCalendar', path: `${pathname}?is_list_view=${isListView}`})
@@ -82,13 +83,13 @@ const EventList = () => {
     const colorBlue = '#60a5fa'
     const colorGreen = '#4ade80'
     const colorYellow = '#facc15'
-    const colorRed = '#f87171'
+    const colorRed = '#f87171' // red-400
     const colorPurple = '#c084fc'
     const colorGray = '#9ca3af'
     let color = colorGray
     if (event.event_type === '01') color = colorRed
     if (event.event_type === '03') color = colorBlue
-    if (event.event_type === '04') color = colorBlue
+    if (event.event_type === '04') color = colorYellow
     if (event.event_type === '08') color = colorPurple
     return {
       id: event.event_id,
@@ -100,6 +101,19 @@ const EventList = () => {
     }
   })
 
+  const getEventTypeIcon = (eventType: string) => {
+    if (eventType === '01') return <div className="border bg-red-400 text-white"><MicVocal size={16} /></div>
+    if (eventType === '03') return <div className="border bg-yellow-400 text-white"><ShoppingCart size={16} /></div>
+    if (eventType === '04') return <div className="border bg-blue-400 text-white"><Flower2 size={16} /></div>
+    if (eventType === '08') return <div className="border bg-purple-400 text-white"><Briefcase size={16} /></div>
+  }
+
+  const start = new Date(2025, 9, 1)
+  const end = new Date(2025, 10, 1)
+  const handleCalendarMove = (move: number) => {
+    setSelectMonth(new Date(selectMonth.getFullYear(), selectMonth.getMonth() + move, 1))
+  }
+
   return (
     <div className="root-panel">
       <MessageBanner
@@ -109,65 +123,108 @@ const EventList = () => {
           onClose={() => setMessage('')} />
       <Breadcrumb />
       <h2 className="header-title">Event</h2>
-      {isListView &&
-        <>
-          <div className="searchPanel">
+      <div className="block sm:hidden">
+        <div>
+          <div className="fc fc-direction-ltr">
+            <div className="fc-header-toolbar fc-toolbar">
+              <h2 className="fc-toolbar-title">{formatDateTime(selectMonth, "MMM yyyy")}</h2>
+              <div>
+                <button
+                    className="fc-button fc-button-primary"
+                    onClick={() => setSelectMonth(new Date(new Date().getFullYear(), new Date().getMonth(), 1))}>
+                  today
+                </button>
+                <div className="fc-button-group">
+                  <button
+                      className="fc-button fc-button-primary"
+                      onClick={() => setSelectMonth(new Date(selectMonth.getFullYear(), selectMonth.getMonth() - 1, 1))}>
+                    <span className="fc-icon fc-icon-chevron-left" />
+                  </button>
+                  <button className="fc-button fc-button-primary"
+                      onClick={() => setSelectMonth(new Date(selectMonth.getFullYear(), selectMonth.getMonth() + 1, 1))}>
+                    <span className="fc-icon fc-icon-chevron-right" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Event Name</th>
-                <th>Location</th>
-                <th>Start At</th>
-                <th />
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {events.map(event => (
-                <tr key={event.event_id} className="leading-none">
-                  <td>{CodeEventType[event.event_type]}</td>
-                  <td>{event.event_name}</td>
-                  <td>{event.location}</td>
-                  <td>{formatDateTime(event.start_at, "yyyy/MM/dd")}</td>
-                  <td>{event.start_time}</td>
-                  <td>
-                    <button
-                        className="button-page"
-                        onClick={() => handleShowForm(event.event_id ?? "")} >
-                      <FileText className="w-5 h-5" />
-                    </button>
-                  </td>
+        </div>
+        <div className="space-y-1">
+          {events.filter(e => new Date(e.start_at) >= new Date(selectMonth) && new Date(e.start_at) < new Date(selectMonth.getFullYear(), selectMonth.getMonth() + 1, 1)).map(event => (
+            <div className="border rounded-sm p-1 shadow-sm flex items-center">
+              <span className="font-bold w-14">{formatDateTime(event.start_at, "MM/dd EEE")}</span>
+              {getEventTypeIcon(event.event_type)}
+              <span>&ensp;</span>
+              <button
+                  className="button-link card-title"
+                  onClick={() => handleShowForm(event.event_id ?? "")}>
+                {event.event_name}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="hidden sm:block">
+        {isListView &&
+          <>
+            <div className="searchPanel">
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Event Name</th>
+                  <th>Location</th>
+                  <th>Start At</th>
+                  <th />
+                  <th />
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      }
-      {!isListView &&
-        <FullCalendar
-            plugins={[dayGridPlugin]}
-            initialView="dayGridMonth"
-            events={calendarEvents}
-            eventClick={handleEventClick}
-            eventContent={(arg) => (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="truncate">
+              </thead>
+              <tbody>
+                {events.map(event => (
+                  <tr key={event.event_id} className="leading-none">
+                    <td>{CodeEventType[event.event_type]}</td>
+                    <td>{event.event_name}</td>
+                    <td>{event.location}</td>
+                    <td>{formatDateTime(event.start_at, "yyyy/MM/dd")}</td>
+                    <td>{event.start_time}</td>
+                    <td>
+                      <button
+                          className="button-page"
+                          onClick={() => handleShowForm(event.event_id ?? "")} >
+                        <FileText className="w-5 h-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        }
+        {!isListView &&
+          <FullCalendar
+              plugins={[dayGridPlugin]}
+              initialView="dayGridMonth"
+              events={calendarEvents}
+              eventClick={handleEventClick}
+              eventContent={(arg) => (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="truncate">
+                        {arg.event.title}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
                       {arg.event.title}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {arg.event.title}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-            height="auto"
-            aspectRatio={1.2} />
-      }
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              height="auto"
+              aspectRatio={1.2} />
+        }
+      </div>
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">
@@ -177,18 +234,20 @@ const EventList = () => {
             </button>
           </div>
           <div className="footer-right">
-            {isListView &&
-              <button className="button-second"
-                  onClick={() => handleChangeView(false)}>
-                <CalendarDays size={16} />
-              </button>
-            }
-            {!isListView &&
-              <button className="button-second"
-                  onClick={() => handleChangeView(true)}>
-                <List size={16} />
-              </button>
-            }
+            <div className="hidden sm:block">
+              {isListView &&
+                <button className="button-second"
+                    onClick={() => handleChangeView(false)}>
+                  <CalendarDays size={16} />
+                </button>
+              }
+              {!isListView &&
+                <button className="button-second"
+                    onClick={() => handleChangeView(true)}>
+                  <List size={16} />
+                </button>
+              }
+            </div>
             <button className="button-save"
                 onClick={() => handleShowForm("")}>
               <Plus size={16} />
