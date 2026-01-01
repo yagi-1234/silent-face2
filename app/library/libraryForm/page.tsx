@@ -338,7 +338,7 @@ const LibraryForm = () => {
                 value={item.action_count ?? ''}
                 onChange={handleChange} />
             <PartialDateInput
-                name="last_listened_at"
+                name="last_actioned_at"
                 value={formatDateTime(item.last_actioned_at, 'yyyy/MM/dd') ?? ''}
                 onChange={handleChangeDate}
                 mode="flexible" />
