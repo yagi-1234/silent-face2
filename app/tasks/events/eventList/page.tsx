@@ -151,7 +151,7 @@ const EventList = () => {
         </div>
         <div className="space-y-1">
           {events.filter(e => new Date(e.start_at) >= new Date(selectMonth) && new Date(e.start_at) < new Date(selectMonth.getFullYear(), selectMonth.getMonth() + 1, 1)).map(event => (
-            <div className="border rounded-sm p-1 shadow-sm flex items-center">
+            <div className="border rounded-sm p-1 shadow-sm flex items-center" key={event.event_id}>
               <span className="font-bold w-14">{formatDateTime(event.start_at, "MM/dd EEE")}</span>
               {getEventTypeIcon(event.event_type)}
               <span>&ensp;</span>

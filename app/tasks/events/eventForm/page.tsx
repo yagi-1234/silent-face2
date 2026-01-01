@@ -90,14 +90,13 @@ const EventForm = () => {
       <Breadcrumb />
       <h2 className="header-title">Event Form</h2>
       <p className="timestamp">{event.event_id ? "last updated at: " + formatDateTime(event.updated_at, 'yyyy/MM/dd HH:mm') + " (" + event.updated_count + ")" : '(Not registered)'}</p>
-
-      <div className="hidden sm:block">
-        <div className="input-form">
-          <label htmlFor="event_type">Event Type</label>
+      <div>
+        <div className="div-input-row">
+          <label htmlFor="event_type" className="input-label">Event Type</label>
           <select
               id="event_type"
               name="event_type"
-              className="w-48"
+              className="w-36"
               value={event.event_type}
               onChange={(e) => handleChange(e)}>
             <option value=""></option>
@@ -108,6 +107,9 @@ const EventForm = () => {
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="hidden sm:block">
         <div className="input-form">
           <label htmlFor="event_name">Event Name</label>
           <input type="text"
