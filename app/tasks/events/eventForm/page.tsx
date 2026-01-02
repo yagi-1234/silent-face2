@@ -107,43 +107,42 @@ const EventForm = () => {
             ))}
           </select>
         </div>
-      </div>
-
-      <div className="hidden sm:block">
-        <div className="input-form">
-          <label htmlFor="event_name">Event Name</label>
+        <div className="div-input-row">
+          <label htmlFor="event_name" className="input-label">Event Name</label>
           <input type="text"
               id="event_name"
               name="event_name"
+              className="w-full sm:w-160"
               value={event.event_name ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="event_name_2"></label>
+        <div className="div-input-row">
           <input type="text"
               id="event_name_2"
               name="event_name_2"
+              className="w-full sm:w-160"
               value={event.event_name_2 ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="location">Location</label>
+        <div className="div-input-row">
+          <label htmlFor="location" className="input-label">Location</label>
           <input type="text"
               id="location"
               name="location"
+              className="w-full sm:w-160"
               value={event.location ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="start_at">Start</label>
+        <div className="div-input-row">
+          <label htmlFor="start_at" className="input-label">Start</label>
           <PartialDateInput
               name="start_at"
               value={formatDateTime(event.start_at,'yyyy/MM/dd') ?? ''}
               onChange={handleChangeDate}
               mode="flexible" />
         </div>
-        <div className="input-form">
-          <label htmlFor="start_time">Time</label>
+        <div className="div-input-row">
+          <label htmlFor="start_time" className="input-label">Time</label>
           <input type="text"
               id="start_time"
               name="start_time"
@@ -151,28 +150,30 @@ const EventForm = () => {
               value={event.start_time ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="organized">Organized</label>
+        <div className="div-input-row">
+          <label htmlFor="organized" className="input-label">Organized</label>
           <input type="text"
               id="organized"
               name="organized"
+              className="w-full sm:w-160"
               value={event.organized ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="event_url">Website</label>
+        <div className="div-input-row">
+          <label htmlFor="event_url" className="input-label">Website</label>
           <input type="text"
               id="event_url"
               name="event_url"
+              className="w-full sm:w-160"
               value={event.event_url ?? ''}
               onChange={handleChange} />
         </div>
-        <div className="input-form">
-          <label htmlFor="priority">Priority</label>
+        <div className="div-input-row">
+          <label htmlFor="priority" className="input-label">Priority</label>
           <select
               id="priority"
               name="priority"
-              className="w-48"
+              className="w-32"
               value={event.priority}
               onChange={(e) => handleChange(e)}>
             <option value=""></option>
@@ -183,8 +184,8 @@ const EventForm = () => {
             ))}
           </select>
         </div>
-        <div className="input-form-full">
-          <label htmlFor="event_comment">Comment</label>
+        <div className="div-input-row">
+          <label htmlFor="event_comment" className="input-label">Comment</label>
           <textarea id="event_comment"
               name="event_comment"
               rows={3}
