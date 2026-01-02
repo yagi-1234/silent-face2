@@ -35,7 +35,7 @@ export default function RootLayout({
           </ConfirmModalProvider>
         </main>
         <footer className="text-center text-sm text-gray-500 mt-10 py-4 border-t">
-          &copy; 2025 Silent Face Appa
+          &copy; 2025 Silent Face App
         </footer>
       </body>
     </html>
