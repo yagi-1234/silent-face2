@@ -66,7 +66,10 @@ export const mergeArtist = async (newData: Artist): Promise<Artist> => {
 }
 
 const insertArtist = async (newData: Artist): Promise<Artist> => {
-    const { artist_id, album_count, owned_count, track_count, last_listened_at, country_name_1, origin_full_name_1, ...insertData } = newData
+    const { artist_id, album_count, owned_count, track_count, last_listened_at, country_name_1, origin_full_name_1, ...newData2 } = newData
+    const insertData = { ...newData2,
+      updated_at: new Date(),
+    }
     console.log("insertData:", insertData)
     const { data: result, error } = await supabase
         .from('mt11_artists')
