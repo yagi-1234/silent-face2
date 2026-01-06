@@ -11,8 +11,8 @@ export async function GET() {
 
 async function copyArtist() {
   console.log('start copyArtist')
-  const { error } = await supabase.rpc('backup_mt11_artist');
+  const { data, error } = await supabase.rpc('backup_mt11_artist');
   if (error) console.log('copyArtist failed')
-  else console.log('copyArtist success')
+  else console.log(data)
   console.log('end copyArtist')
 }
