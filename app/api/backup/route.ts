@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabaseAdmin'
 
 export async function GET() {
   console.log('start backup')
