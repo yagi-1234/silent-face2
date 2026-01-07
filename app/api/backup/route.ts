@@ -14,5 +14,5 @@ async function copyArtist() {
   const { data, error } = await supabase.rpc('backup_mt11_artist');
   if (error) console.log('copyArtist failed')
   else console.log(data)
-  console.log('end copyArtist')
+  console.log('end copyArtist2')
 }
