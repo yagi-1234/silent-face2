@@ -93,7 +93,11 @@ export const mergeAlbum = async (newData: Album): Promise<Album> => {
   }
 }
 const insertAlbum = async (newData: Album): Promise<Album> => {
-  const { album_id, artist_name_0, artist_name_1, artist_name_2, album_artist_name_1, album_point, track_count, track_length, ...insertData } = newData
+  const { album_id, artist_name_0, artist_name_1, artist_name_2, album_artist_name_1, album_point, track_count, track_length, ...newData2 } = newData
+  const insertData = {
+    ...newData2,
+    updated_at: new Date(),
+  }
   console.log("insertData:", insertData)
   const { data: result, error } = await supabase
       .from('mt21_albums')
