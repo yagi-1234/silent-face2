@@ -4,14 +4,16 @@ import { supabase } from '@/lib/supabaseAdmin'
 
 export async function GET() {
   console.log('start::backup')
-  await copyArtist()
+  await backupTable('mt11_artists')
+  await backupTable('mt21_albums')
+  await backupTable('mt31_tracks')
   console.log('end::backup')
   return NextResponse.json({ ok: true })
 }
 
-async function copyArtist() {
-  console.log('start:::copyArtist')
-  const { data, error } = await supabase.rpc('backup_mt11_artist');
-  if (error) console.log('copyArtist failed')
-  else console.log('end:::copyArtist2>>', data, 'data copied.')
+async function backupTable(tableName: string) {
+  console.log('start:::backupTable:::' + tableName)
+  const { data, error } = await supabase.rpc('backup_' + tableName);
+  if (error) console.log('backupTable failed:::' + tableName)
+  else console.log('end:::backupTable:::' + tableName + '>>', data, 'data copied.')
 }
