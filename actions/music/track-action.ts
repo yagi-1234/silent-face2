@@ -243,8 +243,13 @@ const copyToTrackRecord = (trackView: TrackView, processType: string) => {
     ...trackRow
   } = trackView
   if (processType === 'i') {
-    const { track_id, ...trackRow2 } = trackRow
-    return trackRow2
+    const trackRow2: TrackRow = {
+      ...trackRow,
+      created_at: new Date(),
+      updated_at: new Date(),
+    }
+    const { track_id, ...trackRow3 } = trackRow2
+    return trackRow3
   } else if (processType === 'u') {
     const trackRow2: TrackRow = {
       ...trackRow,
