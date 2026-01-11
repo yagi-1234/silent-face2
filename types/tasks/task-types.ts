@@ -54,7 +54,7 @@ export type TaskCondition = {
 
 export const initialTaskCondition: TaskCondition = {
   task_type: '',
-  task_status_list: ['0','1','2']
+  task_status_list: ['0','1']
 }
 
 export type MusicTask = {

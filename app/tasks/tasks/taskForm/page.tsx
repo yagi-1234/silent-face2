@@ -70,12 +70,12 @@ const TaskForm = () => {
     }))
   }
   const handleChangeDate = (value: string, name: string) => {
-    console.log('value', value)
     setTask(prev => ({
       ...prev, [name]: value
     }))
     let nextDate = name == 'next_date' ? (value ? new Date(value) : null) : task.next_date
     let limitDate = name == 'limit_date' ? (value ? new Date(value) : null) : task.limit_date
+    let firstActedAt = task.first_acted_at
     if (task.next_period && name === 'last_acted_at' && value) {
       nextDate = new Date(value)
       nextDate.setDate(nextDate.getDate() + Number(task.next_period))
@@ -88,33 +88,39 @@ const TaskForm = () => {
       limitDate = new Date(value)
       limitDate.setDate(limitDate.getDate() + Number(task.buffer_period))
     }
-    console.log('nextDate', nextDate)
+    if (name === 'last_acted_at' && task.action_count === 1) firstActedAt = new Date(value)
     setTask(prev => ({
       ...prev,
+      first_acted_at: firstActedAt,
       next_date: nextDate,
       limit_date: limitDate
     }))
   }
 
   const handlePlus = () => {
-    const lastActedAt = new Date()
-    let nextDate = task.next_date
-    let limitDate = task.limit_date
-    if (task.next_period) {
-      nextDate = new Date(lastActedAt)
-      nextDate.setDate(nextDate.getDate() + Number(task.next_period))
-      if (task.buffer_period) {
-        limitDate = new Date(nextDate)
-        limitDate.setDate(limitDate.getDate() + Number(task.buffer_period))
+    setTask(prev => {
+      const lastActedAt = new Date()
+      const actionCount = task.action_count == null ? 1 : Number(task.action_count) + 1
+      const firstActedAt = actionCount === 1 ? lastActedAt : task.first_acted_at
+      let nextDate = task.next_date
+      let limitDate = task.limit_date
+      if (task.next_period) {
+        nextDate = new Date(lastActedAt)
+        nextDate.setDate(nextDate.getDate() + Number(task.next_period))
+        if (task.buffer_period) {
+          limitDate = new Date(nextDate)
+          limitDate.setDate(limitDate.getDate() + Number(task.buffer_period))
+        }
       }
-    }
-    setTask(prev => ({
-      ...prev,
-      action_count: prev.action_count == null ? 1 : Number(prev.action_count) + 1,
-      last_acted_at: lastActedAt,
-      next_date: nextDate,
-      limit_date: limitDate,
-    }))
+      return {
+        ...prev,
+        action_count: actionCount,
+        last_acted_at: lastActedAt,
+        first_acted_at: firstActedAt,
+        next_date: nextDate,
+        limit_date: limitDate
+      }
+    })
   }
 
   const handleSave = () => {
@@ -290,6 +296,16 @@ const TaskForm = () => {
             <PartialDateInput
                 name="last_acted_at"
                 value={formatDateTime(task.last_acted_at, "yyyy-MM-dd")}
+                onChange={handleChangeDate} />
+          </div>
+        </div>
+        <div className="div-input-row">
+          <label htmlFor="next_period" className="input-label">First</label>
+          <div className="div-input-left">
+            <span className="w-25 sm:w-33"></span>
+            <PartialDateInput
+                name="first_acted_at"
+                value={formatDateTime(task.first_acted_at, "yyyy-MM-dd")}
                 onChange={handleChangeDate} />
           </div>
         </div>

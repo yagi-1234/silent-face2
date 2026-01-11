@@ -18,7 +18,7 @@ import { CodeTaskStatus, CodeTaskType, CodeScheduleType, CodePriorityType } from
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { Task, TaskCondition, initialTaskCondition } from '@/types/tasks/task-types'
-import { ellipsis } from '@/utils/viewUtils'
+import { ellipsis, isEllipsed } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -80,30 +80,18 @@ const TaskList = () => {
     setIsModalOpen(true)
   }
 
-  const getInputClassName = (scheduleType: string, taskStatus: string, nextDate: Date | null, limitDate: Date | null) => {
-    let className = ''
-
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const nextDate2 = nextDate ? new Date(nextDate) : null
-    nextDate2?.setHours(0, 0, 0, 0)
-    const limiteDate2 = limitDate ? new Date(limitDate) : null
-    limiteDate2?.setHours(0, 0, 0, 0)
-
-    if (taskStatus === '9') {
-      className += 'bg-gray-300'
+  const getInputClassName = (originalClassName: string, taskStatus: string, targetDate: Date | null) => {
+    let className = originalClassName
+    if (taskStatus !== '1' || !targetDate) {
+      return className
     }
-
-    if (limiteDate2 && today > limiteDate2)
-      className += ' text-red-600'
-
-    if (scheduleType && scheduleType === '1' && (taskStatus === '0' || taskStatus === '1'))
-      if (nextDate2 && today > nextDate2)
-        className += ' bg-green-100'
-    if (scheduleType && scheduleType === '2')
-      if (nextDate2 && today > nextDate2)
-        className += ' bg-green-100'
-
+    const today = new Date().setHours(0, 0, 0, 0)
+    if (targetDate) {
+      const targetDate2 = new Date(targetDate)?.setHours(0, 0, 0, 0)
+      if (today >= targetDate2) {
+        className += ' text-red-600'
+      }
+    }
     return className
   }
 
@@ -136,7 +124,6 @@ const TaskList = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
-    console.log('a')
     setCondition(prev => ({
       ...prev, [name]: value
     }))
@@ -245,8 +232,7 @@ const TaskList = () => {
           </thead>
           <tbody>
             {tasks.map(task => (
-              <tr key={task.task_id}
-                  className={getInputClassName(task.schedule_type, task.task_status, task.next_date, task.limit_date)}>
+              <tr key={task.task_id}>
                 <td>
                   <select
                       value={task.task_status}
@@ -258,15 +244,26 @@ const TaskList = () => {
                 </td>
                 <td>{CodeTaskType[task.task_type] ?? ""}</td>
                 <td>{task.task_cycle}</td>
-                <td>{ellipsis(task.task_name, 24)}</td>
+                <td>
+                  {isEllipsed(task.task_name, 24) ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild><div>{ellipsis(task.task_name, 24)}</div></TooltipTrigger>
+                        <TooltipContent>{task.task_name}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : (
+                    <div>{task.task_name}</div>
+                  )}
+                </td>
                 <td>{CodePriorityType[task.priority]}</td>
                 <td>{CodeScheduleType[task.schedule_type]}</td>
                 <td className="numeric-field">{task.task_progress}</td>
                 <td className="numeric-field">{task.action_count}</td>
                 <td>{formatDateTime(task.first_acted_at, "yyyy/MM/dd")}</td>
                 <td>{formatDateTime(task.last_acted_at, "yyyy/MM/dd")}</td>
-                <td>{formatDateTime(task.next_date, "yyyy/MM/dd")}</td>
-                <td>{formatDateTime(task.limit_date, "yyyy/MM/dd")}</td>
+                <td className={getInputClassName("", task.task_status, task.next_date)}>{formatDateTime(task.next_date, "yyyy/MM/dd")}</td>
+                <td className={getInputClassName("", task.task_status, task.limit_date)}>{formatDateTime(task.limit_date, "yyyy/MM/dd")}</td>
                 <td className="flex items-center gap-1">
                   <button className="bg-gray-100 text-green-700 flex items-center justify-center w-10 p-2"
                       onClick={() => handleDoneAction(task.task_id)} >
@@ -321,7 +318,7 @@ const TaskList = () => {
                 <AlarmClockCheck size={14} />
                 {formatDateTime(task.last_acted_at, "yyyy/MM/dd")}
               </div>
-              <div className="div-card-row">
+              <div className={getInputClassName("div-card-row", task.task_status, task.next_date)}>
                 <CalendarClock size={14} />
                 {formatDateTime(task.next_date, "yyyy/MM/dd")}
                 <span>&ensp;</span>
