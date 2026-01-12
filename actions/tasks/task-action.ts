@@ -39,12 +39,14 @@ export const fetchTasks = async (condition: TaskCondition): Promise<Task[]> => {
 }
 
 export const mergeTask = async (newData: Task, updateTaskKey: string): Promise<Task> => {
-    if (newData.task_id) {
-      const result = await updateTask(newData)
-      if (updateTaskKey) await updateItemByUpdatingTask(updateTaskKey, newData.action_count, newData.last_acted_at)
-      return result
-    }
-    else return await insertTask(newData)
+  if (newData.task_id) {
+    const result = await updateTask(newData)
+    if (updateTaskKey) await updateItemByUpdatingTask(updateTaskKey, newData.action_count, newData.last_acted_at)
+    return await fetchTask(result.task_id)
+  } else {
+    const result = await insertTask(newData)
+    return await fetchTask(result.task_id)
+  }
 }
 
 const insertTask = async (newData: Task): Promise<Task> => {
@@ -253,13 +255,13 @@ export const updateMusicTaskStatus = async (taskSubId: string, taskStatus: strin
   }
   const result = await updateMusicTask(newData)
 
-  updateMusicTasksPriority(oldData.task_status ?? '', oldData.task_priority ?? 0)
+  await updateMusicTasksPriority(oldData.task_status ?? '', oldData.task_sub_type ?? '', oldData.task_priority ?? 0)
 
   return result
 }
 
-export const updateMusicTasksPriority = async (taskStatus: string, task_priority: number) => {
-  const oldData = await fetchMusicTasksByTaskStatus(taskStatus, task_priority)
+export const updateMusicTasksPriority = async (taskStatus: string, taskSubType: string, taskPriority: number) => {
+  const oldData = await fetchMusicTasksByTaskStatus(taskStatus, taskSubType, taskPriority)
   if (!oldData || oldData.length === 0)
     return
   const newData = oldData.map((row) => ({
@@ -267,15 +269,16 @@ export const updateMusicTasksPriority = async (taskStatus: string, task_priority
     task_priority: row.task_priority ? row.task_priority - 1 : null
   }))
   for (const row of newData) {
-    updateMusicTask(row)
+    await updateMusicTask(row)
   }
 }
-const fetchMusicTasksByTaskStatus = async (taskStatus: string, task_priority: number): Promise<MusicTask[]> => {
-  const { data: oldData, error } = await supabase
-      .from('ct02_music_tasks')
+const fetchMusicTasksByTaskStatus = async (taskStatus: string, taskSubType: string, taskPriority: number): Promise<MusicTask[]> => {
+  let query = supabase.from('ct02_music_tasks')
       .select('*')
-      .eq('task_status', taskStatus)
-      .gt('task_priority', task_priority)
+  if (taskStatus === '0') query = query.eq('task_sub_type', taskSubType)
+  query = query.eq('task_status', taskStatus)
+  query = query.gt('task_priority', taskPriority)
+  const { data: oldData, error } = await query
   if (error) throw error
   return oldData
 }
@@ -285,10 +288,8 @@ const fetchMaxTaskStatus = async (taskStatus: string, taskSubType: string): Prom
       .from('cv02_max_priority_music_tasks')
       .select('max_task_priority')
   query = query.eq('task_status', taskStatus)
-  if (taskStatus === '0')
-    query = query.eq('task_sub_type', taskSubType)
-  else
-    query = query.eq('task_sub_type', '99')
+  if (taskStatus === '0') query = query.eq('task_sub_type', taskSubType)
+  else query = query.eq('task_sub_type', '99')
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchMaxTaskStatus:', error)
@@ -307,8 +308,8 @@ export const refreshMusicTask = async (condition: MusicTaskCondition): Promise<M
     task_priority: row.new_task_priority
   }))
   for (const row of newData)
-    updateMusicTask(row)
-  return fetchMusicTasks(condition)
+    await updateMusicTask(row)
+  return await fetchMusicTasks(condition)
 }
 const fetchMusicTasksForRefresh = async (): Promise<MusicTask[]> => {
   const taskStatusList = ['0','1']

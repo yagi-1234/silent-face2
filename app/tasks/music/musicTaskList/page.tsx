@@ -8,7 +8,6 @@ import { AlarmClockCheck, ArrowLeft, FileText, Plus, Search, RotateCw } from 'lu
 import { fetchMusicTasks, updateMusicTaskStatus, refreshMusicTask } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
-import { LogoffButton } from '@/components/LogoffButton'
 import MessageBanner from '@/components/MessageBanner'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
@@ -72,8 +71,7 @@ const MusicTaskList = () => {
     setModalMessage('Are you sure you want to change Status?')
     setConfirmHandler(async () => {
       const result = await updateMusicTaskStatus(taskSubId, taskStatus)
-      loadData()
-      setTasks(prev => prev.map(t => t.task_sub_id === result.task_sub_id ? result : t))
+      await loadData()
       setMessage('Saved Successfully!')
       setMessageType('info')
     })

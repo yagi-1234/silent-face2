@@ -136,7 +136,9 @@ const TaskForm = () => {
 
       let updateTaskKey = ''
       if (task.task_key && originalTask.action_count && task.action_count && originalTask.action_count < task.action_count) updateTaskKey = task.task_key
-      setTask(await mergeTask(task, updateTaskKey))
+      const result = await mergeTask(task, updateTaskKey)
+      setTask(result)
+      setOriginalTask(result)
       setMessage("Saved Successfully!")
       setMessageType("info")
     })
