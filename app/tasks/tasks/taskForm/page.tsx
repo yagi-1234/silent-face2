@@ -44,8 +44,22 @@ const TaskForm = () => {
   const { handleBack } = useCustomBack()
   const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
 
+  const handleTaskStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    let isDone = false
+    const { value } = event.target
+    if (event.target.value === '2' || event.target.value === '8' || event.target.value === '9') isDone = true
+    setTask(prev => ({
+      ...prev,
+      task_status: value,
+      next_period: isDone ? null : task.next_period,
+      next_date: isDone ? null : task.next_date,
+      buffer_period: isDone ? null : task.buffer_period,
+      limit_date: isDone ? null : task.limit_date,
+    }))
+  }
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, classList } = event.target;
+    const { name, value, classList } = event.target
     const isNumeric = classList.contains("numeric-field")
     setTask(prev => ({
       ...prev, [name]: isNumeric ? (value === '' ? null : Number(value)) : value
@@ -262,7 +276,7 @@ const TaskForm = () => {
               name="task_status"
               className="w-48"
               value={task.task_status}
-              onChange={(e) => handleChange(e)}>
+              onChange={(e) => handleTaskStatusChange(e)}>
             {Object.entries(CodeTaskStatus).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}
