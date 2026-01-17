@@ -94,7 +94,7 @@ export function RegionList({ onSelect }: Props) {
         const newDispOrder = regions[newIndex].disp_order
         const minDispOrder = oldDispOrder < newDispOrder ? oldDispOrder : newDispOrder
         const maxDispOrder = oldDispOrder < newDispOrder ? newDispOrder : oldDispOrder
-        let addValue = Math.pow(10, (5 - regions[oldIndex].region_level) * 2)
+        const addValue = Math.pow(10, (5 - regions[oldIndex].region_level) * 2)
         let index = 0
         const reordered = newRegions.map(newRegion => ({
           ...newRegion,
