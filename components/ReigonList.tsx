@@ -1,10 +1,14 @@
 'use client'
 
-import { ArrowLeft, Check, FileText, ListPlus, Plus, Search } from 'lucide-react'
+import { ArrowLeft, Check, FileText, Menu, ListPlus, Plus, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import { Region, RegionCondition, initialRegion, initialRegionCondition } from '@/types/common/common-types'
 import { fetchRegion, fetchRegionForInsert, fetchRegions, insertRegion, updateRegion } from '@/actions/common/region-action'
+import clsx from 'clsx';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core'
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { Region, RegionCondition, initialRegion, initialRegionCondition } from '@/types/common/common-types'
 
 interface Props {
   onSelect: (regionCode: string, regionName: string) => void
@@ -45,6 +49,12 @@ export function RegionList({ onSelect }: Props) {
 
   const handleShowEdit = async (regionCode: string) => {
     if (regionCode) loadRegion(regionCode)
+    else {
+      const temp = { ...initialRegion,
+        disp_order: regions.filter(row => row.region_level === 1).at(-1)?.next_disp_no ?? 0
+      }
+      setRegion(temp)
+    }
     setShowEditPanel(true)
   }
   const handleShowPlus = async (regionCode: string) => {
@@ -70,6 +80,33 @@ export function RegionList({ onSelect }: Props) {
   const loadRegion = async (regionCode: string) => {
     const fetchData = await fetchRegion(regionCode)
     setRegion(fetchData)
+  }
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+    if (active.id !== over?.id) {
+      const oldIndex = regions.findIndex(row => row.region_code === active.id)
+      const newIndex = regions.findIndex(row => row.region_code === over?.id)
+      if (regions[oldIndex].parent_region_code === regions[newIndex].parent_region_code) {
+        const newRegions = arrayMove(regions, oldIndex, newIndex)
+
+        const oldDispOrder = regions[oldIndex].disp_order
+        const newDispOrder = regions[newIndex].disp_order
+        const minDispOrder = oldDispOrder < newDispOrder ? oldDispOrder : newDispOrder
+        const maxDispOrder = oldDispOrder < newDispOrder ? newDispOrder : oldDispOrder
+        let addValue = Math.pow(10, (5 - regions[oldIndex].region_level) * 2)
+        let index = 0
+        const reordered = newRegions.map(newRegion => ({
+          ...newRegion,
+         disp_order: (newRegion.disp_order >= minDispOrder && newRegion.disp_order <= maxDispOrder) ? minDispOrder + (addValue * index++) : newRegion.disp_order,
+        }))
+        setRegions(reordered)
+        await Promise.all(
+          reordered.filter(row => row.disp_order >= minDispOrder && row.disp_order <= maxDispOrder).
+              map(row => updateRegion(row))
+        )
+      }
+    }
   }
 
   useEffect(() => {
@@ -142,45 +179,33 @@ export function RegionList({ onSelect }: Props) {
           </div>
           <div className="hidden sm:block">
             <div className="rounded overflow-y-auto max-h-[calc(80vh-220px)]">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Region Name</th>
-                    <th></th>
-                    <th>Disp Order</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {regions.map(region => (
-                    <tr key={region.region_code} className='h-7'>
-                      <td
-                          onDoubleClick={() => onSelect(region.region_code ?? '', region.region_full_name_1)}>
-                        {region.region_full_name_1}
-                      </td>
-                      <td>{region.region_name_2}</td>
-                      <td>{region.disp_order}</td>
-                      <td className='flex'>
-                        <div>
-                          <button
-                              className="button-page"
-                              onClick={() => handleShowEdit(region.region_code ?? '')} >
-                            <FileText className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div>
-                          <button
-                              className="button-page"
-                              onClick={() => handleShowPlus(region.region_code ?? '')} >
-                            <ListPlus className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  <div>　</div>
-                </tbody>
-              </table>
+              <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext
+                    items={regions.map(region => region.region_code ?? "")}
+                    strategy={verticalListSortingStrategy}>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Region Name</th>
+                        <th></th>
+                        <th>Disp Order</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {regions.map(region => (
+                        <SortableRow
+                            key={region.region_code} 
+                            region={region} 
+                            onSelect={onSelect}
+                            onEdit={handleShowEdit}
+                            onPlus={handleShowPlus} />
+                      ))}
+                      <div>　</div>
+                    </tbody>
+                  </table>
+                </SortableContext>
+              </DndContext>
             </div>
           </div>
           <div className="block sm:hidden">
@@ -254,6 +279,7 @@ export function RegionList({ onSelect }: Props) {
                 value={region.priority}
                 onChange={handleCheckBoxChange} />
           </div>
+{/**
           <div className="input-form">
             <label htmlFor="disp_order">Disp Order</label>
             <input type="number"
@@ -263,7 +289,8 @@ export function RegionList({ onSelect }: Props) {
                 value={region.disp_order}
                 onChange={handleChange} />
           </div>
-          <div className="flex justify-between items-center">
+ */}
+           <div className="flex justify-between items-center">
             <button className="button-back h-6 w-16"
                 onClick={() => handleCloseEdit()}>
               <ArrowLeft size={16} />
@@ -276,6 +303,55 @@ export function RegionList({ onSelect }: Props) {
         </>
       )}
     </>
+  )
+}
+
+type Props2 = {
+  region: Region,
+  onSelect: (regionCode: string, regionFullName: string) => void
+  onEdit: (id: string) => void
+  onPlus: (id: string) => void
+}
+const SortableRow = ({ region, onSelect, onEdit, onPlus }: Props2) => {
+
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: region.region_code ?? '',
+  })
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <tr key={region.region_code} className={clsx("h-7")} ref={setNodeRef} style={style}>
+      <td
+          onDoubleClick={() => onSelect(region.region_code ?? '', region.region_full_name_1)}>
+        {region.region_full_name_1}
+      </td>
+      <td>{region.region_name_2}</td>
+      <td>{region.disp_order}</td>
+      <td className="flex items-center">
+        <div>
+          <button
+              className="button-page"
+              onClick={() => onEdit(region.region_code ?? '')} >
+            <FileText className="w-4 h-4" />
+          </button>
+        </div>
+        <div>
+          <button
+              className="button-page"
+              onClick={() => onPlus(region.region_code ?? '')} >
+            <ListPlus className="w-4 h-4" />
+          </button>
+        </div>
+      </td>
+      <td style={{ cursor: "grab" }}>
+        <span {...attributes} {...listeners}>
+          <Menu  className="w-4 h-4" />
+        </span>
+      </td>
+    </tr>
   )
 }
 

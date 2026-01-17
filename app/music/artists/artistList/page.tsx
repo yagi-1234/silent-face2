@@ -9,6 +9,7 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
 import MessageBanner from '@/components/MessageBanner'
+import { ToggleButton } from '@/components/ToggleButton'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
@@ -37,15 +38,11 @@ const ArtistList = () => {
 
   const [artists, setArtists] = useState<Artist[]>([])
   const [condition, setCondition] = useState<ArtistCondition>(initialArtistCondition)
-  const [isMobile, setIsMobile] = useState(false)
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = event.target
-    console.log(name)
-    console.log(value)
-    console.log(type)
     setCondition(prev => ({
       ...prev, 
       [name]: type === 'checkbox' ? (event.target as HTMLInputElement).checked : value
@@ -221,18 +218,98 @@ const ArtistList = () => {
         </div>
       </div>
       <div className="hidden sm:block">
-        <ArtistTable
-            artists={artists}
-            onShowAlbums={(artistId, artistName1) => handleShowAlbums(artistId, artistName1)}
-            onShowTracks={(artistId, artistName1) => handleShowTracks(artistId, artistName1)}
-            onShowForm={(artistId) => handleShowForm(artistId)} />
+        <table>
+          <thead>
+            <tr>
+              <th>Artist Name</th>
+              <th>Type</th>
+              <th>Origin</th>
+              <th>Albums</th>
+              <th>Tracks</th>
+              <th>Years Active</th>
+              <th>Grade</th>
+              <th>Last Listened At</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {artists.map(artist => (
+              <tr key={artist.artist_id}>
+                <td>{artist.artist_name_1}</td>
+                <td>{CodeArtistType[artist.artist_type ?? '']}</td>
+                <td>{artist.country_name_1}</td>
+                <td className="numeric-field">
+                  <button
+                      className="button-link"
+                      onClick={() => handleShowAlbums(artist.artist_id ?? '', artist.artist_name_1)}>
+                    {artist.owned_count} / {artist.album_count}
+                  </button>
+                </td>
+                <td className="numeric-field">
+                  <button
+                      className="button-link"
+                      onClick={() => handleShowTracks(artist.artist_id ?? '', artist.artist_name_1)}>
+                    {artist.track_count} 
+                  </button>
+                </td>
+                <td>{artist.years_active}</td>
+                <td>{CodeArtistGrade[artist.grade ?? '']}</td>
+                <td>{formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}</td>
+                <td>
+                  <button
+                      className="button-page"
+                      onClick={() => handleShowForm(artist.artist_id ?? '')} >
+                    <FileText className="w-5 h-5" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       <div className="block sm:hidden">
-        <ArtistCard
-            artists={artists}
-            onShowAlbums={(artistId, artistName1) => handleShowAlbums(artistId, artistName1)}
-            onShowTracks={(artistId, artistName1) => handleShowTracks(artistId, artistName1)}
-            onShowForm={(artistId) => handleShowForm(artistId)} />
+        <div className="div-card-area">
+          {artists.map(artist => (
+            <div key={artist.artist_id}
+                className="div-card">
+              <div>
+                <button
+                    className="button-link card-title"
+                    onClick={() => handleShowForm(artist.artist_id ?? '')}>
+                  {artist.artist_name_1}
+                </button>
+              </div>
+              {artist.country_name_1 && (
+                <div className="div-card-row">
+                  <AtSign size={14} />
+                  {artist.country_name_1}
+                </div>
+              )}
+              <div className="div-card-row">
+                <Disc3 size={14} />
+                <button
+                    className="button-link"
+                    onClick={() => handleShowAlbums(artist.artist_id ?? '', artist.artist_name_1)}>
+                  {artist.owned_count} / {artist.album_count}
+                </button>
+                <span>&ensp;</span>
+                <Music size={14} />
+                <button
+                    className="button-link"
+                    onClick={() => handleShowTracks(artist.artist_id ?? '', artist.artist_name_1)}>
+                  {artist.track_count}
+                </button>
+              </div>
+              <div className="div-card-row">
+                <Star size={14} />
+                {CodeArtistGrade[artist.grade ?? '']}
+                <span>&ensp;</span>
+                <History size={14} />
+                {formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
       <div className="footer-area">
         <div className="footer-area-sub">
@@ -261,127 +338,3 @@ const ArtistList = () => {
     </div>
   )
 }
-
-type Props = {
-  artists: Artist[]
-  onShowAlbums: (artistId: string, artistName: string) => void
-  onShowTracks: (artistId: string, artistName: string) => void
-  onShowForm: (artistId: string) => void
-}
-
-const ArtistTable = ({ artists, onShowAlbums, onShowTracks, onShowForm }: Props) => {
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th>Artist Name</th>
-          <th>Type</th>
-          <th>Origin</th>
-          <th>Albums</th>
-          <th>Tracks</th>
-          <th>Grade</th>
-          <th>Last Listened At</th>
-          <th />
-        </tr>
-      </thead>
-      <tbody>
-        {artists.map(artist => (
-          <tr key={artist.artist_id}>
-            <td>{artist.artist_name_1}</td>
-            <td>{CodeArtistType[artist.artist_type ?? '']}</td>
-            <td>{artist.country_name_1}</td>
-            <td className="numeric-field">
-              <button
-                  className="button-link"
-                  onClick={() => onShowAlbums(artist.artist_id ?? '', artist.artist_name_1)}>
-                {artist.owned_count} / {artist.album_count}
-              </button>
-            </td>
-            <td className="numeric-field">
-              <button
-                  className="button-link"
-                  onClick={() => onShowTracks(artist.artist_id ?? '', artist.artist_name_1)}>
-                {artist.track_count} 
-              </button>
-            </td>
-            <td>{CodeArtistGrade[artist.grade ?? '']}</td>
-            <td>{formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}</td>
-            <td>
-              <button
-                  className="button-page"
-                  onClick={() => onShowForm(artist.artist_id ?? '')} >
-                <FileText className="w-5 h-5" />
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
-}
-
-const ArtistCard = ({ artists, onShowAlbums, onShowTracks, onShowForm }: Props) => {
-  return (
-    <div className="div-card-area">
-      {artists.map(artist => (
-        <div key={artist.artist_id}
-            className="div-card">
-          <div>
-            <button
-                className="button-link card-title"
-                onClick={() => onShowForm(artist.artist_id ?? '')}>
-              {artist.artist_name_1}
-            </button>
-          </div>
-          {artist.country_name_1 && (
-            <div className="div-card-row">
-              <AtSign size={14} />
-              {artist.country_name_1}
-            </div>
-          )}
-          <div className="div-card-row">
-            <Disc3 size={14} />
-            <button
-                className="button-link"
-                onClick={() => onShowAlbums(artist.artist_id ?? '', artist.artist_name_1)}>
-              {artist.owned_count} / {artist.album_count}
-            </button>
-            <span>&ensp;</span>
-            <Music size={14} />
-            <button
-                className="button-link"
-                onClick={() => onShowTracks(artist.artist_id ?? '', artist.artist_name_1)}>
-              {artist.track_count}
-            </button>
-          </div>
-          <div className="div-card-row">
-            <Star size={14} />
-            {CodeArtistGrade[artist.grade ?? '']}
-            <span>&ensp;</span>
-            <History size={14} />
-            {formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-const ToggleButton = ({ name, title, checked, onChange } : {
-  name: string
-  title: string
-  checked: boolean
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-}) => (
-  <label className="flex items-center gap-2 cursor-pointer">
-    <input type="checkbox"
-        name={name}
-        checked={checked}
-        onChange={onChange}
-        className="sr-only" />
-    <div className={`w-11 h-6 rounded-full border transition ${checked ? "bg-blue-500" : "bg-gray-300"}`}>
-      <div className={`w-5 h-5 bg-white rounded-full shdow transition translate-y-0 ${checked ? 'translate-x-5' : 'translate-0.5'}`} />
-    </div>
-    <span className="text-sm">{title}</span>
-  </label>
-)

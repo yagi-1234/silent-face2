@@ -5,7 +5,7 @@ import type { Region, RegionCondition } from '@/types/common/common-types'
 export const fetchRegion = async (regionCode: string): Promise<Region> => {
   console.log('regionCode:', regionCode)
   let query = supabase
-      .from('cm11_region_new')
+      .from('vm11_region')
       .select('*')
       .eq('region_code', regionCode)
       .single()
@@ -25,11 +25,11 @@ export const fetchRegionForInsert = async (regionCode: string): Promise<Region> 
     region_name_2: '',
     region_level: result.region_level + 1,
     region_level_name: '',
-    disp_order: result.disp_order,
+    disp_order: result.child_next_disp_no,
     region_full_name_1: '',
     iso_code: '',
     priority: '0',
-    parent_region_code: regionCode,
+    parent_region_code: regionCode ?? null,
     updated_count: 0,
   }
   return result2
@@ -38,7 +38,7 @@ export const fetchRegionForInsert = async (regionCode: string): Promise<Region> 
 export const fetchRegions = async (condition: RegionCondition): Promise<Region[]> => {
   console.log('condition:', condition)
   let query = supabase
-      .from('vm11_region_new')
+      .from('vm11_region')
       .select('*')
   if (condition.region_name)
     query = query.or(`region_full_name_1.ilike.%${condition.region_name}%,region_name_2.ilike.%${condition.region_name}%`)
@@ -55,22 +55,8 @@ export const fetchRegions = async (condition: RegionCondition): Promise<Region[]
   return result
 }
 
-const fetchNextRegionCode = async (parentRegionCode: string): Promise<string> => {
-  let query = supabase
-      .from('vm11_max_region')
-      .select('next_region_code')
-      .eq('parent_region_code', parentRegionCode)
-      .single()
-  const { data: result, error } = await query
-  if (error) {
-    console.error('Error fetchNextRegionCode:', error)
-    throw error
-  }
-  return result.next_region_code
-}
-
 export const insertRegion = async (newData: Region): Promise<Region> => {
-  const { region_code, region_full_name_1, ...newData2 } = newData
+  const { region_code, region_full_name_1, country_name_1, next_disp_no, child_next_disp_no, ...newData2 } = newData
   console.log('insertData:', newData2)
   const { data: result, error } = await supabase
       .from('cm11_region_new')
@@ -86,7 +72,7 @@ export const insertRegion = async (newData: Region): Promise<Region> => {
 }
 
 export const updateRegion = async (newData: Region): Promise<Region> => {
-  const { region_full_name_1, ...newData2 } = newData
+  const { region_full_name_1, country_name_1, next_disp_no, child_next_disp_no, ...newData2 } = newData
   const updateData = { ...newData2,
     updated_at: new Date(),
     updated_count: Number(newData2.updated_count ?? 0) + 1,
