@@ -48,6 +48,10 @@ const AlbumList = () => {
   const [album, setAlbum] = useState<Album>(initialAlbum)
   const [originalAlbum, setOriginalAlbum] = useState<Album>(initialAlbum)
 
+  const checkLogin = async () => {
+    await checkUser()
+  }
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
     setErrors(removeErrorKey(errors, name))
@@ -117,9 +121,6 @@ const AlbumList = () => {
     router.push(`/tasks/music/musicTaskForm/?${queryPrams.toString()}`)
   }
 
-  const checkLogin = async () => {
-    await checkUser()
-  }
   useEffect(() => {
     checkLogin()
     const loadAlbum = async () => {

@@ -11,12 +11,14 @@ import HiddenPanel from '@/components/HiddenPanel'
 import { useHistory } from '@/contexts/HistoryContext'
 import MessageBanner from '@/components/MessageBanner'
 import { ToggleButton } from '@/components/ToggleButton'
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { Album, AlbumCondition, initialAlbumCondition } from '@/types/music/album-types'
 import { CodeOwnedFlag } from '@/utils/codeUtils'
 import { formatDateTime, formatDateVariousTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
+import { ellipsis, isEllipsed } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -41,6 +43,10 @@ const AlbumList = () => {
 
   const [albums, setAlbums] = useState<Album[]>([])
   const [condition, setCondition] = useState<AlbumCondition>(initialAlbumCondition)
+
+  const checkLogin = async () => {
+    await checkUser()
+  }
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked, type } = event.target
@@ -73,14 +79,10 @@ const AlbumList = () => {
 
   const handleShowForm = (albumId: string) => {
     addToHistory({ title: 'albumList', path: `${pathname}?${searchParams.toString()}`})
-    if (albumId)
-      router.push(`/music/albums/albumForm?album_id=${albumId}`)
-    else if (condition.artist_id)
-      router.push(`/music/albums/albumForm?artist_id=${condition.artist_id}`)
-    else if (albums[0].artist_id)
-      router.push(`/music/albums/albumForm?artist_id=${albums[0].artist_id}`)
-    else
-      router.push("/music/albums/albumForm")
+    if (albumId) router.push(`/music/albums/albumForm?album_id=${albumId}`)
+    else if (condition.artist_id) router.push(`/music/albums/albumForm?artist_id=${condition.artist_id}`)
+    else if (albums[0].artist_id) router.push(`/music/albums/albumForm?artist_id=${albums[0].artist_id}`)
+    else router.push("/music/albums/albumForm")
   }
 
   const handleShowTracks = (artistId: string, artistName: string, albumId: string, albumName: string) => {
@@ -88,9 +90,6 @@ const AlbumList = () => {
     router.push(`/music/tracks/trackList?artist_id=${artistId}&artist_name=${artistName}&album_id=${albumId}&album_name=${albumName}`)
   }
 
-  const checkLogin = async () => {
-    await checkUser()
-  }
   useEffect(() => {
     checkLogin()
     const loadData = async () => {
@@ -339,10 +338,28 @@ const AlbumList = () => {
           <tbody>
             {albums.map((album) => (
               <tr key={album.album_id}>
-                <td>{album.album_artist_name_1}</td>
+                <td>
+                  {isEllipsed(album.album_artist_name_1, 24) ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild><div>{ellipsis(album.album_artist_name_1, 24)}</div></TooltipTrigger>
+                        <TooltipContent>{album.album_artist_name_1}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : ( <div>{album.album_artist_name_1}</div>) }
+                </td>
                 <td>{formatAlbumTypeOrNo(album.album_type, album.album_no)}</td>
                 <td>{formatDateVariousTime(album.released, "yyyy/MM/dd")}</td>
-                <td>{album.album_name_1}</td>
+                <td>
+                  {isEllipsed(album.album_name_1, 40) || album.album_name_2 ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild><div>{ellipsis(album.album_name_1, 40)}</div></TooltipTrigger>
+                        <TooltipContent>{album.album_name_1}<br />{album.album_name_2}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : ( <div>{album.album_name_1}</div>) }
+                </td>
                 <td className="text-center">{CodeOwnedFlag[album.owned_flag]}</td>
                 <td className="numeric-field">
                   <button
