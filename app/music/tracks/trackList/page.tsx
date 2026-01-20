@@ -94,6 +94,7 @@ const TrackList = () => {
   useEffect(() => {
     checkLogin()
     const loadData = async () => {
+      console.log(searchParams.get('album_name'))
       const condition1 = {
         ...condition,
         artist_id: searchParams.get('artist_id') ?? '',

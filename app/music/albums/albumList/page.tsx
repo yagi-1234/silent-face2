@@ -87,7 +87,12 @@ const AlbumList = () => {
 
   const handleShowTracks = (artistId: string, artistName: string, albumId: string, albumName: string) => {
     addToHistory({ title: 'albumList', path: `${pathname}?${searchParams.toString()}`})
-    router.push(`/music/tracks/trackList?artist_id=${artistId}&artist_name=${artistName}&album_id=${albumId}&album_name=${albumName}`)
+    const query = new URLSearchParams()
+    query.append('artist_id', artistId)
+    query.append('artist_name', artistName)
+    query.append('album_id', albumId)
+    query.append('album_name', albumName)
+    router.push(`/music/tracks/trackList?${query.toString()}`)
   }
 
   useEffect(() => {

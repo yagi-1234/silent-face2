@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { Check, ChevronsLeft, ChevronsRight, ArrowLeft, Plus } from 'lucide-react'
+import { Check, ChevronsDown, ChevronsLeft, ChevronsUp, ChevronsRight, ArrowLeft, Plus } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { fetchArtist } from '@/actions/music/artist-action'
@@ -41,6 +41,7 @@ const TrackForm = () => {
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
   const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
+  const [showComment, setShowComment] = useState(false)
   const { handleBack } = useCustomBack()
 
   const [track, setTrack] = useState<TrackView>(initialTrack)
@@ -439,12 +440,22 @@ const TrackForm = () => {
         <div className="div-input-row">
           <div className="input-form-full">
             <label htmlFor="track_comment">Comment</label>
-            <textarea id="track_comment"
-                name="track_comment"
-                rows={3}
-                value={track.track_comment ?? ''}
-                onChange={handleChange} >
-            </textarea>
+            {(!!!track.track_comment) && (
+              <button
+                  onClick={() => setShowComment(!showComment)}>
+                {showComment ? <ChevronsUp size={16} /> : <ChevronsDown size={16} />}
+              </button>
+            )}
+            {(showComment || track.track_comment) && (
+              <div className="div-row-left">
+                <textarea id="track_comment"
+                    name="track_comment"
+                    rows={3}
+                    value={track.track_comment ?? ''}
+                    onChange={handleChange} >
+                </textarea>
+              </div>
+            )}
           </div>
         </div>
       </div>
