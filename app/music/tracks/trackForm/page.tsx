@@ -281,7 +281,7 @@ const TrackForm = () => {
             </div>
           </div>
         </div>
-        <div className="div-input-row">
+        <div className="div-input-row mb-0">
           <label htmlFor="track_name_0" className="input-label">Track Name</label>
           <input type="text"
               id="track_name_0"
@@ -290,7 +290,7 @@ const TrackForm = () => {
               value={track.track_name_0}
               onChange={handleChange} />
         </div>
-        <div className="div-input-row">
+        <div className="div-input-row mb-0">
           <input type="text"
               id="track_name_1"
               name="track_name_1"

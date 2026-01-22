@@ -214,13 +214,13 @@ button {
     @apply flex justify-start
   }
   .div-row-left {
-    @apply flex justify-start mb-2
+    @apply flex justify-start
   }
   .div-row-right {
-    @apply flex justify-end mb-2
+    @apply flex justify-end
   }
   .div-row-between {
-    @apply flex justify-between mb-2
+    @apply flex justify-between
   }
 
   .input-check-label {

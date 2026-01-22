@@ -11,12 +11,13 @@ import HiddenPanel from '@/components/HiddenPanel'
 import { useHistory } from '@/contexts/HistoryContext'
 import MessageBanner from '@/components/MessageBanner'
 import { ToggleButton } from '@/components/ToggleButton'
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { TrackView, TrackCondition, initialTrackCondition } from '@/types/music/track-types'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { ellipsis } from '@/utils/viewUtils'
+import { ellipsis, isEllipsed } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -123,13 +124,13 @@ const TrackList = () => {
   
   return (
     <div className="root-panel">
+      <Breadcrumb />
+      <h2 className="header-title">Track List</h2>
       <MessageBanner
           message={message}
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
-      <h2 className="header-title">Track List</h2>
       <div>
         <div className="hidden sm:block">
           <div className="div-input-row">
@@ -312,12 +313,39 @@ const TrackList = () => {
           <tbody>
             {tracks.map(track => (
               <tr key={track.track_id} className="leading-none">
-                <td>{ellipsis(track.track_artist_name_1, 24)}</td>
-                <td>{ellipsis(track.album_name_1, 32)}</td>
+                <td>
+                  {isEllipsed(track.track_artist_name_1, 24) ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild><div>{ellipsis(track.track_artist_name_1, 24)}</div></TooltipTrigger>
+                        <TooltipContent>{track.track_artist_name_1}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : ( <div>{track.track_artist_name_1}</div>) }
+                </td>
+                <td>
+                  {isEllipsed(track.album_name_1, 32) || track.album_name_2 ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild><div>{ellipsis(track.album_name_1, 32)}</div></TooltipTrigger>
+                        <TooltipContent>{track.album_name_1}<br />{track.album_name_2}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : ( <div>{track.album_name_1}</div>) }
+                </td>
                 <td className="numeric-field">
                   {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}
                 </td>
-                <td>{ellipsis(track.track_name_1, 40)}</td>
+                <td>
+                  {isEllipsed(track.track_name_1, 40) || track.track_name_2 ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild><div>{ellipsis(track.track_name_1, 40)}</div></TooltipTrigger>
+                        <TooltipContent>{track.track_name_1}<br />{track.track_name_2}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : ( <div>{track.track_name_1}</div>) }
+                </td>
                 <td className="numeric-field">{track.is_point_except === "1" ? "-" : track.track_point}</td>
                 <td className="numeric-field">{!!track.single_no ? track.single_no : track.is_single === "1" ? "◯" : ""}</td>
                 <td className="numeric-field">{!!track.track_year ? track.track_year : track.album_year}</td>
