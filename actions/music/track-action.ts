@@ -68,6 +68,8 @@ export const fetchTracks = async (condition: TrackCondition): Promise<TrackView[
   query = query.limit(1000)
   query = query.order('artist_name_0')
       .order('album_year')
+      .order('album_no')
+      .order('album_name_0')
       .order('disc_no_for_sort')
       .order('track_no')
   const { data: result, error } = await query
@@ -235,6 +237,7 @@ const copyToTrackRecord = (trackView: TrackView, processType: string) => {
     album_name_0,
     album_name_1,
     album_name_2,
+    album_no,
     album_year,
     disc_no_for_sort,
     track_artist_name_1,
@@ -271,6 +274,7 @@ const copyToTrackView = (track: TrackRow): TrackView => {
     album_name_0: null,
     album_name_1: null,
     album_name_2: null,
+    album_no: null,
     album_year: null,
     disc_no_for_sort: 0,
     track_artist_name_1: null,
