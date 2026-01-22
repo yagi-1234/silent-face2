@@ -103,4 +103,6 @@ export type ArtistTrackKey = {
   album_id: string | null,
   track_id: string | null,
   track_point: number | null,
+  listening_count: number | null,
+  last_listened_at: Date | null,
 }
