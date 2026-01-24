@@ -3,7 +3,7 @@
 import React from 'react'
 import { Suspense, useEffect, useState } from 'react'
 import clsx from 'clsx';
-import { ArrowLeft, Check, CircleMinus, CirclePlus, CopyPlus, Menu } from 'lucide-react'
+import { ArrowLeft, Check, CircleMinus, CirclePlus, CircleStar, CopyPlus, Disc3, Menu, Music, Shield, SquareStar, Users } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { fetchPlaylist, copyPlaylist, mergePlaylist, fetchPlaylistTracks, mergePlaylistTracks } from '@/actions/music/playlist-action'
@@ -146,11 +146,6 @@ const PlaylistTrackList = () => {
     setPlaylistTracks(fetchData2)
   }
 
-  useEffect(() => {
-    checkLogin()
-    loadData(inPlaylistId)
-  }, [])
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (active.id !== over?.id) {
@@ -172,6 +167,21 @@ const PlaylistTrackList = () => {
       setPlaylistTracks(reordered)
     }
   }
+
+  const setPrevRankCell = (rankNo: number | null, prevRankNo: number | null) => {
+    let content = null
+    if (prevRankNo && rankNo) {
+      content = prevRankNo - rankNo
+      if (content > 0) content = '+' + content
+      if (content === 0) content = '±' + content
+    }
+    return content
+  }
+
+  useEffect(() => {
+    checkLogin()
+    loadData(inPlaylistId)
+  }, [])
 
   return (
     <div className="root-panel">
@@ -272,9 +282,31 @@ const PlaylistTrackList = () => {
         <div className="div-card-area">
           {playlistTracks.map(playlistTrack => (
             <div key={playlistTrack.playlist_track_id} className="div-card">
-              <div className="div-card-row card-title">{playlistTrack.artist_name_1}</div>
-              <div className="div-card-row">{playlistTrack.album_name_1}</div>
-              <div className="div-card-row card-title">{playlistTrack.track_name_1}</div>
+              <div className="div-card-row card-title">
+                <Users size={14} />
+                {playlistTrack.artist_name_1}
+              </div>
+              {playlistTrack.album_name_1 && (
+                <div className="div-card-row">
+                  <Disc3 size={14} />
+                  {playlistTrack.album_name_1}
+                </div>
+              )}
+              <div className="div-card-row card-title">
+                <Music size={14} />
+                {playlistTrack.track_name_1}
+              </div>
+              <div className="div-card-row">
+                <Shield size={14} />
+                {playlistTrack.entry_count === 1 ? "first Entry" : playlistTrack.entry_count + " Entries"}
+                <CircleStar size={14} />
+                {playlistTrack.rank_no + " (" + setPrevRankCell(playlistTrack.rank_no, playlistTrack.prev_rank_no) + ")"}
+                <SquareStar size={14} />
+                {playlistTrack.max_rank_no}
+                {playlistTrack.max_rank_count && playlistTrack.max_rank_count > 4 && (
+                  " (" + playlistTrack.max_rank_count + ")"
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -339,7 +371,6 @@ const SortableRow = ({ playlistTrack, onDelete }: Props) => {
     <tr
         className={clsx(
           playlistTrack.edit_mode === "i" ? "text-red-400" : "",
-          playlistTrack.edit_mode === "u" ? "text-blue-500" : "",
           playlistTrack.edit_mode === "d" ? "bg-gray-300" : ""
         )}
         ref={setNodeRef}
