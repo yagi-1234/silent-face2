@@ -23,6 +23,12 @@ export const initialPlaylist: PlaylistView = {
   max_disp_order: 0,
 }
 
+export type PlaylistFunc = {
+  parent_playlist_id: string | null,
+  max_disp_order: number | null,
+  next_disp_order: number | null,
+}
+
 export type PlaylistTrackRow = {
   playlist_track_id: string | null,
   playlist_id: string | null,

@@ -45,6 +45,10 @@ const PlaylistTrackList = () => {
 
   const inPlaylistId = searchParams.get('playlist_id') ?? ''
 
+  const checkLogin = async () => {
+    await checkUser()
+  }
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setPlaylist(prev => ({
@@ -132,10 +136,6 @@ const PlaylistTrackList = () => {
       updated.sort((a, b) => (a.play_order ?? Infinity) - (b.play_order ?? Infinity))
       return updated
     })
-  }
-
-  const checkLogin = async () => {
-    await checkUser()
   }
 
   const loadData = async (playlistId: string) => {

@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, FileText, ListPlus, Plus } from "lucide-react"
+import { ArrowLeft, FileText, Menu, ListPlus, Plus } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { fetchPlaylists, mergePlaylist } from '@/actions/music/playlist-action'
+import { fetchPlaylists, mergePlaylist, updatePlaylist } from '@/actions/music/playlist-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
@@ -14,6 +14,9 @@ import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core'
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { PlaylistView, initialPlaylist } from '@/types/music/playlist-types'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { ellipsis } from '@/utils/viewUtils'
@@ -104,6 +107,32 @@ const PlaylistList = () => {
     loadData()
   }, [])
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+    if (active.id !== over?.id) {
+      const oldIndex = playlists.findIndex(row => row.playlist_id === active.id)
+      const newIndex = playlists.findIndex(row => row.playlist_id === over?.id)
+      if (playlists[oldIndex].parent_playlist_id === playlists[newIndex].parent_playlist_id) {
+        const minIndex = oldIndex < newIndex ? oldIndex : newIndex
+        const maxIndex = oldIndex < newIndex ? newIndex : oldIndex
+        let newDispOrder = playlists.at(minIndex)?.disp_order ?? 0
+        const newPlaylists = arrayMove(playlists, oldIndex, newIndex)
+
+        const reordered = newPlaylists.map((row, index) => {
+          return {
+            ...row,
+            disp_order: index >= minIndex && index <= maxIndex ? newDispOrder + (index - minIndex) : row.disp_order
+          }
+        })
+        setPlaylists(reordered)
+        await Promise.all(
+          reordered.filter((row, index) => index >= minIndex && index <= maxIndex).
+              map(row => updatePlaylist(row))
+        )
+      }
+    }
+  }
+
   return (
     <div className="root-panel">
       <MessageBanner
@@ -115,81 +144,46 @@ const PlaylistList = () => {
       <h2 className="header-title">Playlists</h2>
       <div className="searchPanel">
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Playlist Name</th>
-            <th></th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {playlists.map((playlist) => (
-            <React.Fragment key={playlist.playlist_id}>
-              <tr className="leading-none">
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext
+            items={playlists.map(row => row.playlist_id ?? "")}
+            strategy={verticalListSortingStrategy}>
+          <table>
+            <thead>
+              <tr>
+                <th>Playlist Name</th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {playlists.map(playlist => (
+                <SortableRow
+                    key={playlist.playlist_id}
+                    playlist={playlist} 
+                    onShowTracks={playlist_id => handleShowTracks(playlist_id)}
+                    onPlus={playlist_id => handleShowTracks(playlist_id)} />
+              ))}
+              <tr>
                 <td>
-                  {playlist.parent_playlist_id && (
-                    <span>&nbsp;&nbsp;</span>
-                  )}
-                  {ellipsis(playlist.playlist_name, 24)}
+                  <input type="text"
+                      name="playlist_name"
+                      value={newPlaylist.playlist_name ?? ""}
+                      onChange={handleChange} />
                 </td>
-                <td className='flex'>
-                  <div>
-                    <button
-                        className="button-page"
-                        onClick={() => handleShowTracks(playlist.playlist_id ?? '')}>
-                      <FileText className='w-5 h-5' />
-                    </button>
-                  </div>
-                  <div className="w-8">
-                    {!playlist.parent_playlist_id && (
-                      <button
-                          className="button-page"
-                          onClick={() => handlePlus(playlist.playlist_id ?? '')} >
-                        <ListPlus className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
+                <td>
+                  <button
+                      className="button-page"
+                      onClick={() => handleSave("", newPlaylist.playlist_name ?? "", playlists.at(-1)?.disp_order ?? 0)}>
+                    <Plus className='w-5 h-5' />
+                  </button>
                 </td>
               </tr>
-              {showFormId === playlist.playlist_id && (
-                <tr>
-                  <td>
-                    <span>&nbsp;&nbsp;</span>
-                    <input type="text"
-                        name="playlist_name"
-                        value={newSubPlaylist.playlist_name ?? ""}
-                        onChange={handleChangeSub} />
-                  </td>
-                  <td>
-                    <button
-                        className="button-page"
-                        onClick={() => handleSave(playlist.playlist_id ?? "", newSubPlaylist.playlist_name ?? "", playlist.max_disp_order ?? 0)}>
-                      <Plus className='w-5 h-5' />
-                    </button>
-                  </td>
-                </tr>
-              )}
-            </React.Fragment>
-          ))}
-          <tr>
-            <td>
-              <input type="text"
-                  name="playlist_name"
-                  value={newPlaylist.playlist_name ?? ""}
-                  onChange={handleChange} />
-            </td>
-            <td>
-              <button
-                  className="button-page"
-                  onClick={() => handleSave("", newPlaylist.playlist_name ?? "", playlists.at(-1)?.disp_order ?? 0)}>
-                <Plus className='w-5 h-5' />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </tbody>
+          </table>
+        </SortableContext>
+      </DndContext>
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">
@@ -208,5 +202,60 @@ const PlaylistList = () => {
               </>
           } />
     </div>
+  )
+}
+
+type Props = {
+  playlist: PlaylistView
+  onShowTracks: (playlist_id: string) => void
+  onPlus: (playlist_id: string) => void
+}
+
+const SortableRow = ({ playlist, onShowTracks, onPlus }: Props) => {
+
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: playlist.playlist_id ?? '',
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <tr className="leading-none"
+        ref={setNodeRef}
+        style={style}>
+      <td>
+        {playlist.parent_playlist_id && (
+          <span>&nbsp;&nbsp;</span>
+        )}
+        {ellipsis(playlist.playlist_name, 24)}
+      </td>
+      <td className='flex'>
+        <div>
+          <button
+              className="button-page"
+              onClick={() => onShowTracks(playlist.playlist_id ?? '')}>
+            <FileText className='w-5 h-5' />
+          </button>
+        </div>
+        <div className="w-8">
+          {!playlist.parent_playlist_id && (
+            <button
+                className="button-page"
+                onClick={() => onPlus(playlist.playlist_id ?? '')} >
+              <ListPlus className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </td>
+      <td style={{ cursor: "grab" }}>
+        <span {...attributes} {...listeners}>
+          <Menu size={16} />
+        </span>
+      </td>
+      <td>{playlist.disp_order}</td>
+    </tr>
   )
 }

@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import { PlaylistRow, PlaylistView, PlaylistTrackRow, PlaylistTrackView } from '@/types/music/playlist-types'
+import { PlaylistRow, PlaylistView, PlaylistFunc, PlaylistTrackRow, PlaylistTrackView } from '@/types/music/playlist-types'
 
 export const fetchPlaylist = async (playlistId: string): Promise<PlaylistView> => {
   console.log(playlistId)
@@ -50,7 +50,7 @@ export const copyPlaylist = async (newData: PlaylistView, newPlaylistTracks: Pla
 }
 
 const insertPlaylist = async (newData: PlaylistView) => {
-  const insertData = copyToPlaylistRecord(newData, 'i')
+  const insertData = await copyToPlaylistRecord(newData, 'i')
   console.log('insertData:', insertData)
   const { data: result, error } = await supabase
       .from('mt41_playlists')
@@ -65,8 +65,8 @@ const insertPlaylist = async (newData: PlaylistView) => {
   return result
 }
 
-const updatePlaylist = async (newData: PlaylistView): Promise<PlaylistRow> => {
-  const updateData = copyToPlaylistRecord(newData, 'u')
+export const updatePlaylist = async (newData: PlaylistView): Promise<PlaylistRow> => {
+  const updateData = await copyToPlaylistRecord(newData, 'u')
   console.log('updateData:', updateData)
   const { data: result, error } = await supabase
       .from('mt41_playlists')
@@ -82,15 +82,21 @@ const updatePlaylist = async (newData: PlaylistView): Promise<PlaylistRow> => {
   return result
 }
 
-const copyToPlaylistRecord = (playlistView: PlaylistView, processType: string) => {
+const copyToPlaylistRecord = async (playlistView: PlaylistView, processType: string) => {
   const {
     max_disp_order,
     ...playlistRow
   } = playlistView
   if (processType === 'i') {
+    let dispOrder = null
+    if (playlistView.parent_playlist_id) {
+      const playlistFunc = await fetchPlaylistFunc(playlistView.parent_playlist_id)
+      dispOrder = playlistFunc.next_disp_order
+    }
     const { playlist_id, ...playlistRow2 } = playlistRow
     const playlistRow3 = {
       ...playlistRow2,
+      disp_order: dispOrder,
       created_at: new Date(),
       updated_at: new Date(),
       updated_count: 0
@@ -174,6 +180,21 @@ const deletePlaylistTrack = async (deleteData: PlaylistTrackView) => {
     throw(error)
   }
   console.log('deletePlaylistTrack Complete Result:')
+}
+
+const fetchPlaylistFunc = async (parentPlaylistId: string): Promise<PlaylistFunc> => {
+  console.log(parentPlaylistId)
+  let query = supabase
+      .from('mv41_playlist_func')
+      .select('parent_playlist_id, max_disp_order, next_disp_order')
+      .eq('parent_playlist_id', parentPlaylistId)
+      .single()
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchPlaylistFunc:', error)
+    throw error
+  }
+  return result
 }
 
 const copyToPlaylistTrackRecord = (PlaylistTrackView: PlaylistTrackView, processType: string) => {
