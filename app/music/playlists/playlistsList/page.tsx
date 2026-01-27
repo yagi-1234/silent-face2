@@ -115,7 +115,7 @@ const PlaylistList = () => {
       if (playlists[oldIndex].parent_playlist_id === playlists[newIndex].parent_playlist_id) {
         const minIndex = oldIndex < newIndex ? oldIndex : newIndex
         const maxIndex = oldIndex < newIndex ? newIndex : oldIndex
-        let newDispOrder = playlists.at(minIndex)?.disp_order ?? 0
+        const newDispOrder = playlists.at(minIndex)?.disp_order ?? 0
         const newPlaylists = arrayMove(playlists, oldIndex, newIndex)
 
         const reordered = newPlaylists.map((row, index) => {
