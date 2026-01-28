@@ -41,6 +41,8 @@ export const fetchItems = async (condition: LibraryCondition): Promise<LibraryIt
     query = query.or(`item_name_1.ilike.${itemName},item_name_2.ilike.${itemName}`)
   }
   if (condition.task_status) query = query.eq('task_status', condition.task_status)
+  if (condition.actioned === '1') query = query.not('last_actioned_at', 'is', null)
+  if (condition.not_actioned === '1') query = query.is('last_actioned_at', null)
   query = query.order('released', { ascending: false })
   const { data: result, error } = await query
   if (error) {

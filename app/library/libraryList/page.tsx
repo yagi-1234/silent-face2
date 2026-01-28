@@ -59,10 +59,12 @@ const LibraryList = () => {
   }
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
-    const { name, value } = event.target
+    const { name, value, type } = event.target
+    let newValue = value
+    if (type === 'checkbox') newValue = event.target.checked ? '1' : '0'
     setCondition(prev => ({
       ...prev, 
-      [name]: value
+      [name]: newValue
     }))
   }
 
@@ -82,7 +84,9 @@ const LibraryList = () => {
     if (condition.library_type) query.append('library_type', condition.library_type)
     if (condition.item_type) query.append('item_type', condition.item_type)
     if (condition.item_name) query.append('item_name', condition.item_name)
-      if (condition.task_status) query.append('item_name', condition.task_status)
+    if (condition.task_status) query.append('item_name', condition.task_status)
+    if (condition.actioned) query.append('actioned', condition.actioned)
+    if (condition.not_actioned) query.append('not_actioned', condition.not_actioned)
     router.push(`/library/libraryList?${query.toString()}`)
     const fetchData = await fetchItems(condition)
     console.log("fetchData", fetchData[0])
@@ -135,23 +139,95 @@ const LibraryList = () => {
               }}
               onChange={handleSearchChange} />
         </div>
-        <div className="div-input-row">
-          <label htmlFor="task_status" className="input-label">Task Status</label>
-          <select
-              id="task_status"
-              name="task_status"
-              className="w-48"
-              value={condition.task_status ?? ''}
-              onChange={(e) => handleSearchChange(e)}>
-            <option key="" value=""></option>
-            {Object.entries(CodeTaskStatus)
-                .sort(([a], [b]) => a.localeCompare(b))
-                .map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-            ))}
-          </select>
+        <div className="hidden sm:block">
+          <div className="div-input-row">
+            <div className="div-row-left">
+              <div className="w-60">
+                <label htmlFor="task_status" className="input-label">Task Status</label>
+                <select
+                    id="task_status"
+                    name="task_status"
+                    className="w-48"
+                    value={condition.task_status ?? ''}
+                    onChange={(e) => handleSearchChange(e)}>
+                  <option key="" value=""></option>
+                  {Object.entries(CodeTaskStatus)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([key, label]) => (
+                        <option key={key} value={key}>
+                          {label}
+                        </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="actioned" className="input-label">Not Actioned</label>
+                <label className="input-check-label">
+                  <input type="checkbox"
+                      id="actioned"
+                      name="actioned"
+                      className="w-5"
+                      checked={condition.actioned === '1'}
+                      value={condition.actioned}
+                      onChange={handleSearchChange} />
+                  <span className="mr-4">actioned</span>
+                  <input type="checkbox"
+                      id="not_actioned"
+                      name="not_actioned"
+                      className="w-5"
+                      checked={condition.not_actioned === '1'}
+                      value={condition.not_actioned}
+                      onChange={handleSearchChange} />
+                  <span>not actioned</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="block sm:hidden">
+          <div className="div-input-row">
+            <div className="div-row-left">
+              <div className="w-60">
+                <label htmlFor="task_status" className="input-label">Task Status</label>
+                <select
+                    id="task_status"
+                    name="task_status"
+                    className="w-48"
+                    value={condition.task_status ?? ''}
+                    onChange={(e) => handleSearchChange(e)}>
+                  <option key="" value=""></option>
+                  {Object.entries(CodeTaskStatus)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([key, label]) => (
+                        <option key={key} value={key}>
+                          {label}
+                        </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="div-input-row">
+            <label htmlFor="actioned" className="input-label">Not Actioned</label>
+            <label className="input-check-label">
+              <input type="checkbox"
+                  id="actioned"
+                  name="actioned"
+                  className="w-5"
+                  checked={condition.actioned === '1'}
+                  value={condition.actioned}
+                  onChange={handleSearchChange} />
+              <span className="mr-4">actioned</span>
+              <input type="checkbox"
+                  id="not_actioned"
+                  name="not_actioned"
+                  className="w-5"
+                  checked={condition.not_actioned === '1'}
+                  value={condition.not_actioned}
+                  onChange={handleSearchChange} />
+              <span>not actioned</span>
+            </label>
+          </div>
         </div>
         <div className="div-row-right">
           <button className="button-search"

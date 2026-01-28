@@ -93,6 +93,8 @@ export type LibraryCondition = {
   item_type: string | null
   item_name: string | null
   task_status: string | null
+  actioned: string
+  not_actioned: string
 }
 
 export const initialLibraryCondition: LibraryCondition = {
@@ -100,4 +102,6 @@ export const initialLibraryCondition: LibraryCondition = {
   item_type: null,
   item_name: null,
   task_status: null,
+  actioned: '0',
+  not_actioned: '0',
 }
