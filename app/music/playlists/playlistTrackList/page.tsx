@@ -100,14 +100,22 @@ const PlaylistTrackList = () => {
   }
 
   const handleSave = async () => {
-    await mergePlaylist(playlist)
-    await mergePlaylistTracks(playlistTracks, deletePlaylistTracks)
-    await loadData(inPlaylistId)
+    setModalMessage('Do you want to continue with this registration?')
+    setConfirmHandler(async () => {
+      await mergePlaylist(playlist)
+      await mergePlaylistTracks(playlistTracks, deletePlaylistTracks)
+      await loadData(inPlaylistId)
+    })
+    setIsModalOpen(true)
   }
 
   const handleCopy = async () => {
-    const playlistId = await copyPlaylist(playlist, playlistTracks)
-    await loadData(playlistId)
+    setModalMessage('Do you want to continue with this registration?')
+    setConfirmHandler(async () => {
+      const playlistId = await copyPlaylist(playlist, playlistTracks)
+      await loadData(playlistId)
+    })
+    setIsModalOpen(true)
   }
 
   const handleDelete = (playlistTrackId: string, playOrder :number) => {
@@ -283,6 +291,17 @@ const PlaylistTrackList = () => {
           {playlistTracks.map(playlistTrack => (
             <div key={playlistTrack.playlist_track_id} className="div-card">
               <div className="div-card-row card-title">
+                <SquareStar size={14} />
+                {playlistTrack.entry_count === 1 ? "New" : (
+                  <>
+                    {playlistTrack.max_rank_no}
+                    {playlistTrack.max_rank_count && playlistTrack.max_rank_count > 4 && (
+                      " (" + playlistTrack.max_rank_count + ")"
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="div-card-row card-title">
                 <Users size={14} />
                 {playlistTrack.artist_name_1}
               </div>
@@ -297,15 +316,14 @@ const PlaylistTrackList = () => {
                 {playlistTrack.track_name_1}
               </div>
               <div className="div-card-row">
-                <Shield size={14} />
-                {playlistTrack.entry_count === 1 ? "first Entry" : playlistTrack.entry_count + " Entries"}
-                <CircleStar size={14} />
-                {playlistTrack.rank_no + " (" + setPrevRankCell(playlistTrack.rank_no, playlistTrack.prev_rank_no) + ")"}
-                <SquareStar size={14} />
-                {playlistTrack.max_rank_no}
-                {playlistTrack.max_rank_count && playlistTrack.max_rank_count > 4 && (
-                  " (" + playlistTrack.max_rank_count + ")"
-                )}
+                {playlistTrack.entry_count && playlistTrack.entry_count > 1 &&
+                  <>
+                    <Shield size={14} />
+                    {playlistTrack.entry_count > 1 ? playlistTrack.entry_count + " Entries" : ""}
+                    <CircleStar size={14} />
+                    {playlistTrack.prev_rank_no ? playlistTrack.rank_no + " (" + setPrevRankCell(playlistTrack.rank_no, playlistTrack.prev_rank_no) + ")" : ""}
+                  </>
+                }
               </div>
             </div>
           ))}
@@ -380,12 +398,16 @@ const SortableRow = ({ playlistTrack, onDelete }: Props) => {
       <td>{ellipsis(playlistTrack.album_name_1, 24)}</td>
       <td>{ellipsis(playlistTrack.track_name_1, 24)}</td>
       <td className="numeric-field">{playlistTrack.entry_count}</td>
-      <td className="numeric-field">{playlistTrack.rank_no}</td>
+      <td className="numeric-field">{playlistTrack.entry_count && playlistTrack.entry_count > 1 ? playlistTrack.rank_no : "New"}</td>
       <td className="numeric-field">{setPrevRankCell(playlistTrack.rank_no, playlistTrack.prev_rank_no)}</td>
       <td className="numeric-field">
-        {playlistTrack.max_rank_no}
-        {playlistTrack.max_rank_count && playlistTrack.max_rank_count > 4 && (
-          " (" + playlistTrack.max_rank_count + ")"
+        {playlistTrack.entry_count === 1 ? "" : (
+          <>
+            {playlistTrack.max_rank_no}
+            {playlistTrack.max_rank_count && playlistTrack.max_rank_count > 4 && (
+              " (" + playlistTrack.max_rank_count + ")"
+            )}
+          </>
         )}
       </td>
       <td style={{ cursor: "grab" }}>
