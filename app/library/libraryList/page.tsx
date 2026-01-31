@@ -8,6 +8,7 @@ import { fetchItems, fetchItemMst } from '@/actions/library/library-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import MessageBanner from '@/components/MessageBanner'
+import { EllipsisAndTooltip } from '@/components/EllipsisAndTooltip'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
@@ -15,7 +16,7 @@ import { CodeCompletedFlag, CodeOwnedFlag, CodeLibraryGrade, CodeTaskType, CodeT
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
 import { LibraryItem, LibraryItemMst, LibraryCondition, initialLibraryCondition } from '@/types/library/library-types'
-import { ellipsis } from '@/utils/viewUtils'
+import { ellipsis, isEllipsed } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -253,8 +254,7 @@ const LibraryList = () => {
               <th>{itemMst?.genre}</th>
               {itemMst?.owned_flag && <th>{itemMst.owned_flag}</th> }
               <th>Grade</th>
-              <th>Progress</th>
-              <th>{itemMst?.action_count}</th>
+              {/* <th>Progress</th> */}
               <th>{itemMst?.last_actioned_at}</th>
               <th>Tasked</th>
               <th></th>
@@ -266,25 +266,24 @@ const LibraryList = () => {
                 {itemMst?.item_type && 
                   <td>{item.item_type}</td>
                 }
-                <td>{item.item_name_1}</td>
+                <td>{EllipsisAndTooltip(item.item_name_1, 16)}</td>
                 {itemMst?.item_name_2 && 
-                  <td>{ellipsis(item.item_name_2, 24)}</td> 
+                  <td>{EllipsisAndTooltip(item.item_name_2, 16)}</td>
                 }
-                <td>{item.author_name_1}</td>
-                <td>{item.author_name_2}</td>
-                <td>{item.owner_name}</td>
-                <td>{item.actors_1}</td>
+                <td>{EllipsisAndTooltip(item.author_name_1, 12)}</td>
+                <td>{EllipsisAndTooltip(item.author_name_2, 12)}</td>
+                <td>{EllipsisAndTooltip(item.owner_name, 8)}</td>
+                <td>{EllipsisAndTooltip(item.actors_1, 12)}</td>
                 <td>{formatDateTime(item.released, "yyyy/MM/dd")}</td>
                 {itemMst?.volumes && <td className="numeric-field">{item.volumes}</td> }
                 {itemMst?.completed_flag && <td className="numeric-field">{CodeCompletedFlag[item.completed_flag]}</td> }
-                <td>{item.genre}</td>
+                <td>{EllipsisAndTooltip(item.genre, 8)}</td>
                 {itemMst?.owned_flag && 
                   <td className="text-center">{CodeOwnedFlag[item.owned_flag]}</td>
                 }
                 <td>{CodeLibraryGrade[item.grade ?? ""]}</td>
-                <td className="numeric-field">{item.progress}</td>
-                <td className="numeric-field">{item.action_count}</td>
-                <td>{formatDateTime(item.last_actioned_at, "yyyy/MM/dd")}</td>
+                {/* <td className="numeric-field">{item.progress}</td> */}
+                <td>{item.action_count ?? 0 > 0 ? formatDateTime(item.last_actioned_at, "yyyy/MM/dd") + " (" + item.action_count + ")" : ""}</td>
                 <td className="numeric-field">
                   <button
                       className="button-link"
