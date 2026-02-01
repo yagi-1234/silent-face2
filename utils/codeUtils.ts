@@ -96,6 +96,11 @@ export const CodeAlbumType: { [key: string]: string | '' } = {
 export const CodeOwnedFlag: { [key: string]: string | '' } = {
   "1": "◯",
 }
+export const CodeOwnedMagazineFlag: { [key: string]: string | '' } = {
+  "1": "◯",
+  "8": "For Sale",
+  "9": "Sold",
+}
 
 export const CodeCompletedFlag: { [key: string]: string | '' } = {
   "1": "◯",
@@ -121,5 +126,6 @@ export const CodeEventType: { [key: string]: string | '' } = {
   '01': 'Live',
   '03': 'Shopping',
   '04': 'Season Event',
+  '06': 'Health Care',
   '08': 'Work'
 }

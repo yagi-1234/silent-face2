@@ -12,11 +12,10 @@ import { EllipsisAndTooltip } from '@/components/EllipsisAndTooltip'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
-import { CodeCompletedFlag, CodeOwnedFlag, CodeLibraryGrade, CodeTaskType, CodeTaskStatus } from '@/utils/codeUtils'
+import { CodeCompletedFlag, CodeOwnedMagazineFlag, CodeLibraryGrade, CodeTaskType, CodeTaskStatus } from '@/utils/codeUtils'
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
 import { LibraryItem, LibraryItemMst, LibraryCondition, initialLibraryCondition } from '@/types/library/library-types'
-import { ellipsis, isEllipsed } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -52,7 +51,9 @@ const LibraryList = () => {
       library_type: searchParams.get('library_type') ?? '',
       item_type: searchParams.get('item_type') ?? '',
       item_name: searchParams.get('item_name') ?? '',
-      task_status: searchParams.get('task_status') ?? ''
+      task_status: searchParams.get('task_status') ?? '',
+      actioned: searchParams.get('actioned') ?? '',
+      not_actioned: searchParams.get('not_actioned') ?? '',
     }
     setCondition(condition1)
     const fetchData = await fetchItems(condition1)
@@ -163,24 +164,28 @@ const LibraryList = () => {
               </div>
               <div>
                 <label htmlFor="actioned" className="input-label">Not Actioned</label>
-                <label className="input-check-label">
-                  <input type="checkbox"
-                      id="actioned"
-                      name="actioned"
-                      className="w-5"
-                      checked={condition.actioned === '1'}
-                      value={condition.actioned}
-                      onChange={handleSearchChange} />
-                  <span className="mr-4">actioned</span>
-                  <input type="checkbox"
-                      id="not_actioned"
-                      name="not_actioned"
-                      className="w-5"
-                      checked={condition.not_actioned === '1'}
-                      value={condition.not_actioned}
-                      onChange={handleSearchChange} />
-                  <span>not actioned</span>
-                </label>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  <label className="input-check-label">
+                    <input type="checkbox"
+                        id="actioned"
+                        name="actioned"
+                        className="w-5"
+                        checked={condition.actioned === '1'}
+                        value={condition.actioned}
+                        onChange={handleSearchChange} />
+                    <span>actioned</span>
+                  </label>
+                  <label className="input-check-label">
+                    <input type="checkbox"
+                        id="not_actioned"
+                        name="not_actioned"
+                        className="w-5"
+                        checked={condition.not_actioned === '1'}
+                        value={condition.not_actioned}
+                        onChange={handleSearchChange} />
+                    <span>not_actioned</span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -279,7 +284,7 @@ const LibraryList = () => {
                 {itemMst?.completed_flag && <td className="numeric-field">{CodeCompletedFlag[item.completed_flag]}</td> }
                 <td>{EllipsisAndTooltip(item.genre, 8)}</td>
                 {itemMst?.owned_flag && 
-                  <td className="text-center">{CodeOwnedFlag[item.owned_flag]}</td>
+                  <td className="text-center">{CodeOwnedMagazineFlag[item.owned_flag]}</td>
                 }
                 <td>{CodeLibraryGrade[item.grade ?? ""]}</td>
                 {/* <td className="numeric-field">{item.progress}</td> */}
@@ -358,7 +363,7 @@ const LibraryList = () => {
                 {itemMst?.owned_flag &&
                   <>
                     <span>&ensp;</span>
-                    {"Owned " + CodeOwnedFlag[item.owned_flag]}
+                    {"Owned " + CodeOwnedMagazineFlag[item.owned_flag]}
                   </>
                 }
               </div>

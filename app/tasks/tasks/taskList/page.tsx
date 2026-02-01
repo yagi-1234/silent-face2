@@ -236,7 +236,7 @@ const TaskList = () => {
                 <td>
                   <select
                       value={task.task_status}
-                      onChange={(e) => handleStatusChange(task.task_id, e.target.value) }>
+                      onChange={(e) => handleStatusChange(task.task_id ?? "", e.target.value) }>
                     {Object.entries(CodeTaskStatus).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
                     ))}
@@ -266,12 +266,12 @@ const TaskList = () => {
                 <td className={getInputClassName("", task.task_status, task.limit_date)}>{formatDateTime(task.limit_date, "yyyy/MM/dd")}</td>
                 <td className="flex items-center gap-1">
                   <button className="bg-gray-100 text-green-700 flex items-center justify-center w-10 p-2"
-                      onClick={() => handleDoneAction(task.task_id)} >
+                      onClick={() => handleDoneAction(task.task_id ?? "")} >
                     <CircleCheckBig className="w-5 h-5" />
                   </button>
                   <button
                       className="button-page"
-                      onClick={() => handleShowForm(task.task_id)} >
+                      onClick={() => handleShowForm(task.task_id ?? "")} >
                     <FileText className="w-5 h-5" />
                   </button>
                   {task.task_comment && (
@@ -310,7 +310,7 @@ const TaskList = () => {
               <div>
                 <button
                     className="button-link card-title"
-                    onClick={() => handleShowForm(task.task_id)}>
+                    onClick={() => handleShowForm(task.task_id ?? "")}>
                   {task.task_name}
                 </button>
               </div>

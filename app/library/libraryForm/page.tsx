@@ -14,7 +14,7 @@ import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
-import { CodeOwnedFlag, CodeLibraryGrade, CodeTaskType } from '@/utils/codeUtils'
+import { CodeOwnedFlag, CodeOwnedMagazineFlag, CodeLibraryGrade, CodeTaskType } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { LibraryItem, initialLibraryItem, LibraryItemMst } from '@/types/library/library-types'
@@ -279,18 +279,33 @@ const LibraryForm = () => {
           <div className="div-input-row">
             <label htmlFor="owned_flag" className="input-label">Owned</label>
             <div className="div-input-left">
-              <select
-                  id="owned_flag"
-                  name="owned_flag"
-                  className="w-24 mr-2"
-                  value={item.owned_flag}
-                  onChange={handleChange} >
-                <option key="" value=""></option>
-                {Object.entries(CodeOwnedFlag)
-                    .sort(([a], [b]) => a.localeCompare(b))
-                    .map(([key, label]) => (<option key={key} value={key}>{label}</option>
-                ))}
-              </select>
+              {item.library_type !== "07" ? (
+                <select
+                    id="owned_flag"
+                    name="owned_flag"
+                    className="w-24 mr-2"
+                    value={item.owned_flag}
+                    onChange={handleChange} >
+                  <option key="" value=""></option>
+                  {Object.entries(CodeOwnedFlag)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+                  ))}
+                </select>
+              ) : (
+                <select
+                    id="owned_flag"
+                    name="owned_flag"
+                    className="w-24 mr-2"
+                    value={item.owned_flag}
+                    onChange={handleChange} >
+                  <option key="" value=""></option>
+                  {Object.entries(CodeOwnedMagazineFlag)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+                  ))}
+                </select>
+              )}
               <PartialDateInput
                   name="added_at"
                   value={formatDateTime(item.added_at, 'yyyy/MM/dd') ?? ''}

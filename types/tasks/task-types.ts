@@ -1,8 +1,8 @@
 export type Task = {
-  task_id: string
+  task_id: string | null
   task_type: string
   task_cycle: string
-  task_key: string
+  task_key: string | null
   task_name: string
   priority: string
   task_status: string
@@ -26,10 +26,10 @@ export type TaskUIState = Task & {
 }
 
 export const initialTask: Task = {
-  task_id: '',
+  task_id: null,
   task_type: '',
   task_cycle: '',
-  task_key: '',
+  task_key: null,
   task_name: '',
   priority: '2',
   task_status: '0',

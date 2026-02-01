@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Briefcase, CalendarDays, FileText, Flower2, List, MicVocal, Plus, ShoppingCart } from 'lucide-react'
+import { ArrowLeft, Briefcase, CalendarDays, FileText, Flower2, HeartPlus, List, MicVocal, Plus, ShoppingCart } from 'lucide-react'
 
 import { fetchEvents } from '@/actions/tasks/event-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -84,12 +84,14 @@ const EventList = () => {
     const colorGreen = '#4ade80'
     const colorYellow = '#facc15'
     const colorRed = '#f87171' // red-400
+    const colorPink = '#f687b3'
     const colorPurple = '#c084fc'
     const colorGray = '#9ca3af'
     let color = colorGray
     if (event.event_type === '01') color = colorRed
     if (event.event_type === '03') color = colorBlue
     if (event.event_type === '04') color = colorYellow
+    if (event.event_type === '06') color = colorPink
     if (event.event_type === '08') color = colorPurple
     return {
       id: event.event_id,
@@ -105,6 +107,7 @@ const EventList = () => {
     if (eventType === '01') return <div className="border bg-red-400 text-white"><MicVocal size={16} /></div>
     if (eventType === '03') return <div className="border bg-yellow-400 text-white"><ShoppingCart size={16} /></div>
     if (eventType === '04') return <div className="border bg-blue-400 text-white"><Flower2 size={16} /></div>
+    if (eventType === '06') return <div className="border bg-pink-400 text-white"><HeartPlus size={16} /></div>
     if (eventType === '08') return <div className="border bg-purple-400 text-white"><Briefcase size={16} /></div>
   }
 
