@@ -214,7 +214,7 @@ const EventList = () => {
               initialView="dayGridMonth"
               initialDate={formatDateTime(selectMonth, "yyyy-MM-dd")}
               datesSet={info => {
-                let tmpDate = new Date(new Date(info.startStr))
+                const tmpDate = new Date(new Date(info.startStr))
                 tmpDate.setDate(tmpDate.getDate() + 7)
                 setSelectMonth(new Date(tmpDate.getFullYear(), tmpDate.getMonth(), 1))
               }}
