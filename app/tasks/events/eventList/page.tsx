@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Briefcase, CalendarDays, FileText, Flower2, HeartPlus, List, MicVocal, Plus, ShoppingCart } from 'lucide-react'
 
@@ -42,11 +42,11 @@ const EventList = () => {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [condition, setCondition] = useState<TaskCondition>(initialTaskCondition)
 
   const [events, setEvents] = useState<EventItem[]>([])
   const [isListView, setIsListView] = useState<boolean>(false)
   const [selectMonth, setSelectMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+  const calendarRef = useRef<FullCalendar | null>(null)
 
   const handleShowForm = (eventId: string) => {
     addToHistory({ title: 'eventCalendar', path: `${pathname}?is_list_view=${isListView}`})
@@ -58,9 +58,11 @@ const EventList = () => {
   }
   
   const handleEventClick = (info: EventClickArg) => {
-    const eventId = info.event.id
-    addToHistory({ title: 'eventCalendar', path: `${pathname}?${searchParams.toString()}`})
-    router.push(`/tasks/events/eventForm?event_id=${eventId}`)
+    const query = new URLSearchParams()
+    query.append('selectMonth', formatDateTime(selectMonth, 'yyyy-MM-dd'))
+    const nowPath = `/tasks/events/eventList?${query.toString()}`
+    addToHistory({ title: 'eventCalendar', path: nowPath})
+    router.push(`/tasks/events/eventForm?event_id=${info.event.id}`)
   }
 
   const loadEvents = async () => {
@@ -75,6 +77,10 @@ const EventList = () => {
   useEffect(() => {
     checkLogin()
     console.log(searchParams.get('is_list_view'))
+    if (searchParams.get('selectMonth')) {
+      setSelectMonth(new Date(searchParams.get('selectMonth') ?? '2019-01-01'))
+      calendarRef.current?.getApi().gotoDate(searchParams.get('selectMonth') ?? '2019-01-01')
+    }
     setIsListView(searchParams.get('is_list_view') === 'true' ? true : false)
     loadEvents()
   }, [])
@@ -111,8 +117,6 @@ const EventList = () => {
     if (eventType === '08') return <div className="border bg-purple-400 text-white"><Briefcase size={16} /></div>
   }
 
-  const start = new Date(2025, 9, 1)
-  const end = new Date(2025, 10, 1)
   const handleCalendarMove = (move: number) => {
     setSelectMonth(new Date(selectMonth.getFullYear(), selectMonth.getMonth() + move, 1))
   }
@@ -208,6 +212,12 @@ const EventList = () => {
           <FullCalendar
               plugins={[dayGridPlugin]}
               initialView="dayGridMonth"
+              initialDate={formatDateTime(selectMonth, "yyyy-MM-dd")}
+              datesSet={info => {
+                let tmpDate = new Date(new Date(info.startStr))
+                tmpDate.setDate(tmpDate.getDate() + 7)
+                setSelectMonth(new Date(tmpDate.getFullYear(), tmpDate.getMonth(), 1))
+              }}
               events={calendarEvents}
               eventClick={handleEventClick}
               eventContent={(arg) => (
@@ -225,6 +235,7 @@ const EventList = () => {
                 </TooltipProvider>
               )}
               height="auto"
+              ref={calendarRef}
               aspectRatio={1.2} />
         }
       </div>
