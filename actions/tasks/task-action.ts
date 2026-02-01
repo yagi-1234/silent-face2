@@ -42,10 +42,10 @@ export const mergeTask = async (newData: Task, updateTaskKey: string): Promise<T
   if (newData.task_id) {
     const result = await updateTask(newData)
     if (updateTaskKey) await updateItemByUpdatingTask(updateTaskKey, newData.action_count, newData.last_acted_at)
-    return await fetchTask(result.task_id)
+    return await fetchTask(result.task_id ?? '')
   } else {
     const result = await insertTask(newData)
-    return await fetchTask(result.task_id)
+    return await fetchTask(result.task_id ?? '')
   }
 }
 
