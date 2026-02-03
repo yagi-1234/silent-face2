@@ -50,7 +50,11 @@ export const mergeTask = async (newData: Task, updateTaskKey: string): Promise<T
 }
 
 const insertTask = async (newData: Task): Promise<Task> => {
-    const { task_id, ...insertData } = newData
+    const { task_id, ...newData2 } = newData
+    const insertData = {
+      ...newData2,
+      updated_at: new Date(),
+    }
     console.log("insertData:", insertData)
     const { data: result, error } = await supabase
         .from('ct01_tasks')
