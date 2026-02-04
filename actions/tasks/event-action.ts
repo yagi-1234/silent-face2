@@ -37,7 +37,11 @@ export const mergeEvent = async (newData: EventItem): Promise<EventItem> => {
 }
 
 const insertEvent = async (newData: EventItem): Promise<EventItem> => {
-    const { event_id, ...insertData } = newData
+    const { event_id, ...newData2 } = newData
+    const insertData = {
+      ...newData2,
+      updated_at: new Date(),
+    }
     console.log('insertData:', insertData)
     const { data: result, error } = await supabase
         .from('tt03_events')

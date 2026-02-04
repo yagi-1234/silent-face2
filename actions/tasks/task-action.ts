@@ -208,7 +208,8 @@ const insertMusicTask = async (newData: MusicTask): Promise<MusicTask> => {
   const maxTaskStatus = await fetchMaxTaskStatus(newData.task_status ?? '', newData.task_sub_type ?? '')
   const { task_sub_id, created_at, row_num, new_task_priority, priority_difference, ...newData2 } = newData
   const newData3 = { ...newData2,
-    task_priority: Number(maxTaskStatus) + 1
+    task_priority: Number(maxTaskStatus) + 1,
+    updated_at: new Date(),
   }
   const { data: result, error } = await supabase
       .from('ct02_music_tasks')

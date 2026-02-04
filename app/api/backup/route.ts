@@ -8,6 +8,8 @@ export async function GET() {
   await backupTable('mt21_albums')
   await backupTable('mt31_tracks')
   await backupTable('ct01_tasks')
+  await backupTable('ct02_music_tasks')
+  await backupTable('tt03_events')
   console.log('end::backup')
   return NextResponse.json({ ok: true })
 }
