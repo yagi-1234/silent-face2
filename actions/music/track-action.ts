@@ -143,7 +143,7 @@ export const mergeTracks = async (newData: TrackView[]): Promise<Number> => {
 }
 
 const insertTrack = async (newData: TrackView): Promise<TrackView> => {
-  const insertData = copyToTrackRecord(newData, 'i')
+  const insertData = copyViewToRecord(newData, 'i')
   console.log('insertData:', insertData)
   const { data: result, error } = await supabase
       .from('mt31_tracks')
@@ -161,7 +161,7 @@ const insertTrack = async (newData: TrackView): Promise<TrackView> => {
 const insertTracks = async (newData: TrackView[]) => {
   const insertData: Partial<TrackRow>[] = []
   newData.forEach((row) => {
-    const row2 = copyToTrackRecord(row, 'i')
+    const row2 = copyViewToRecord(row, 'i')
     insertData.push(row2)
   })
   console.log('insertData:', insertData)
@@ -178,7 +178,7 @@ const insertTracks = async (newData: TrackView[]) => {
 }
 
 const updateTrack = async (newData: TrackView): Promise<TrackRow> => {
-  const updateData = copyToTrackRecord(newData, 'u')
+  const updateData = copyViewToRecord(newData, 'u')
   console.log('updateData:', updateData)
   const { data: result, error } = await supabase
       .from('mt31_tracks')
@@ -229,7 +229,8 @@ export const validateTrack = (track: TrackView): ValidationErrors => {
   return errors
 }
 
-const copyToTrackRecord = (trackView: TrackView, processType: string) => {
+const copyViewToRecord = (view: TrackView, processType: string): Partial<TrackRow> => {
+  const nowDate = new Date()
   const {
     artist_name_0,
     artist_name_1,
@@ -243,26 +244,26 @@ const copyToTrackRecord = (trackView: TrackView, processType: string) => {
     track_artist_name_1,
     track_count,
     album_track_length,
-    ...trackRow
-  } = trackView
-  if (processType === 'i') {
-    const trackRow2: TrackRow = {
-      ...trackRow,
-      created_at: new Date(),
-      updated_at: new Date(),
+    ...row
+  } = view
+  switch (processType) {
+    case "i": {
+      const { track_id, ...insertData } = {
+        ...row,
+        created_at: nowDate,
+        updated_at: nowDate,
+      }
+      return insertData
     }
-    const { track_id, ...trackRow3 } = trackRow2
-    return trackRow3
-  } else if (processType === 'u') {
-    const trackRow2: TrackRow = {
-      ...trackRow,
-      updated_at: new Date(),
-      updated_count: Number(trackRow.updated_count ?? 0) + 1
+    case "u": {
+      return {
+        ...row,
+        updated_at: nowDate,
+        updated_count: Number(row.updated_count ?? 0) + 1
+      }
     }
-    return trackRow2
-  } else {
-    return trackRow
   }
+  return row
 }
 
 const copyToTrackView = (track: TrackRow): TrackView => {

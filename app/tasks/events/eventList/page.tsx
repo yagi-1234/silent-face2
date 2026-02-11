@@ -19,7 +19,6 @@ import { CodeEventType } from '@/utils/codeUtils'
 import { formatDateTime, formatDateVariousTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 
-import { TaskCondition, initialTaskCondition } from '@/types/tasks/task-types'
 import type { EventItem } from '@/types/tasks/event-types'
 import { EventClickArg } from '@fullcalendar/core'
 
@@ -48,9 +47,13 @@ const EventList = () => {
   const [selectMonth, setSelectMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
   const calendarRef = useRef<FullCalendar | null>(null)
 
-  const handleShowForm = (eventId: string) => {
+  const inEventType = searchParams.get('event_type') ?? ''
+
+  const handleShowForm = (eventType: string, eventId: string) => {
+    console.log(eventType)
     addToHistory({ title: 'eventCalendar', path: `${pathname}?is_list_view=${isListView}`})
-    router.push(`/tasks/events/eventForm?event_id=${eventId}`)
+    if (eventType === '01') router.push(`/music/lives/liveTrackList?event_id=${eventId}`)
+    else router.push(`/tasks/events/eventForm?event_id=${eventId}`)
   }
 
   const handleChangeView = (isList: boolean) => {
@@ -62,11 +65,13 @@ const EventList = () => {
     query.append('selectMonth', formatDateTime(selectMonth, 'yyyy-MM-dd'))
     const nowPath = `/tasks/events/eventList?${query.toString()}`
     addToHistory({ title: 'eventCalendar', path: nowPath})
-    router.push(`/tasks/events/eventForm?event_id=${info.event.id}`)
+    const eventType = events.filter(row => row.event_id === info.event.id).at(0)?.event_type
+    if (eventType === '01') router.push(`/music/lives/liveTrackList?event_id=${info.event.id}`)
+    else router.push(`/tasks/events/eventForm?event_id=${info.event.id}`)
   }
 
   const loadEvents = async () => {
-    const result = await fetchEvents()
+    const result = await fetchEvents(inEventType)
     setEvents(result)
   }
 
@@ -76,7 +81,6 @@ const EventList = () => {
 
   useEffect(() => {
     checkLogin()
-    console.log(searchParams.get('is_list_view'))
     if (searchParams.get('selectMonth')) {
       setSelectMonth(new Date(searchParams.get('selectMonth') ?? '2019-01-01'))
       calendarRef.current?.getApi().gotoDate(searchParams.get('selectMonth') ?? '2019-01-01')
@@ -164,7 +168,7 @@ const EventList = () => {
               <span>&ensp;</span>
               <button
                   className="button-link card-title"
-                  onClick={() => handleShowForm(event.event_id ?? "")}>
+                  onClick={() => handleShowForm(event.event_type, event.event_id ?? "")}>
                 {event.event_name}
               </button>
             </div>
@@ -198,7 +202,7 @@ const EventList = () => {
                     <td>
                       <button
                           className="button-page"
-                          onClick={() => handleShowForm(event.event_id ?? "")} >
+                          onClick={() => handleShowForm(event.event_type, event.event_id ?? "")} >
                         <FileText className="w-5 h-5" />
                       </button>
                     </td>
@@ -263,7 +267,7 @@ const EventList = () => {
               }
             </div>
             <button className="button-save"
-                onClick={() => handleShowForm("")}>
+                onClick={() => handleShowForm("", "")}>
               <Plus size={16} />
             </button>
           </div>

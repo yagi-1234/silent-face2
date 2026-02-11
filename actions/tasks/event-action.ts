@@ -15,25 +15,24 @@ export const fetchEvent = async (eventId: string): Promise<EventItem> => {
   return result
 }
 
-export const fetchEvents = async (): Promise<EventItem[]> => {
-  let query = supabase
-      .from('tt03_events')
-      .select('*')
-      .order('start_at')
+export const fetchEvents = async (eventType: string | null): Promise<EventItem[]> => {
+  let query = supabase.from('tt03_events').select('*')
+  if (eventType) query = query.eq('event_type', eventType)
+  query = query.order('start_at')
   const { data: result, error } = await query
   if (error) {
-      console.error('Error fetchEvents:', error)
-      return []
+    console.error('Error fetchEvents:', error)
+    return []
   }
   return result
 }
 
 export const mergeEvent = async (newData: EventItem): Promise<EventItem> => {
-    if (newData.event_id) {
-        return await updateEvent(newData)
-    } else {
-        return await insertEvent(newData)
-    }
+  if (newData.event_id) {
+    return await updateEvent(newData)
+  } else {
+    return await insertEvent(newData)
+  }
 }
 
 const insertEvent = async (newData: EventItem): Promise<EventItem> => {
