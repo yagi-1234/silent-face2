@@ -3,7 +3,8 @@
 import { useEffect } from 'react'
 import type { NextPage } from 'next'
 
-import { AlarmClockCheck, BookImage, BookOpenText, BookText, Calendar, Clapperboard, Disc3, Download, Gamepad2, Users, FileAudio, Music, MicVocal, SquareLibrary, Tv } from 'lucide-react'
+import { AlarmClockCheck, BookImage, BookOpenText, BookText, Calendar, Clapperboard, Disc3, Download, Gamepad2, Users, 
+  Music, MicVocal, SquareLibrary, Tv, ScanHeart } from 'lucide-react'
 
 import HomeIconButton from '@/components/HomeIconButton'
 import { checkUser } from '@/contexts/RooterContext'
@@ -64,6 +65,16 @@ const Page: NextPage = () => {
         <HomeIconButton icon={Tv} label="Drama" path="/library/libraryList?library_type=05" />
         <HomeIconButton icon={Gamepad2} label="Games" path="/library/libraryList?library_type=06" />
         <HomeIconButton icon={BookOpenText} label="Magazine" path="/library/libraryList?library_type=07" />
+      </div>
+
+      <div className="flex items-center my-6">
+        <div className="flex-grow border-t border-gray-300"></div>
+        <span className="mx-4 text-gray-500">Others</span>
+        <div className="flex-grow border-t border-gray-300"></div>
+      </div>
+
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-10 text-center">
+        <HomeIconButton icon={ScanHeart} label="Health" path="/health/healthList" />
       </div>
     </div>
   )
