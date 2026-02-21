@@ -54,43 +54,45 @@ const HealthList = () => {
   useEffect(() => {
     checkLogin()
     loadData()
-  })
+  }, [])
 
   return (
     <div className="root-panel">
       <Breadcrumb />
       <h2 className="header-title">Health List</h2>
-      <div className="hidden sm:block">
+      <div>
+        <div className="hidden sm:block">
 
-      </div>
-      <div className="block sm:hidden">
-        <div className="div-card-area">
-          {weights.map(weight => (
-            <div key={weight.weight_id} className="div-card">
-              <div className="div-card-row card-title">
-                <button
-                    className="button-link"
-                    onClick={() => handleShowForm(weight.weight_id ?? '')}>
-                  {formatDateTime(weight.weight_date, "yyyy/MM/dd")}
-                </button>
-              </div>
-              <div className="div-card-row card-title">
-                <Weight size={14} />
-                {weight.weight}<span>kg</span>
-              </div>
-              <div className="div-card-row">
-                <div className="mr-2">
-                  <span>BFP：</span>{weight.bfp}<span>%</span>
+        </div>
+        <div className="block sm:hidden">
+          <div className="div-card-area">
+            {weights.map(weight => (
+              <div key={weight.weight_id} className="div-card">
+                <div className="div-card-row card-title">
+                  <button
+                      className="button-link"
+                      onClick={() => handleShowForm(weight.weight_id ?? '')}>
+                    {formatDateTime(weight.weight_date, "yyyy/MM/dd")}
+                  </button>
                 </div>
-                <div className="mr-2">
-                  <span>Muscle：</span>{weight.muscle_mass}<span>kg</span>
+                <div className="div-card-row card-title">
+                  <Weight size={14} />
+                  {weight.weight}<span>kg</span>
                 </div>
-                <div>
-                  <span>VFL：</span>{weight.vfl}
+                <div className="div-card-row">
+                  <div className="mr-2">
+                    <span>BFP：</span>{weight.bfp}<span>%</span>
+                  </div>
+                  <div className="mr-2">
+                    <span>Muscle：</span>{weight.muscle_mass}<span>kg</span>
+                  </div>
+                  <div>
+                    <span>VFL：</span>{weight.vfl}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
       <div className="footer-area">

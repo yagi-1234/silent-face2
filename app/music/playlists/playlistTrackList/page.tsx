@@ -294,8 +294,8 @@ const PlaylistTrackList = () => {
                 <SquareStar size={14} />
                 {playlistTrack.entry_count === 1 ? "New" : (
                   <>
-                    {playlistTrack.max_rank_no}
-                    {playlistTrack.max_rank_count && playlistTrack.max_rank_count > 4 && (
+                    {playlistTrack.rank_no}
+                    {(playlistTrack.rank_no == playlistTrack.max_rank_no && 6 > (playlistTrack.rank_no ?? 99) && playlistTrack.max_rank_count && 1 < playlistTrack.max_rank_count) && (
                       " (" + playlistTrack.max_rank_count + ")"
                     )}
                   </>

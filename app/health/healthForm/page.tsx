@@ -111,7 +111,7 @@ const DailyHealth = () => {
         </div>
         <div className="div-input-row">
           <label htmlFor="weight" className="input-label">Weight</label>
-          <input type="text"
+          <input type="number"
               id="weight"
               name="weight"
               className="numeric-field w-24"
@@ -121,7 +121,7 @@ const DailyHealth = () => {
         </div>
         <div className="div-input-row">
           <label htmlFor="bfp" className="input-label">Body Fat Percentage</label>
-          <input type="text"
+          <input type="number"
               id="bfp"
               name="bfp"
               className="numeric-field w-24"
@@ -131,7 +131,7 @@ const DailyHealth = () => {
         </div>
         <div className="div-input-row">
           <label htmlFor="muscle_mass" className="input-label">Muscle Mass</label>
-          <input type="text"
+          <input type="number"
               id="muscle_mass"
               name="muscle_mass"
               className="numeric-field w-24"
@@ -141,7 +141,7 @@ const DailyHealth = () => {
         </div>
         <div className="div-input-row">
           <label htmlFor="vfl" className="input-label">Visceral Fat Level</label>
-          <input type="text"
+          <input type="number"
               id="vfl"
               name="vfl"
               className="numeric-field w-24"
@@ -150,7 +150,7 @@ const DailyHealth = () => {
         </div>
         <div className="div-input-row">
           <label htmlFor="bmr" className="input-label">Basal Metabolic Rate</label>
-          <input type="text"
+          <input type="number"
               id="bmr"
               name="bmr"
               className="numeric-field w-24"
@@ -160,7 +160,7 @@ const DailyHealth = () => {
         </div>
         <div className="div-input-row">
           <label htmlFor="body_age" className="input-label">Body Age</label>
-          <input type="text"
+          <input type="number"
               id="body_age"
               name="body_age"
               className="numeric-field w-24"

@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import type { NextPage } from 'next'
 
 import { AlarmClockCheck, BookImage, BookOpenText, BookText, Calendar, Clapperboard, Disc3, Download, Gamepad2, Users, 
-  Music, MicVocal, SquareLibrary, Tv, ScanHeart } from 'lucide-react'
+  Music, MicVocal, NotebookPen, SquareLibrary, Tv, ScanHeart } from 'lucide-react'
 
 import HomeIconButton from '@/components/HomeIconButton'
 import { checkUser } from '@/contexts/RooterContext'
@@ -33,6 +33,7 @@ const Page: NextPage = () => {
         <HomeIconButton icon={AlarmClockCheck} label="Task List" path="/tasks/tasks/taskList" />
         <HomeIconButton icon={AlarmClockCheck} label="Music Task" path="/tasks/music/musicTaskList" />
         <HomeIconButton icon={Calendar} label="Events" path="/tasks/events/eventList" />
+        <HomeIconButton icon={NotebookPen} label="Notes" path="/tasks/notes/noteList" />
       </div>
 
       <div className="flex items-center my-6">

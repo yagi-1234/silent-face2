@@ -451,7 +451,7 @@ const TrackForm = () => {
                 <textarea id="track_comment"
                     name="track_comment"
                     rows={3}
-                    value={track.track_comment ?? ''}
+                    value={track.track_comment ?? ""}
                     onChange={handleChange} >
                 </textarea>
               </div>
