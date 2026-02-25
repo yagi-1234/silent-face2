@@ -2,17 +2,23 @@
 
 import { useEffect } from 'react'
 import type { NextPage } from 'next'
-
 import { AlarmClockCheck, BookImage, BookOpenText, BookText, Calendar, Clapperboard, Disc3, Download, Gamepad2, Users, 
-  Music, MicVocal, NotebookPen, SquareLibrary, Tv, ScanHeart } from 'lucide-react'
+    Music, MicVocal, NotebookPen, Rss, SquareLibrary, Tv, ScanHeart } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 import HomeIconButton from '@/components/HomeIconButton'
 import { checkUser } from '@/contexts/RooterContext'
 
 const Page: NextPage = () => {
 
+  const router = useRouter()
+
   const checkLogin = async () => {
     await checkUser()
+  }
+
+  const handleShowReleases = () => {
+    router.push("/information/release")
   }
 
   useEffect(() => {
@@ -21,7 +27,15 @@ const Page: NextPage = () => {
 
   return (
     <div className="root-panel">
-      <h2 className="header-title">This is Home</h2>
+      <div className="flex">
+        <div className="flex-1">
+          <h2 className="header-title">This is Home</h2>
+        </div>
+        <div className="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center">
+          <Rss size={20} 
+              onClick={handleShowReleases} />
+        </div>
+      </div>
 
       <div className="flex items-center my-6">
         <div className="flex-grow border-t border-gray-300"></div>
