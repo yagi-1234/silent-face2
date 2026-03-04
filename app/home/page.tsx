@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react'
 import type { NextPage } from 'next'
-import { AlarmClockCheck, BookImage, BookOpenText, BookText, Calendar, Clapperboard, Disc3, Download, Gamepad2, Users, 
-    Music, MicVocal, NotebookPen, Rss, SquareLibrary, Tv, ScanHeart } from 'lucide-react'
+import { AlarmClockCheck, BookImage, BookOpenText, BookText, Calendar, Clapperboard, Database, Disc3, Download, Gamepad2, 
+    Info, Music, MicVocal, NotebookPen, SquareLibrary, Tv, ScanHeart, Settings, Users} from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import HomeIconButton from '@/components/HomeIconButton'
@@ -17,6 +17,9 @@ const Page: NextPage = () => {
     await checkUser()
   }
 
+  const handleShowMaster = () => {
+    router.push("/master/masterList")
+  }
   const handleShowReleases = () => {
     router.push("/information/release")
   }
@@ -31,9 +34,14 @@ const Page: NextPage = () => {
         <div className="flex-1">
           <h2 className="header-title">This is Home</h2>
         </div>
-        <div className="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center">
-          <Rss size={20} 
-              onClick={handleShowReleases} />
+        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-2">
+          <Settings size={20} onClick={handleShowReleases} />
+        </div>
+        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-2">
+          <Database size={20} onClick={handleShowMaster} />
+        </div>
+        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+          <Info size={20} onClick={handleShowReleases} />
         </div>
       </div>
 
