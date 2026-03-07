@@ -1,8 +1,9 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { Check, Clock, ArrowLeft, ArrowRight, Plus } from 'lucide-react'
+import { Calendar, Check, Clock, ArrowLeft, ArrowRight, Plus } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { DayPicker } from 'react-day-picker'
 
 import { fetchArtist } from '@/actions/music/artist-action'
 import { fetchAlbum, mergeAlbum, isAlbumEdited, validateAlbum } from '@/actions/music/album-action'
@@ -324,6 +325,22 @@ const AlbumList = () => {
                 album:<br /> {JSON.stringify(album)}
               </>
           } />
+    </div>
+  )
+}
+
+type Props = {
+  selected?: Date
+  onSelect: (date: Date | undefined) => void
+}
+
+export function CalendarOnly({ selected, onSelect }: Props) {
+  return (
+    <div>
+      <DayPicker
+          mode="single"
+          selected={selected}
+          onSelect={onSelect} />
     </div>
   )
 }
