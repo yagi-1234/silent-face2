@@ -3,42 +3,24 @@ import { supabase } from "@/lib/supabase"
 import { updateItemByUpdatingTask } from '@/actions/library/library-action'
 import { updateAlbumByUpdatingTask } from '@/actions/music/album-action'
 import type { ValidationErrors } from '@/types/common/common-types'
-import type { Task, TaskCondition, MusicTask, MusicTaskCondition } from '@/types/tasks/task-types'
+import type { TaskRow, TaskView, TaskListView, Task, TaskCondition, MusicTask, MusicTaskCondition, TaskGroupView } from '@/types/tasks/task-types'
 
-import { formatDateToYYYYMMDD } from '@/utils/dateFormat'
-
-export const fetchTask = async (taskId: string): Promise<Task> => {
+export const fetchTask = async (taskId: string): Promise<TaskView> => {
     console.log('taskId:', taskId)
     const { data, error } = await supabase
-            .from('ct01_tasks')
+            .from('tt01_tasks')
             .select('*')
             .eq('task_id', taskId)
             .single()
     if (error) {
-        console.error('Error fetching tasks:', error)
+        console.error('Error fetchTask:', error)
         throw error
     }
     console.log("data:", data)
     return data
 }
 
-export const fetchTasks = async (condition: TaskCondition): Promise<Task[]> => {
-  console.log('condition:', condition)
-  let query = supabase.from('ct01_tasks').select('*')
-  if (condition.task_type) query = query.eq('task_type', condition.task_type)
-  if (condition.task_status_list.length > 0) query = query.in('task_status', condition.task_status_list)
-  query = query.order('next_date')
-  query = query.order('task_status', { ascending: false })
-  query = query.order('last_acted_at', { ascending: false })
-  const { data: result, error } = await query
-  if (error) {
-      console.error('Error fetchTasks:', error)
-      return []
-  }
-  return result
-}
-
-export const mergeTask = async (newData: Task, updateTaskKey: string): Promise<Task> => {
+export const mergeTask = async (newData: TaskView, updateTaskKey: string): Promise<TaskView> => {
   if (newData.task_id) {
     const result = await updateTask(newData)
     if (updateTaskKey) await updateItemByUpdatingTask(updateTaskKey, newData.action_count, newData.last_acted_at)
@@ -49,76 +31,66 @@ export const mergeTask = async (newData: Task, updateTaskKey: string): Promise<T
   }
 }
 
-const insertTask = async (newData: Task): Promise<Task> => {
-    const { task_id, ...newData2 } = newData
-    const insertData = {
-      ...newData2,
-      updated_at: new Date(),
-    }
-    console.log("insertData:", insertData)
-    const { data: result, error } = await supabase
-        .from('ct01_tasks')
-        .insert(insertData)
-        .select()
-        .single()
-    if (error || !result) {
-        console.log('error')
-        alert ('Error: Insert Task Failed')
-        throw(error)
-    }
-    console.log("Insert Task Complete Result:", result)
-    return result
+const insertTask = async (newData: TaskView): Promise<TaskRow> => {
+  const insertData = copyViewToRecord(newData, 'i')
+  console.log('insertData:', insertData)
+  const { data: result, error } = await supabase
+      .from('tt01_tasks')
+      .insert(insertData)
+      .select()
+      .single()
+  if (error || !result) {
+      console.log('error')
+      alert ('Error: insertTask Failed')
+      throw(error)
+  }
+  console.log("insertTask Complete Result:", result)
+  return result
 }
 
-const updateTask = async (newData: Task): Promise<Task> => {
-
-    const updateData = { ...newData,
-        next_date: newData.next_date ? formatDateToYYYYMMDD(new Date(newData.next_date)) : null,
-        limit_date: newData.limit_date ? formatDateToYYYYMMDD(new Date(newData.limit_date)) : null,
-        updated_at: new Date(),
-        updated_count: Number(newData.updated_count ?? 0) + 1
-    }
-    console.log("updateData:", updateData)
-    const { data: result, error } = await supabase    
-        .from('ct01_tasks')
-        .update(updateData)
-        .eq('task_id', updateData.task_id)
-        .select()
-        .single()
-    if (error) {
-        alert ('Error: updateTask Failed')
-        throw(error)
-    }
-    console.log('updateTask Complete Result:', result)
-    return result
+const updateTask = async (newData: TaskView): Promise<TaskRow> => {
+  const updateData = copyViewToRecord(newData, 'u')
+  console.log('updateData:', updateData)
+  const { data: result, error } = await supabase    
+      .from('tt01_tasks')
+      .update(updateData)
+      .eq('task_id', updateData.task_id)
+      .select()
+      .single()
+  if (error) {
+      alert ('Error: updateTask Failed')
+      throw(error)
+  }
+  console.log('updateTask Complete Result:', result)
+  return result
 }
 
-export const updateLastActedAt = async (taskId: string): Promise<Task> => {
-    const oldData = await fetchTask(taskId)
-    if (!oldData)
-        throw "error"
-    const newLastActedAt = new Date()
-    if (oldData.schedule_type === '1') { // Spot
-        return oldData
-    } else if (oldData.schedule_type === '2') { // Regularly
-        const newNextDate = new Date(newLastActedAt)
-        newNextDate.setHours(9, 0, 0, 0)
-        newNextDate.setDate(newNextDate.getDate() + Number(oldData.task_cycle))
-        const newLimitDate = new Date(newNextDate)
-        newLimitDate.setDate(newLimitDate.getDate() + Number(oldData.buffer_period))
-        const newData = { ...oldData,
-            last_acted_at: newLastActedAt,
-            next_date: newNextDate,
-            limit_date: newLimitDate,
-            action_count: Number(oldData.action_count) + 1,
-        }
-        return await updateTask(newData)
-    } else {
-        throw 'error'
-    }
-}
+// export const updateLastActedAt = async (taskId: string): Promise<Task> => {
+//     const oldData = await fetchTask(taskId)
+//     if (!oldData)
+//         throw "error"
+//     const newLastActedAt = new Date()
+//     if (oldData.schedule_type === '1') { // Spot
+//         return oldData
+//     } else if (oldData.schedule_type === '2') { // Regularly
+//         const newNextDate = new Date(newLastActedAt)
+//         newNextDate.setHours(9, 0, 0, 0)
+//         newNextDate.setDate(newNextDate.getDate() + Number(oldData.task_cycle))
+//         const newLimitDate = new Date(newNextDate)
+//         newLimitDate.setDate(newLimitDate.getDate() + Number(oldData.buffer_period))
+//         const newData = { ...oldData,
+//             last_acted_at: newLastActedAt,
+//             next_date: newNextDate,
+//             limit_date: newLimitDate,
+//             action_count: Number(oldData.action_count) + 1,
+//         }
+//         return await updateTask(newData)
+//     } else {
+//         throw 'error'
+//     }
+// }
 
-export const updateTaskStatus = async (taskId: string, taskStatus: string) => {
+export const updateTaskStatus = async (taskId: string, taskStatus: string): Promise<TaskView> => {
     const oldData = await fetchTask(taskId)
     console.log('oldData:', oldData)
     if (!oldData)
@@ -126,21 +98,22 @@ export const updateTaskStatus = async (taskId: string, taskStatus: string) => {
 
     const newData = { ...oldData,
       task_status: taskStatus,
-      next_date: taskStatus === '9' ? null : oldData.next_date,
-      limit_date: taskStatus === '9' ? null : oldData.limit_date,
+      next_date: (taskStatus === '8' || taskStatus === '9') ? null : oldData.next_date,
+      limit_date: (taskStatus === '8' || taskStatus === '9') ? null : oldData.limit_date,
     }
-    return await updateTask(newData)
+    await updateTask(newData)
+    return await fetchTask(taskId)
 }
 
-export const validateTask = (task: Task): ValidationErrors => {
+export const validateTask = (task: TaskView): ValidationErrors => {
     const errors: ValidationErrors = {}
 
-    if (!task.task_name.trim())
+    if (task.task_name && !task.task_name.trim())
         errors.task_name = "Task name is required."
     return errors
 }
 
-export const isTaskEdited = (original?: Task, current?: Task): boolean => {
+export const isTaskEdited = (original?: TaskView, current?: TaskView): boolean => {
   if (!original || !current) return true;
   return (
     original.task_type !== current.task_type ||
@@ -152,7 +125,7 @@ export const isTaskEdited = (original?: Task, current?: Task): boolean => {
       ? false
       : new Date(original.last_acted_at || "").getTime() !==
         new Date(current.last_acted_at || "").getTime()) ||
-    original.task_cycle !== current.task_cycle ||
+    original.task_group_id !== current.task_group_id ||
     (!original.next_date && !current.next_date
       ? false
       : new Date(original.next_date || "").getTime() !==
@@ -348,3 +321,60 @@ export const isMusicTaskEdited = (original?: MusicTask, current?: MusicTask): bo
     original.task_comment !== current.task_comment
   )
 }
+
+export const fetchTasks = async (condition: TaskCondition): Promise<TaskListView[]> => {
+  console.log('condition:', condition)
+  let query = supabase.from('tv01_tasks').select('*')
+  if (condition.task_type) query = query.eq('task_type', condition.task_type)
+  if (condition.task_status_list.length > 0) query = query.in('task_status', condition.task_status_list)
+  query = query.order('task_type')
+  query = query.order('task_group_order')
+  query = query.order('next_date')
+  query = query.order('task_status', { ascending: false })
+  query = query.order('last_acted_at', { ascending: false })
+  const { data: result, error } = await query
+  if (error) {
+      console.error('Error fetchTasks:', error)
+      return []
+  }
+  return result
+}
+
+export const fetchTaskGroups = async (taskType: string): Promise<TaskGroupView[]> => {
+    console.log('taskType:', taskType)
+    const { data: result, error } = await supabase
+        .from('tt02_task_groups')
+        .select('*')
+        .eq('task_type', taskType)
+    if (error) {
+        console.error('Error fetchTaskGroups:', error)
+        throw error
+    }
+    return result
+}
+
+const copyViewToRecord = (view: TaskView, processType: string): Partial<TaskRow> => {
+  const nowDate = new Date()
+  const {
+    ...row
+  } = view
+  switch (processType) {
+    case 'i': {
+      const { task_id, ...insertData } = {
+        ...row,
+        created_at: nowDate,
+        updated_at: nowDate,
+      }
+      return insertData
+    }
+    case 'u': {
+      return {
+        ...row,
+        updated_at: nowDate,
+        updated_count: Number(row.updated_count ?? 0) + 1
+      }
+    }
+  }
+  return row
+}
+

@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 
 import type { LibraryItem, LibraryItemMst, LibraryCondition } from '@/types/library/library-types'
-import { Task, initialTask } from '@/types/tasks/task-types'
+import { TaskView, initialTask } from '@/types/tasks/task-types'
 import { makeKeywordForSql } from '@/utils/stringUtils'
 
 export const fetchItem = async (itemId: string): Promise<LibraryItem> => {
@@ -19,7 +19,7 @@ export const fetchItem = async (itemId: string): Promise<LibraryItem> => {
   return result
 }
 
-export const fetchItemForTask = async (itemId: string): Promise<Task> => {
+export const fetchItemForTask = async (itemId: string): Promise<TaskView> => {
   const fetchData = await fetchItem(itemId)
   const task = { ...initialTask,
     task_key: fetchData.item_id,

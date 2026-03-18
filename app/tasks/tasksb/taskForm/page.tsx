@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Check, Plus } from 'lucide-react'
 
 import { fetchItemForTask } from '@/actions/library/library-action'
-import { fetchTask, mergeTask, validateTask, isTaskEdited, fetchTaskGroups } from '@/actions/tasks/task-action'
+import { fetchTask, mergeTask, validateTask, isTaskEdited } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
@@ -15,7 +15,7 @@ import MessageBanner from '@/components/MessageBanner'
 import { useMessage } from '@/contexts/MessageContext'
 import PartialDateInput from '@/components/PartialDateInput'
 import { checkUser } from '@/contexts/RooterContext'
-import { TaskView, initialTask, TaskGroupView } from '@/types/tasks/task-types'
+import { Task, initialTask } from '@/types/tasks/task-types'
 import { CodeTaskType, CodePriorityType, CodeTaskStatus, CodeScheduleType } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
@@ -33,9 +33,8 @@ const TaskForm = () => {
   const params = useSearchParams()
   const inTaskId = params.get("task_id") ?? ""
   const inItemId = params.get("item_id") ?? ""
-  const [task, setTask] = useState<TaskView>(initialTask)
-  const [originalTask, setOriginalTask] = useState<TaskView>(initialTask)
-  const [taskGroups, setTaskGroups] = useState<TaskGroupView[]>([])
+  const [task, setTask] = useState<Task>(initialTask)
+  const [originalTask, setOriginalTask] = useState<Task>(initialTask)
 
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
 
@@ -81,15 +80,6 @@ const TaskForm = () => {
       next_date: nextDate,
       limit_date: limitDate
     }))
-  }
-  const handleTaskTypeChange = async (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setTask(prev => ({
-      ...prev, task_type: event.target.value
-    }))
-    if (event.target.value) {
-      const result = await fetchTaskGroups(event.target.value)
-      setTaskGroups(result)
-    }
   }
   const handleChangeDate = (value: string, name: string) => {
     setTask(prev => ({
@@ -214,8 +204,8 @@ const TaskForm = () => {
               id="task_type"
               name="task_type"
               className="w-48"
-              value={task.task_type ?? ""}
-              onChange={(e) => handleTaskTypeChange(e)}>
+              value={task.task_type}
+              onChange={(e) => handleChange(e)}>
             {Object.entries(CodeTaskType)
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([key, label]) => (
@@ -226,20 +216,14 @@ const TaskForm = () => {
           </select>
         </div>
         <div className="div-input-row">
-          <label htmlFor="task_group_id" className="input-label">Group</label>
-          <select
-              id="task_group_id"
-              name="task_group_id"
-              className="w-full sm:w-160"
-              value={task.task_group_id ?? ""}
-              onChange={handleChange}>
-            <option key="" value=""></option>
-            {taskGroups.map(taskGroup => (
-              <option key={taskGroup.task_group_id} value={taskGroup.task_group_id ?? ""}>
-                {taskGroup.task_group_name}
-              </option>
-            ))}
-          </select>
+          <label htmlFor="task_cycle" className="input-label">Cycle</label>
+          <input
+              type="text"
+              id="task_cycle"
+              name="task_cycle"
+              className="w-48"
+              value={task.task_cycle}
+              onChange={(e) => handleChange(e)}/>
         </div>
         <div className="div-input-row">
           <label htmlFor="task_name" className="input-label">Task Name</label>
@@ -248,7 +232,7 @@ const TaskForm = () => {
               id="task_name"
               name="task_name"
               className="w-full sm:w-160"
-              value={task.task_name ?? ""}
+              value={task.task_name}
               onChange={(e) => handleChange(e)}/>
         </div>
         <div className="div-input-row">
@@ -257,7 +241,7 @@ const TaskForm = () => {
               id="priority"
               name="priority"
               className="w-48"
-              value={task.priority ?? ""}
+              value={task.priority}
               onChange={(e) => handleChange(e)}>
             <option value=""></option>
             {Object.entries(CodePriorityType).map(([key, label]) => (
@@ -273,7 +257,7 @@ const TaskForm = () => {
               id="schedule_type"
               name="schedule_type"
               className="w-48"
-              value={task.schedule_type ?? ""}
+              value={task.schedule_type}
               onChange={(e) => handleChange(e)}>
             <option value=""></option>
             {Object.entries(CodeScheduleType).map(([key, label]) => (
@@ -289,7 +273,7 @@ const TaskForm = () => {
               id="task_status"
               name="task_status"
               className="w-48"
-              value={task.task_status ?? ""}
+              value={task.task_status}
               onChange={(e) => handleTaskStatusChange(e)}>
             {Object.entries(CodeTaskStatus).map(([key, label]) => (
               <option key={key} value={key}>
@@ -297,6 +281,16 @@ const TaskForm = () => {
               </option>
             ))}
           </select>
+        </div>
+        <div className="div-input-row">
+          <label htmlFor="task_progress" className="input-label">Progress</label>
+          <input
+              type="number"
+              id="task_progress"
+              name="task_progress"
+              className="numeric-field w-30"
+              value={task.task_progress ?? ""}
+              onChange={(e) => handleChange(e)}/>
         </div>
         <div className="div-input-row">
           <label htmlFor="action_count" className="input-label">Acted</label>

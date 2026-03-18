@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { AlarmClockCheck, ArrowLeft, BookImage, BookOpenText, BookText, CalendarClock, CircleCheckBig, Clapperboard, Hourglass, Plus, FileText, Gamepad2, Tv, Info, Search } from 'lucide-react'
 
-import { fetchTasks, updateTaskStatus } from '@/actions/tasks/task-action'
+import { fetchTasks, updateLastActedAt, updateTaskStatus } from '@/actions/tasks/task-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import MessageBanner from '@/components/MessageBanner'
@@ -51,11 +51,17 @@ const TaskList = () => {
     setTasks(fetchData)
   }
 
-  const handleStatusChange = async (taskId: string, taskStatus: string) => {
+  const handleShowForm = (taskId: string) => {
+    addToHistory({ title: 'taskList', path: `${pathname}?${searchParams.toString()}`})
+    if (taskId) router.push(`/tasks/tasks/taskForm?task_id=${taskId}`)
+    else router.push("/tasks/tasks/taskForm")
+  }
+
+  const handleStatusChange = (taskId: string, taskStatus: string) => {
     setModalMessage('Are you sure you want to change Status?')
     setConfirmHandler(async () => {
-      await updateTaskStatus(taskId, taskStatus)
-      setTasks(await fetchTasks(condition))
+      const result = await updateTaskStatus(taskId, taskStatus)
+      setTasks(prev => prev.map(t => t.task_id === result.task_id ? result : t))
       setMessage('Saved Successfully!')
       setMessageType('info')
       loadList()
@@ -63,21 +69,15 @@ const TaskList = () => {
     setIsModalOpen(true)
   }
 
-  const handleShowForm = (taskId: string) => {
-    addToHistory({ title: 'taskList', path: `${pathname}?${searchParams.toString()}`})
-    if (taskId) router.push(`/tasks/tasks/taskForm?task_id=${taskId}`)
-    else router.push("/tasks/tasks/taskForm")
-  }
-
   const handleDoneAction = (taskId: string) => {
-    // setModalMessage('Are you sure you want to mark this as completed?')
-    // setConfirmHandler(async () => {
-    //   const result = await updateLastActedAt(taskId)
-    //   setTasks(prev => prev.map(t => t.task_id === result.task_id ? result : t))
-    //   setMessage('Saved Successfully!')
-    //   setMessageType('info')
-    // })
-    // setIsModalOpen(true)
+    setModalMessage('Are you sure you want to mark this as completed?')
+    setConfirmHandler(async () => {
+      const result = await updateLastActedAt(taskId)
+      setTasks(prev => prev.map(t => t.task_id === result.task_id ? result : t))
+      setMessage('Saved Successfully!')
+      setMessageType('info')
+    })
+    setIsModalOpen(true)
   }
 
   const getInputClassName = (originalClassName: string, taskStatus: string, targetDate: Date | null) => {

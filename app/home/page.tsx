@@ -56,6 +56,7 @@ const Page: NextPage = () => {
         <HomeIconButton icon={AlarmClockCheck} label="Music Task" path="/tasks/music/musicTaskList" />
         <HomeIconButton icon={Calendar} label="Events" path="/tasks/events/eventList" />
         <HomeIconButton icon={NotebookPen} label="Notes" path="/tasks/notes/noteList" />
+        <HomeIconButton icon={AlarmClockCheck} label="Task List" path="/tasks/tasksb/taskList" />
       </div>
 
       <div className="flex items-center my-6">
