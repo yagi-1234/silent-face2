@@ -40,7 +40,19 @@ const TaskList = () => {
   const searchParams = useSearchParams()
   const [tasks, setTasks] = useState<TaskListView[]>([])
   const [condition, setCondition] = useState<TaskCondition>(initialTaskCondition)
+  const [selectedTaskType, setSelectedTaskType] = useState<string>('99')
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
+
+  const handleSelectTaskType = (taskType: string) => {
+    setSelectedTaskType(taskType)
+    let newTaskType = taskType
+    if (taskType === '99') {
+      newTaskType = ''
+    }
+    setCondition(prev => ({
+      ...prev, task_type: newTaskType
+    }))
+  }
 
   const handleSearch = async () => {
     const query = new URLSearchParams()
@@ -167,6 +179,30 @@ const TaskList = () => {
       <h2 className="header-title">Task List</h2>
       <div>
         <div className="mb-2">
+          <button className={selectedTaskType === "02" ? "bg-blue-400 border border-blue-400 rounded-sm px-4 py-0.5 mr-2 text-white" : "bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5 mr-2"}
+              onClick={() => handleSelectTaskType("02")}>Books</button>
+          <button className={selectedTaskType === "03" ? "bg-blue-400 border border-blue-400 rounded-sm px-4 py-0.5 mr-2 text-white" : "bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5 mr-2"}
+              onClick={() => handleSelectTaskType("03")}>Comics</button>
+          <button className={selectedTaskType === "04" ? "bg-blue-400 border border-blue-400 rounded-sm px-4 py-0.5 mr-2 text-white" : "bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5 mr-2"}
+              onClick={() => handleSelectTaskType("04")}>Movies</button>
+          <button className={selectedTaskType === "05" ? "bg-blue-400 border border-blue-400 rounded-sm px-4 py-0.5 mr-2 text-white" : "bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5 mr-2"}
+              onClick={() => handleSelectTaskType("05")}>Drama</button>
+          <button className={selectedTaskType === "06" ? "bg-blue-400 border border-blue-400 rounded-sm px-4 py-0.5 mr-2 text-white" : "bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5 mr-2"}
+              onClick={() => handleSelectTaskType("06")}>Games</button>
+          <button className={selectedTaskType === "07" ? "bg-blue-400 border border-blue-400 rounded-sm px-4 py-0.5 mr-2 text-white" : "bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5 mr-2"}
+              onClick={() => handleSelectTaskType("07")}>Magazines</button>
+          <button className={selectedTaskType === "99" ? "bg-blue-400 border border-blue-400 rounded-sm px-4 py-0.5 mr-2 text-white" : "bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5 mr-2"}
+              onClick={() => handleSelectTaskType("99")}>All</button>
+          {/* {Object.entries(CodeTaskType)
+              .map(([Key, label]) => (
+                <label className="bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5 mr-2">{label}</label>
+              )
+          )} */}
+          {/* <label className="bg-blue-400 border border-blue-400 rounded-sm px-4 py-0.5 text-white">Books</label>
+          　
+          <label className="bg-blue-50 border border-blue-400 rounded-sm px-4 py-0.5">Movies</label> */}
+        </div>
+        {/* <div className="mb-2">
           <label htmlFor="task_type" className="input-label">Task Type</label>
           <select
               id="task_type"
@@ -180,7 +216,7 @@ const TaskList = () => {
                 .map(([key, label]) => (<option key={key} value={key}>{label}</option>)
             )}
           </select>
-        </div>
+        </div> */}
         <div className="div-input-row">
           <label htmlFor="task_status" className="input-label">Task Status</label>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
