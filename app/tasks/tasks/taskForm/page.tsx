@@ -180,6 +180,8 @@ const TaskForm = () => {
         setOriginalTask(fetchData)
       } else if (inItemId) {
         const fetchData = await fetchItemForTask(inItemId)
+        const taskGroups = await fetchTaskGroups(fetchData.task_type ?? "")
+        setTaskGroups(taskGroups)
         setTask(fetchData)
         setOriginalTask(fetchData)
       }

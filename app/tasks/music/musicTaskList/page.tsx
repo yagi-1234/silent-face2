@@ -78,10 +78,19 @@ const MusicTaskList = () => {
     setIsModalOpen(true)
   }
 
+  const handleShowArtist = (artistId: string, artistName: string) => {
+    addToHistory({ title: 'task List (Music)', path: `${pathname}?${searchParams.toString()}`})
+    router.push(`/music/artists/artistList?artist_id=${artistId}&artist_name=${artistName}`);
+  }
+  const handleShowAlbums = (artistId: string, artistName: string, albumId: string, albumName: string) => {
+    addToHistory({ title: 'task List (Music)', path: `${pathname}?${searchParams.toString()}`})
+    router.push(`/music/albums/albumList?artist_id=${artistId}&artist_name=${artistName}&album_id=${albumId}&album_name=${albumName}`);
+  }
+
   const handleShowForm = (taskSubId: string) => {
     addToHistory({ title: 'task List (Music)', path: `${pathname}?${searchParams.toString()}`})
     if (taskSubId) router.push(`/tasks/music/musicTaskForm?task_sub_id=${taskSubId}`);
-    else router.push("/tasks/music/musicTaskForm");
+    else router.push('/tasks/music/musicTaskForm');
   }
 
   const checkLogin = async () => {
@@ -99,7 +108,7 @@ const MusicTaskList = () => {
     if (taskStatus === '2') return "bg-green-200"
     if (taskStatus === '8') return "bg-yellow-100"
     if (taskStatus === '9') return "bg-blue-200"
-    return ""
+    return ''
   }
 
   return (
@@ -174,8 +183,20 @@ const MusicTaskList = () => {
                 </td>
                 <td>{CodeMusicTaskType[task.task_sub_type ?? ""]}</td>
                 <td className="numeric-field">{task.task_priority}</td>
-                <td>{task.artist_name}</td>
-                <td>{task.album_name}</td>
+                <td>
+                  <button
+                      className="button-link"
+                      onClick={() => handleShowArtist(task.artist_id ?? "", task.artist_name ?? "")}>
+                    {task.artist_name}
+                  </button>
+                </td>
+                <td>
+                  <button
+                      className="button-link"
+                      onClick={() => handleShowAlbums(task.artist_id ?? "", task.artist_name ?? "", task.album_id ?? "", task.album_name ?? "")}>
+                    {task.album_name}
+                  </button>
+                </td>
                 <td className="numeric-field">{task.action_count}</td>
                 <td>{formatDateTime(task.last_acted_at, "yyyy/MM/dd")}</td>
                 <td>
@@ -193,7 +214,7 @@ const MusicTaskList = () => {
       <div className="block sm:hidden">
         <div className="div-card-area">
           {tasks.map(task => (
-            <div key={task.task_id} className="div-card">
+            <div key={task.task_sub_id} className="div-card">
               <div className="div-card-row">
                 <label className={"card-label w-30 " + getTaskStatusClass(task.task_status ?? "")}>
                   {CodeTaskStatus[task.task_status ?? ""] + (task.task_status !== "0" ? " (" + task.task_priority + ")" : "")}
