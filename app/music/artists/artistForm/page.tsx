@@ -2,6 +2,8 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { ArrowLeft, Check, Search } from 'lucide-react'
+import { FaInstagram, FaTiktok, FaWikipediaW, FaYoutube } from 'react-icons/fa'
+import { FaXTwitter } from 'react-icons/fa6'
 import { useSearchParams } from 'next/navigation'
 
 import { fetchArtist, mergeArtist, isArtistEdited, validateArtist } from '@/actions/music/artist-action'
@@ -105,6 +107,10 @@ const ArtistForm = () => {
     return () => window.removeEventListener('keydown', handler)
   }, [])
 
+  const handleShowWikipedia = (key:string) => {
+
+  }
+
   return (
     <div className="root-panel">
       <MessageBanner
@@ -202,6 +208,53 @@ const ArtistForm = () => {
               name="last_listened_at"
               value={formatDateTime(artist.last_listened_at, 'yyyy/MM/dd HH:mm')}
               readOnly />
+        </div>
+        <div className="div-input-row">
+          <label className="input-label">Links</label>
+          <div className="flex gap-3">
+            <div className="div-links bg-red-600">
+              <a href={`https://youtube.com//results?search_query=${encodeURIComponent(artist.artist_name_1)}`}
+                  target="_blank" 
+                  rel="noopener noreferrer">
+                <FaYoutube className="text-white" />
+              </a>
+            </div>
+            <div className="div-links bg-yellow-100">
+              <a href={`https://ja.wikipedia.org/w/index.php?search=${encodeURIComponent(artist.artist_name_1)}`}
+                  target="_blank" 
+                  rel="noopener noreferrer">
+                <FaWikipediaW className="text-gray-600" />
+              </a>
+            </div>
+            <div className="div-links bg-gray-200">
+              <a href={`https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(artist.artist_name_1)}`}
+                  target="_blank" 
+                  rel="noopener noreferrer">
+                <FaWikipediaW className="text-gray-600" />
+              </a>
+            </div>
+            <div className="div-links bg-black">
+              <a href={`https://twitter.com/search?src=typed_query&f=user&q=${encodeURIComponent(artist.artist_name_1)}`}
+                  target="_blank" 
+                  rel="noopener noreferrer">
+                <FaXTwitter className="text-white" />
+              </a>
+            </div>
+            <div className="div-links bg-pink-500">
+              <a href={`https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(artist.artist_name_1)}`}
+                  target="_blank" 
+                  rel="noopener noreferrer">
+                <FaInstagram className="text-white" />
+              </a>
+            </div>
+            <div className="div-links bg-black">
+              <a href={`https://www.tiktok.com/search?q=${encodeURIComponent(artist.artist_name_1)}`}
+                  target="_blank" 
+                  rel="noopener noreferrer">
+                <FaTiktok className="text-white" />
+              </a>
+            </div>
+          </div>
         </div>
         <div className="div-input-row">
           <label htmlFor="artist_comment" className="input-label">Artist Comment</label>

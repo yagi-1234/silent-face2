@@ -326,6 +326,10 @@ button {
     @apply rounded-sm px-2
   }
 
+  .div-links {
+    @apply w-6 h-6 rounded-full flex items-center justify-center
+  }
+
   .span-accordion {
     @apply text-gray-400 text-sm mr-2
   }
