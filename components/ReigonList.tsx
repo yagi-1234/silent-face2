@@ -122,15 +122,6 @@ export function RegionList({ onSelect }: Props) {
       {!showEditPanel && (
         <>
           <div className="div-input-row">
-            <label htmlFor="region_code" className="input-label">Region Code</label>
-            <input type="text"
-                id="region_code"
-                name="region_code"
-                className="w-30"
-                value={condition.region_code} 
-                onChange={handleSearchChange} />
-          </div>
-          <div className="div-input-row">
             <label htmlFor="region_code" className="input-label">Region Name</label>
             <input type="text"
                 id="region_name"
@@ -188,7 +179,9 @@ export function RegionList({ onSelect }: Props) {
                       <tr>
                         <th>Region Name</th>
                         <th></th>
-                        <th>Disp Order</th>
+                        <th>Level Name</th>
+                        <th>Origin Count</th>
+                        <th></th>
                         <th></th>
                       </tr>
                     </thead>
@@ -329,7 +322,8 @@ const SortableRow = ({ region, onSelect, onEdit, onPlus }: Props2) => {
         {region.region_full_name_1}
       </td>
       <td>{region.region_name_2}</td>
-      <td>{region.disp_order}</td>
+      <td>{region.region_level_name}</td>
+      <td className="numeric-field">{region.origin_count}</td>
       <td className="flex items-center">
         <div>
           <button

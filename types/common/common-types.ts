@@ -17,6 +17,7 @@ export interface Region {
   country_name_1: string
   next_disp_no: number
   child_next_disp_no: number
+  origin_count: number
 }
 export const initialRegion: Region = {
   region_code: '',
@@ -33,6 +34,7 @@ export const initialRegion: Region = {
   country_name_1: '',
   next_disp_no: 0,
   child_next_disp_no: 0,
+  origin_count: 0,
 }
 
 export type RegionCondition = {
