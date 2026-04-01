@@ -176,6 +176,8 @@ const TaskForm = () => {
     const loadTask = async () => {
       if (inTaskId) {
         const fetchData = await fetchTask(inTaskId)
+        const taskGroups = await fetchTaskGroups(fetchData.task_type ?? "")
+        setTaskGroups(taskGroups)
         setTask(fetchData)
         setOriginalTask(fetchData)
       } else if (inItemId) {

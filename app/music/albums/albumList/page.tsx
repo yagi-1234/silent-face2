@@ -1,24 +1,23 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, CalendarCheck, ChevronsUp, ChevronsDown, Clock, FileText, History, Music, Plus, Search, Star, OctagonX } from 'lucide-react'
+import { ArrowLeft, CalendarCheck, ChevronsUp, ChevronsDown, Clock, History, Music, Plus, Search, Star, OctagonX } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchAlbums, formatAlbumTypeOrNo } from '@/actions/music/album-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
+import { EllipsisAndTooltip } from '@/components/EllipsisAndTooltip'
 import HiddenPanel from '@/components/HiddenPanel'
 import { useHistory } from '@/contexts/HistoryContext'
 import MessageBanner from '@/components/MessageBanner'
 import { ToggleButton } from '@/components/ToggleButton'
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { Album, AlbumCondition, initialAlbumCondition } from '@/types/music/album-types'
 import { CodeOwnedFlag } from '@/utils/codeUtils'
 import { formatDateTime, formatDateVariousTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { ellipsis, isEllipsed } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -78,15 +77,20 @@ const AlbumList = () => {
   }
 
   const handleShowForm = (albumId: string) => {
-    addToHistory({ title: 'albumList', path: `${pathname}?${searchParams.toString()}`})
+    addToHistory({ title: 'Album List', path: `${pathname}?${searchParams.toString()}`})
     if (albumId) router.push(`/music/albums/albumForm?album_id=${albumId}`)
     else if (condition.artist_id) router.push(`/music/albums/albumForm?artist_id=${condition.artist_id}`)
     else if (albums[0].artist_id) router.push(`/music/albums/albumForm?artist_id=${albums[0].artist_id}`)
     else router.push("/music/albums/albumForm")
   }
 
+  const handleShowArtist = (artistId: string) => {
+    addToHistory({ title: 'Album List', path: `${pathname}?${searchParams.toString()}`})
+    router.push(`/music/artists/artistForm?artist_id=${artistId}`);
+  }
+
   const handleShowTracks = (artistId: string, artistName: string, albumId: string, albumName: string) => {
-    addToHistory({ title: 'albumList', path: `${pathname}?${searchParams.toString()}`})
+    addToHistory({ title: 'Album List', path: `${pathname}?${searchParams.toString()}`})
     const query = new URLSearchParams()
     query.append('artist_id', artistId)
     query.append('artist_name', artistName)
@@ -330,40 +334,31 @@ const AlbumList = () => {
             <tr>
               <th>Artist Name</th>
               <th>Album No</th>
-              <th>Released</th>
               <th>Album Name</th>
+              <th>Released</th>
               <th>Owned</th>
               <th>Tracks</th>
               <th>Length</th>
               <th>Point</th>
               <th>Last Listened At</th>
-              <th />
             </tr>
           </thead>
           <tbody>
             {albums.map((album) => (
               <tr key={album.album_id}>
                 <td>
-                  {isEllipsed(album.album_artist_name_1, 24) ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild><div>{ellipsis(album.album_artist_name_1, 24)}</div></TooltipTrigger>
-                        <TooltipContent>{album.album_artist_name_1}</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : ( <div>{album.album_artist_name_1}</div>) }
+                  <button className="button-link"
+                      onClick={() => handleShowArtist(album.artist_id ?? "")}>
+                    {EllipsisAndTooltip(album.album_artist_name_1 ?? '', 24)}
+                  </button>  
                 </td>
                 <td>{formatAlbumTypeOrNo(album.album_type, album.album_no)}</td>
                 <td>{formatDateVariousTime(album.released, "yyyy/MM/dd")}</td>
                 <td>
-                  {isEllipsed(album.album_name_1, 40) || album.album_name_2 ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild><div>{ellipsis(album.album_name_1, 40)}</div></TooltipTrigger>
-                        <TooltipContent>{album.album_name_1}<br />{album.album_name_2}</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : ( <div>{album.album_name_1}</div>) }
+                  <button className="button-link"
+                      onClick={() => handleShowForm(album.album_id)}>
+                    {EllipsisAndTooltip(album.album_name_1 ?? '', 40)}
+                  </button>  
                 </td>
                 <td className="text-center">{CodeOwnedFlag[album.owned_flag]}</td>
                 <td className="numeric-field">
@@ -376,13 +371,6 @@ const AlbumList = () => {
                 <td className="numeric-field">{album.track_length}</td>
                 <td className="numeric-field">{album.album_point ? album.album_point.toFixed(2) : ""}</td>
                 <td>{formatDateTime(album.last_listened_at, "yyyy/MM/dd")}</td>
-                <td>
-                  <button
-                      className="button-page"
-                      onClick={() => handleShowForm(album.album_id)} >
-                    <FileText className="w-5 h-5" />
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>

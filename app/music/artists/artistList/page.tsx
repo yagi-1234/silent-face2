@@ -56,11 +56,17 @@ const ArtistList = () => {
   }
   const handleShowAlbums = (artistId: string, artistName: string) => {
     addToHistory({ title: 'artistList', path: `${pathname}?${searchParams.toString()}`})
-    router.push(`/music/albums/albumList?artist_id=${artistId}&artist_name=${artistName}`);
+    const query = new URLSearchParams()
+    query.append('artist_id', artistId)
+    query.append('artist_name', artistName)
+    router.push(`/music/albums/albumList?${query.toString()}`)
   }
   const handleShowTracks = (artistId: string, artistName: string) => {
     addToHistory({ title: 'artistList', path: `${pathname}?${searchParams.toString()}`})
-    router.push(`/music/tracks/trackList?artist_id=${artistId}&artist_name=${artistName}`);
+    const query = new URLSearchParams()
+    query.append('artist_id', artistId)
+    query.append('artist_name', artistName)
+    router.push(`/music/tracks/trackList?${query.toString()}`)
   }
 
   const handleSearch = async () => {

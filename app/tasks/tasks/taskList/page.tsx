@@ -146,13 +146,12 @@ const TaskList = () => {
 
     if ([...searchParams.keys()].length !== 0) {
       const taskStatusList = searchParams.get('task_status_list')
-      console.log('searchParams', searchParams)
-      console.log('taskStatusList', taskStatusList)
       const condition1 = {
         ...condition,
         task_type: searchParams.get('task_type') ?? '',
         task_status_list: taskStatusList ? taskStatusList.split(',') : [],
       }
+      setSelectedTaskType(searchParams.get('task_type') ?? '')
       setCondition(condition1)
     }
     loadList()
