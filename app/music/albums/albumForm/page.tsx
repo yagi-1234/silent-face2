@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { Calendar, Check, Clock, ArrowLeft, ArrowRight, Plus } from 'lucide-react'
+import { Check, Clock, ArrowLeft, ArrowRight, Plus } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { DayPicker } from 'react-day-picker'
 
@@ -227,7 +227,7 @@ const AlbumList = () => {
           <input type="number"
               id="album_no"
               name="album_no"
-              className={errors.album_no ? "numeric-field isError w-2" : "numeric-field w-20"}
+              className={errors.album_no ? "numeric-field isError w-20" : "numeric-field w-20"}
               value={album.album_no ?? ""}
               onChange={handleChangeNumber} />
         </div>
@@ -235,9 +235,18 @@ const AlbumList = () => {
           <label htmlFor="released" className="input-label">Released</label>
           <PartialDateInput
               name="released"
-              value={album.released ?? ''}
+              value={album.released ?? ""}
               onChange={handleChangeDate}
               mode="flexible" />
+        </div>
+        <div className="div-input-row">
+          <label htmlFor="total_track_count" className="input-label">Total Track Count</label>
+          <input type="number"
+              id="total_track_count"
+              name="total_track_count"
+              className={errors.total_track_count ? "numeric-field isError w-20" : "numeric-field w-20"}
+              value={album.total_track_count ?? ""}
+              onChange={handleChangeNumber} />
         </div>
         <div className="div-input-row">
           <label htmlFor="owned_flag" className="input-label">Owned</label>

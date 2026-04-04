@@ -8,7 +8,7 @@ import { makeKeywordForSql} from '@/utils/stringUtils'
 export const fetchAlbum = async (albumId: string): Promise<Album> => {
   const { data: result, error } = await supabase
       .from('mv21_albums')
-      .select('artist_id,artist_name_0,artist_name_1,artist_name_2,album_id,album_artist_name,album_artist_name_1,album_name_0,album_name_1,album_name_2,album_type,album_no,released,owned_flag,added_at,listening_count,last_listened_at,album_comment,updated_at,updated_count,track_count,track_length,album_point')
+      .select('artist_id,artist_name_0,artist_name_1,artist_name_2,album_id,album_artist_name,album_artist_name_1,album_name_0,album_name_1,album_name_2,album_type,album_no,released,total_track_count,owned_flag,added_at,listening_count,last_listened_at,album_comment,updated_at,updated_count,track_count,track_length,album_point')
       .eq('album_id', albumId)
       .single()
   if (error) {
@@ -98,7 +98,7 @@ const insertAlbum = async (newData: Album): Promise<Album> => {
     ...newData2,
     updated_at: new Date(),
   }
-  console.log("insertData:", insertData)
+  console.log('insertData:', insertData)
   const { data: result, error } = await supabase
       .from('mt21_albums')
       .insert(insertData)
@@ -142,6 +142,7 @@ export const isAlbumEdited = (original?: Album, current?: Album): boolean => {
   if (original.album_type !== current.album_type) return true
   if (original.album_no !== current.album_no) return true
   if (original.released !== current.released) return true
+  if (original.total_track_count !== current.total_track_count) return true
   if (original.owned_flag !== current.owned_flag) return true
   if (!compareDate(original.added_at, current.added_at)) return true
   if (!compareDate(original.last_listened_at, current.last_listened_at)) return true

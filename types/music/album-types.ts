@@ -12,6 +12,7 @@ export type Album = {
   album_type: string
   album_no: number | null
   released: string | null
+  total_track_count: number | null
   owned_flag: string
   added_at: Date | null
   listening_count: number | null
@@ -38,6 +39,7 @@ export const initialAlbum: Album = {
   album_type: '',
   album_no: null,
   released: null,
+  total_track_count: null,
   owned_flag: '0',
   added_at: null,
   listening_count: null,

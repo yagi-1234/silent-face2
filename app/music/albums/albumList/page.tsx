@@ -334,8 +334,8 @@ const AlbumList = () => {
             <tr>
               <th>Artist Name</th>
               <th>Album No</th>
-              <th>Album Name</th>
               <th>Released</th>
+              <th>Album Name</th>
               <th>Owned</th>
               <th>Tracks</th>
               <th>Length</th>
@@ -365,7 +365,7 @@ const AlbumList = () => {
                   <button
                       className="button-link"
                       onClick={() => handleShowTracks(album.artist_id ?? '', album.artist_name_1, album.album_id, album.album_name_1)}>
-                    {album.track_count}
+                    {album.track_count + (album.total_track_count ? " / " + album.total_track_count : "")}
                   </button>
                 </td>
                 <td className="numeric-field">{album.track_length}</td>
