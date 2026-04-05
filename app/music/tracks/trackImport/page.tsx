@@ -70,6 +70,7 @@ const TrackImport = () => {
         album_name_2: '',
         album_no: null,
         album_year: 0,
+        total_track_count: null,
         disc_no_for_sort: cells[1] ? Number(cells[1]) : 0,
         track_artist_name_1: null,
         track_count: null,
