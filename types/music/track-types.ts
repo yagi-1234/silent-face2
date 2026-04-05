@@ -32,6 +32,7 @@ export type TrackView = TrackRow & {
   album_name_2: string | null
   album_no: number | null
   album_year: number | null
+  total_track_count: number | null
   disc_no_for_sort: number
   track_artist_name_1: string | null
   track_count: number | null
@@ -49,6 +50,7 @@ export const initialTrack: TrackView = {
   album_name_2: null,
   album_no: null,
   album_year: null,
+  total_track_count: null,
   disc_no: null,
   disc_no_for_sort: 0,
   track_id: '',
