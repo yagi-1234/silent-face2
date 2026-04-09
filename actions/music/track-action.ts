@@ -66,12 +66,17 @@ export const fetchTracks = async (condition: TrackCondition): Promise<TrackView[
     }
   }
   query = query.limit(1000)
-  query = query.order('artist_name_0')
-      .order('album_year')
-      .order('album_no')
-      .order('album_name_0')
-      .order('disc_no_for_sort')
-      .order('track_no')
+  if (condition.order_condition === '1') {
+    query = query.not('last_listened_at', 'is', null)
+    query = query.order('last_listened_at', {ascending: false})
+  } else {
+    query = query.order('artist_name_0')
+        .order('album_year')
+        .order('album_no')
+        .order('album_name_0')
+        .order('disc_no_for_sort')
+        .order('track_no')
+  }
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchTracks:', error)

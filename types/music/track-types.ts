@@ -87,6 +87,7 @@ export type TrackCondition = {
   track_id: string | ''
   track_name: string | ''
   track_name_exact_match: boolean
+  order_condition: string
 }
 export const initialTrackCondition: TrackCondition = {
   artist_id: '',
@@ -98,6 +99,7 @@ export const initialTrackCondition: TrackCondition = {
   track_id: '',
   track_name: '',
   track_name_exact_match: false,
+  order_condition: '0'
 }
 
 export type ArtistTrackKey = {

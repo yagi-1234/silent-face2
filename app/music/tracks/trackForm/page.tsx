@@ -268,7 +268,7 @@ const TrackForm = () => {
                   value={track.track_no ?? ''}
                   onChange={handleChange} />
               <span>/&ensp;</span>
-              <span>{track.track_count ?? ''}</span>
+              <span>{track.total_track_count ?? ''}</span>
             </div>
             <div className="flex-1">
               <label htmlFor="disc_no" className="input-label">Disc No</label>

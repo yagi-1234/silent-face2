@@ -72,6 +72,7 @@ export const CodeArtistType: { [key: string]: string | '' } = {
   "09": "Pop Group",
   "10": "Boys Group",
   "11": "Girls Group",
+  "12": "Solo Project"
 }
 
 export const CodeAlbumType: { [key: string]: string | '' } = {
@@ -128,4 +129,9 @@ export const CodeEventType: { [key: string]: string | '' } = {
   '04': 'Season Event',
   '06': 'Health Care',
   '08': 'Work'
+}
+
+export const TrackListOrder: { [key: string]: string | '' } = {
+  '0': 'Default',
+  '1': 'History',
 }

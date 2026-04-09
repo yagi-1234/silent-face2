@@ -1,23 +1,24 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useCallback, useEffect, useState } from 'react'
 import { ArrowLeft, Calendar, Clock, FileText, History, Plus, Search, OctagonX, Star } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchTracks } from '@/actions/music/track-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
+import { EllipsisAndTooltip } from '@/components/EllipsisAndTooltip'
 import HiddenPanel from '@/components/HiddenPanel'
+import SelectButton from '@/components/SelectButton'
 import { useHistory } from '@/contexts/HistoryContext'
 import MessageBanner from '@/components/MessageBanner'
 import { ToggleButton } from '@/components/ToggleButton'
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { TrackView, TrackCondition, initialTrackCondition } from '@/types/music/track-types'
+import { TrackListOrder } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { ellipsis, isEllipsed } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -50,6 +51,13 @@ const TrackList = () => {
     }))
   }
 
+  const handleOrderChange = useCallback((value: string) => {
+    setCondition(prev => ({
+      ...prev, 
+      order_condition: value
+    }))
+  }, [])
+
   const handleSearch = async () => {
     const query = new URLSearchParams()
     if (condition.artist_id) query.append('artist_id', condition.artist_id)
@@ -61,6 +69,7 @@ const TrackList = () => {
     if (condition.track_id) query.append('track_id', condition.track_id)
     if (condition.track_name) query.append('track_name', condition.track_name)
     if (condition.track_name_exact_match) query.append('track_name_exact_match', 'true')
+    if (condition.order_condition) query.append('order_condition', condition.order_condition)
     router.push(`/music/tracks/trackList?${query.toString()}`)
     const fetchData = await fetchTracks(condition)
     console.log("fetchData", fetchData[0])
@@ -107,6 +116,7 @@ const TrackList = () => {
         track_id: searchParams.get('track_id') ?? '',
         track_name: searchParams.get('track_name') ?? '',
         track_name_exact_match: searchParams.get('track_id') ? true : false,
+        order_condition: searchParams.get('order_condition') ?? '',
       }
       setCondition(condition1)
       const fetchData = await fetchTracks(condition1)
@@ -203,6 +213,15 @@ const TrackList = () => {
                     checked={condition.track_name_exact_match}
                     onChange={handleSearchChange} />
               </div>
+            </div>
+          </div>
+          <div className="div-input-row">
+            <label htmlFor="order" className="input-label">Order</label>
+            <div className="mb-2">
+              <SelectButton
+                  selectedItem={condition.order_condition}
+                  selection={TrackListOrder}
+                  onChange={handleOrderChange}/>
             </div>
           </div>
         </div>
@@ -313,39 +332,12 @@ const TrackList = () => {
           <tbody>
             {tracks.map(track => (
               <tr key={track.track_id} className="leading-none">
-                <td>
-                  {isEllipsed(track.track_artist_name_1, 24) ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild><div>{ellipsis(track.track_artist_name_1, 24)}</div></TooltipTrigger>
-                        <TooltipContent>{track.track_artist_name_1}</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : ( <div>{track.track_artist_name_1}</div>) }
-                </td>
-                <td>
-                  {isEllipsed(track.album_name_1, 32) || track.album_name_2 ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild><div>{ellipsis(track.album_name_1, 32)}</div></TooltipTrigger>
-                        <TooltipContent>{track.album_name_1}<br />{track.album_name_2}</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : ( <div>{track.album_name_1}</div>) }
-                </td>
+                <td>{EllipsisAndTooltip(track.track_artist_name_1 ?? '', 24)}</td>
+                <td>{EllipsisAndTooltip(track.album_name_1 ?? '', 32)}</td>
                 <td className="numeric-field">
                   {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}
                 </td>
-                <td>
-                  {isEllipsed(track.track_name_1, 40) || track.track_name_2 ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild><div>{ellipsis(track.track_name_1, 40)}</div></TooltipTrigger>
-                        <TooltipContent>{track.track_name_1}<br />{track.track_name_2}</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : ( <div>{track.track_name_1}</div>) }
-                </td>
+                <td>{EllipsisAndTooltip(track.track_name_1 ?? '', 40)}</td>
                 <td className="numeric-field">{track.is_point_except === "1" ? "-" : track.track_point}</td>
                 <td className="numeric-field">{!!track.single_no ? track.single_no : track.is_single === "1" ? "◯" : ""}</td>
                 <td className="numeric-field">{!!track.track_year ? track.track_year : track.album_year}</td>
