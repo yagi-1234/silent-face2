@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 
 import { fetchArtist } from '@/actions/music/artist-action'
 import { fetchAlbum, fetchArtistAlbums } from '@/actions/music/album-action'
-import { fetchTrack, fetchTrackByTrackNo, mergeTrack, isTrackEdited, validateTrack } from '@/actions/music/track-action'
+import { fetchTrack, fetchTracksByAlbumId, fetchTrackByTrackNo, mergeTrack, isTrackEdited, validateTrack } from '@/actions/music/track-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import { removeErrorKey } from '@/components/form-error'
@@ -21,6 +21,8 @@ import { TrackView, initialTrack } from '@/types/music/track-types'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { removeArticle, convertToRome, toLowerCase } from '@/utils/stringUtils'
+import ComboBoxWithInput from '@/components/ComboBoxWithInput'
+import { ComboBoxOption } from '@/components/ComboBoxWithInput'
 
 const Page = () => {
   return (
@@ -47,6 +49,7 @@ const TrackForm = () => {
   const [track, setTrack] = useState<TrackView>(initialTrack)
   const [originalTrack, setOriginalTrack] = useState<TrackView>(initialTrack)
   const [artistAlbums, setArtistAlbums] = useState<ArtistAlbum[]>([])
+  const [albumTracks, setAlbumTracks] = useState<ComboBoxOption[]>()
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, type, value } = event.target
@@ -66,6 +69,11 @@ const TrackForm = () => {
       }
     })
   }
+
+  const handleTrackNoChenged = (trackNo: string) => {
+    if (trackNo) moveTrack(Number(trackNo))
+  }
+
   const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     const trackName0 = removeArticle(toLowerCase(await convertToRome(value)))
@@ -91,27 +99,29 @@ const TrackForm = () => {
   }
 
   const handleMoveTrack = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!track.album_id || !track.track_no) return
+    const eventName = event.currentTarget.name
+    let newTrackNo = track.track_no
+    if (eventName === 'prev_button') newTrackNo = newTrackNo - 1
+    if (eventName === 'next_button') newTrackNo = newTrackNo + 1
     if (isTrackEdited(originalTrack, track)) {
       setModalMessage('You have unsaved changes. Are you sure you want to leave this page?')
       const eventName = event.currentTarget.name
       setConfirmHandler(() => {
-        moveTrack(eventName)
+        moveTrack(newTrackNo)
       })
       setIsModalOpen(true)
-    } else moveTrack(event.currentTarget.name)
+    } else moveTrack(newTrackNo)
   }
-  const moveTrack = async (eventName: string) => {
+  const moveTrack = async (trackNo: number) => {
     if (!track.album_id || !track.track_no) return
-    let newTrackNo = track.track_no
-    if (eventName === 'prev_button') newTrackNo = newTrackNo - 1
-    if (eventName === 'next_button') newTrackNo = newTrackNo + 1
-    const fetchData = await fetchTrackByTrackNo(track.album_id, track.disc_no_for_sort, newTrackNo)
+    const fetchData = await fetchTrackByTrackNo(track.album_id, track.disc_no_for_sort, trackNo)
     if (fetchData) {
       setTrack(fetchData)
       setOriginalTrack(fetchData)
     } else {
-      setTrack(prev => setInitialTrack(prev, newTrackNo))
-      setOriginalTrack(prev => setInitialTrack(prev, newTrackNo))
+      setTrack(prev => setInitialTrack(prev, trackNo))
+      setOriginalTrack(prev => setInitialTrack(prev, trackNo))
     }
     setIsModalOpen(false)
     setMessage('')
@@ -158,6 +168,7 @@ const TrackForm = () => {
     checkLogin()
     const loadTrack = async () => {
       let aritstId = ''
+      let albumId = ''
       if (inArtistId) {
         const fetchData = await fetchArtist(inArtistId)
         const fetchData2 = {
@@ -168,6 +179,7 @@ const TrackForm = () => {
           artist_name_2: fetchData.artist_name_2,
         }
         aritstId = fetchData.artist_id ?? ''
+        albumId = fetchData2.album_id ?? ''
         setTrack(fetchData2)
         setOriginalTrack(fetchData2)
       } else if (inAlbumId) {
@@ -185,17 +197,23 @@ const TrackForm = () => {
           album_year: Number(fetchData.released?.substring(0, 4)),
         }
         aritstId = fetchData2.artist_id ?? ''
+        albumId = fetchData2.album_id ?? ''
         setTrack(fetchData2)
         setOriginalTrack(fetchData2)
       } else if (inTrackId) {
         const fetchData = await fetchTrack(inTrackId)
         aritstId = fetchData.artist_id ?? ''
+        albumId = fetchData.album_id ?? ''
         setTrack(fetchData)
         setOriginalTrack(fetchData)
       } else return
 
       const artistAlbums = await fetchArtistAlbums(aritstId)
       setArtistAlbums(artistAlbums)
+      if (albumId) {
+        const albumTracks = await fetchTracksByAlbumId(albumId)
+        setAlbumTracks(albumTracks)
+      }
     }
     loadTrack()
 
@@ -261,13 +279,12 @@ const TrackForm = () => {
           <div className="div-row-left">
             <div className="flex-1">
               <label htmlFor="track_no" className="input-label">Track No</label>
-              <input type="number"
-                  id="track_no"
-                  name="track_no"
-                  className={errors.track_no ? "numeric-field isError w-24" : "numeric-field w-24"}
-                  value={track.track_no ?? ''}
-                  onChange={handleChange} />
-              <span>/&ensp;</span>
+              <ComboBoxWithInput
+                  options={albumTracks ?? []}
+                  value={track.track_no?.toString() ?? ''}
+                  onChange={(val) => (setTrack(prev => ({...prev, track_no: Number(val)})))}
+                  onCommit={(val) => handleTrackNoChenged(val)} />
+              <span>&ensp;/&ensp;</span>
               <span>{track.total_track_count ?? ''}</span>
             </div>
             <div className="flex-1">

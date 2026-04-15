@@ -33,6 +33,24 @@ export const fetchTrackByTrackNo = async (albumId: string, disc_no: number | nul
   return result[0]
 }
 
+export const fetchTracksByAlbumId = async (album_id: string) => {
+  let query = supabase
+      .from('mt31_tracks')
+      .select('track_no, track_name_1')
+  query = query.eq('album_id', album_id)
+  query = query.order('track_no')
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchTracksByAlbumId:', error)
+    return []
+  }
+  const trackSets = (result ?? []).map(row => ({
+    key: String(row.track_no),
+    value: row.track_name_1 ?? ''
+  }))
+  return trackSets
+}
+
 export const fetchTracks = async (condition: TrackCondition): Promise<TrackView[]> => {
   console.log('condition:', condition)
   let query = supabase
