@@ -16,11 +16,25 @@ export const fetchPlaylist = async (playlistId: string): Promise<PlaylistView> =
   return result
 }
 
-export const fetchPlaylists = async (): Promise<PlaylistView[]> => {
+export const fetchPlaylistsCount = async (): Promise<number> => {
+  let query = supabase
+      .from('mv41_playlists')
+      .select('*', { count: 'exact', head: true })
+  const { count, error } = await query
+  if (error) {
+    console.error('Error fetchPlaylistsCount:', error)
+    return 0
+  }
+  return count ?? 0
+}
+
+export const fetchPlaylists = async (pageNo: number): Promise<PlaylistView[]> => {
+  const fetchCount = 20
   let query = supabase
       .from('mv41_playlists')
       .select('*')
       .order('disp_order')
+      .range(fetchCount * (pageNo - 1), fetchCount * pageNo - 1)
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchPlaylists:', error)

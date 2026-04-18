@@ -5,7 +5,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { ArrowLeft, FileText, Menu, ListPlus, Plus } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { fetchPlaylists, mergePlaylist, updatePlaylist } from '@/actions/music/playlist-action'
+import { fetchPlaylists, fetchPlaylistsCount, mergePlaylist, updatePlaylist } from '@/actions/music/playlist-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
@@ -45,14 +45,25 @@ const PlaylistList = () => {
   const [newPlaylist, setNewPlaylist] = useState<PlaylistView>(initialPlaylist)
   const [newSubPlaylist, setNewSubPlaylist] = useState<PlaylistView>(initialPlaylist)
   const [showFormId, setShowFormId] = useState<string>()
+  const [totalPage, setTotalPage] = useState<number>(0)
+  const [currentPageNo, setCurrentPageNo] = useState<number>(1)
 
   const checkLogin = async () => {
     await checkUser()
   }
 
-  const loadData = async () => {
-    const fetchData = await fetchPlaylists()
+  const checkDataCount = async () => {
+    const rowCount = await fetchPlaylistsCount()
+    setTotalPage(rowCount / 10)
+  }
+  const loadData = async (pageNo: number) => {
+    const fetchData = await fetchPlaylists(pageNo)
     setPlaylists(fetchData)
+  }
+
+  const handleSelectPage = async (pageNo: number) => {
+    setCurrentPageNo(pageNo)
+    loadData(pageNo)
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +96,7 @@ const PlaylistList = () => {
         disp_order: parentPlaylistId ? dispOrder + 1 : dispOrder + 1000,
       }
       await mergePlaylist(newData)
-      loadData()
+      loadData(currentPageNo)
       setMessage('Saved Successfully!')
       setMessageType('info')
       setShowFormId("")
@@ -104,7 +115,8 @@ const PlaylistList = () => {
 
   useEffect(() => {
     checkLogin()
-    loadData()
+    checkDataCount()
+    loadData(1)
   }, [])
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -184,6 +196,26 @@ const PlaylistList = () => {
           </table>
         </SortableContext>
       </DndContext>
+      <div className="flex justify-center">
+        {Array.from({ length: totalPage }, (_, i) => (
+          i === (currentPageNo - 1) ? (
+            <button key={i} className="border border-blue-300 w-10 text-center cursor-pointer font-bold bg-blue-50">
+              {i + 1}
+            </button>
+          ) : 
+          i === 0 || ((currentPageNo - 4) < i && i < (currentPageNo + 2)) || (i === totalPage - 1) ? (
+            <button key={i} className="border border-gray-200 w-10 text-center cursor-pointer"
+                onClick={() => handleSelectPage(i + 1)}>
+              {i + 1}
+            </button>
+          ) : 
+          (i === 1 && i <= (currentPageNo - 4)) || (i === currentPageNo + 2 && (currentPageNo + 2) <= i) ? (
+            <button key={i} className="border border-gray-200 w-10 text-center cursor-pointer">
+              ...
+            </button>
+          ) : null
+        ))}
+      </div>
       <div className="footer-area">
         <div className="footer-area-sub">
           <div className="footer-left">
