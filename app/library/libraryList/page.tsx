@@ -9,10 +9,11 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import MessageBanner from '@/components/MessageBanner'
 import { EllipsisAndTooltip } from '@/components/EllipsisAndTooltip'
+import SelectButton from '@/components/SelectButton'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
-import { CodeCompletedFlag, CodeOwnedMagazineFlag, CodeLibraryGrade, CodeTaskType, CodeTaskStatus } from '@/utils/codeUtils'
+import { CodeCompletedFlag, CodeOwnedMagazineFlag, CodeLibraryGrade, CodeTaskType, CodeTaskStatus, OrderLibraryList } from '@/utils/codeUtils'
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
 import { LibraryItem, LibraryItemMst, LibraryCondition, initialLibraryCondition } from '@/types/library/library-types'
@@ -54,6 +55,7 @@ const LibraryList = () => {
       task_status: searchParams.get('task_status') ?? '',
       actioned: searchParams.get('actioned') ?? '',
       not_actioned: searchParams.get('not_actioned') ?? '',
+      order_condition: searchParams.get('order_condition') ?? '',
     }
     setCondition(condition1)
     const fetchData = await fetchItems(condition1)
@@ -89,6 +91,7 @@ const LibraryList = () => {
     if (condition.task_status) query.append('item_name', condition.task_status)
     if (condition.actioned) query.append('actioned', condition.actioned)
     if (condition.not_actioned) query.append('not_actioned', condition.not_actioned)
+    if (condition.order_condition) query.append('order_condition', condition.order_condition)
     router.push(`/library/libraryList?${query.toString()}`)
     const fetchData = await fetchItems(condition)
     console.log("fetchData", fetchData[0])
@@ -233,6 +236,15 @@ const LibraryList = () => {
                   onChange={handleSearchChange} />
               <span>not actioned</span>
             </label>
+          </div>
+        </div>
+        <div className="div-input-row">
+          <label htmlFor="order" className="input-label">Order</label>
+          <div className="mb-2">
+            <SelectButton
+                options={OrderLibraryList}
+                value={condition.order_condition}
+                onChange={(val) => (setCondition(prev => ({...prev, order_condition: val})))} />
           </div>
         </div>
         <div className="div-row-right">

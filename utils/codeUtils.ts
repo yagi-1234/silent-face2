@@ -131,7 +131,12 @@ export const CodeEventType: { [key: string]: string | '' } = {
   '08': 'Work'
 }
 
-export const TrackListOrder: { [key: string]: string | '' } = {
-  '0': 'Default',
-  '1': 'History',
-}
+export const TrackListOrder = [
+  { key: '0', value: 'Default' },
+  { key: '1', value: 'History' },
+]
+
+export const OrderLibraryList = [
+  { key: '0', value: 'Default' },
+  { key: '1', value: 'History' },
+]

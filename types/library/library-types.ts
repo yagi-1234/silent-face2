@@ -95,6 +95,7 @@ export type LibraryCondition = {
   task_status: string | null
   actioned: string
   not_actioned: string
+  order_condition: string
 }
 
 export const initialLibraryCondition: LibraryCondition = {
@@ -104,4 +105,5 @@ export const initialLibraryCondition: LibraryCondition = {
   task_status: null,
   actioned: '0',
   not_actioned: '0',
+  order_condition: '0',
 }

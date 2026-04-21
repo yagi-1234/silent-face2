@@ -219,8 +219,8 @@ const TrackList = () => {
             <label htmlFor="order" className="input-label">Order</label>
             <div className="mb-2">
               <SelectButton
-                  selectedItem={condition.order_condition}
-                  selection={TrackListOrder}
+                  options={TrackListOrder}
+                  value={condition.order_condition}
                   onChange={handleOrderChange}/>
             </div>
           </div>
