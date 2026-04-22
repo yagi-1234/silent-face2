@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { AlarmClockCheck, ArrowLeft, AtSign, CalendarCheck, FileText, Pen, Plus, Search, Spotlight, Star } from 'lucide-react'
 
-import { fetchItems, fetchItemMst } from '@/actions/library/library-action'
+import { fetchItems, fetchItemsCount, fetchItemMst } from '@/actions/library/library-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import MessageBanner from '@/components/MessageBanner'
@@ -17,6 +17,7 @@ import { CodeCompletedFlag, CodeOwnedMagazineFlag, CodeLibraryGrade, CodeTaskTyp
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
 import { LibraryItem, LibraryItemMst, LibraryCondition, initialLibraryCondition } from '@/types/library/library-types'
+import PagingControl from '@/components/PagingControl'
 
 const Page = () => {
   return (
@@ -40,25 +41,21 @@ const LibraryList = () => {
   const [items, setItems] = useState<LibraryItem[]>([])
   const [itemMst, setItemMst] = useState<LibraryItemMst>()
   const [condition, setCondition] = useState<LibraryCondition>(initialLibraryCondition)
+  const [currentPageNo, setCurrentPageNo] = useState<number>(0)
+  const [totalPages, setTotalPages] = useState<number>(0)
 
   const loadMst = async () => {
     const fetchData = await fetchItemMst(inLibraryType)
     setItemMst(fetchData)
   }
 
-  const loadData = async () => {
-    const condition1 = {
-      ...condition,
-      library_type: searchParams.get('library_type') ?? '',
-      item_type: searchParams.get('item_type') ?? '',
-      item_name: searchParams.get('item_name') ?? '',
-      task_status: searchParams.get('task_status') ?? '',
-      actioned: searchParams.get('actioned') ?? '',
-      not_actioned: searchParams.get('not_actioned') ?? '',
-      order_condition: searchParams.get('order_condition') ?? '',
-    }
-    setCondition(condition1)
-    const fetchData = await fetchItems(condition1)
+  const loadDataCount = async (condition1: LibraryCondition) => {
+    const fetchCount = await fetchItemsCount(condition1)
+    setTotalPages(Math.floor(fetchCount / 20) + 1)
+  }
+
+  const loadData = async (condition1: LibraryCondition, pageNo: number) => {
+    const fetchData = await fetchItems(condition1, pageNo)
     setItems(fetchData)
   }
 
@@ -93,9 +90,14 @@ const LibraryList = () => {
     if (condition.not_actioned) query.append('not_actioned', condition.not_actioned)
     if (condition.order_condition) query.append('order_condition', condition.order_condition)
     router.push(`/library/libraryList?${query.toString()}`)
-    const fetchData = await fetchItems(condition)
-    console.log("fetchData", fetchData[0])
-    setItems(fetchData)
+    setCurrentPageNo(0)
+    loadDataCount(condition)
+    loadData(condition, 0)
+  }
+
+  const handleSelectPage = async (pageNo: number) => {
+    setCurrentPageNo(pageNo)
+    loadData(condition, pageNo)
   }
 
   const checkLogin = async () => {
@@ -105,7 +107,19 @@ const LibraryList = () => {
   useEffect(() => {
     checkLogin()
     loadMst()
-    loadData()
+    const condition1 = {
+      ...condition,
+      library_type: searchParams.get('library_type') ?? '',
+      item_type: searchParams.get('item_type') ?? '',
+      item_name: searchParams.get('item_name') ?? '',
+      task_status: searchParams.get('task_status') ?? '',
+      actioned: searchParams.get('actioned') ?? '',
+      not_actioned: searchParams.get('not_actioned') ?? '',
+      order_condition: searchParams.get('order_condition') ?? '',
+    }
+    setCondition(condition1)
+    loadDataCount(condition1)
+    loadData(condition1, 0)
   }, [])
 
   return (
@@ -319,6 +333,10 @@ const LibraryList = () => {
             ))}
           </tbody>
         </table>
+        <PagingControl
+            totalPages={totalPages}
+            currentPageNo={currentPageNo}
+            onSelectPage={(pageNo) => handleSelectPage(pageNo)} />
       </div>
       <div className="block sm:hidden">
         <div className="div-card-area">
