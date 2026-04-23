@@ -48,7 +48,7 @@ const ComboBoxWithInput: React.FC<ComboBoxWithInputProps> = ({ options, value, o
           }} 
           onBlur={() => {
             setIsOpen(false)
-            onCommit?.(inputValue)
+            // onCommit?.(inputValue)
           }} />
       {isOpen && options.length > 0 && (
         <ul className="absolute z-10 w-120 border bg-white max-h-40 overflow-auto">

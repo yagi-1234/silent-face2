@@ -169,6 +169,7 @@ const TrackForm = () => {
     const loadTrack = async () => {
       let aritstId = ''
       let albumId = ''
+      let discNo = null
       if (inArtistId) {
         const fetchData = await fetchArtist(inArtistId)
         const fetchData2 = {
@@ -204,6 +205,7 @@ const TrackForm = () => {
         const fetchData = await fetchTrack(inTrackId)
         aritstId = fetchData.artist_id ?? ''
         albumId = fetchData.album_id ?? ''
+        discNo = fetchData.disc_no
         setTrack(fetchData)
         setOriginalTrack(fetchData)
       } else return
@@ -211,7 +213,7 @@ const TrackForm = () => {
       const artistAlbums = await fetchArtistAlbums(aritstId)
       setArtistAlbums(artistAlbums)
       if (albumId) {
-        const albumTracks = await fetchTracksByAlbumId(albumId)
+        const albumTracks = await fetchTracksByAlbumId(discNo, albumId)
         setAlbumTracks(albumTracks)
       }
     }
