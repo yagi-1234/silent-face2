@@ -2,9 +2,9 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { ArrowLeft, Check } from 'lucide-react'
+import { ArrowLeft, Check, CopyPlus } from 'lucide-react'
 
-import { fetchEvent, mergeEvent } from '@/actions/tasks/event-action'
+import { fetchEvent, insertEvent, mergeEvent } from '@/actions/tasks/event-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
@@ -63,6 +63,18 @@ const EventForm = () => {
     setModalMessage('Do you want to continue with this registration?')
     setConfirmHandler(async () => {
       const result = await mergeEvent(event)
+      setEvent(result)
+      setOriginalEvent(event)
+      setMessage('Saved Successfully!')
+      setMessageType('info')
+    })
+    setIsModalOpen(true)
+  }
+
+  const handleCopy = () => {
+    setModalMessage('Do you want to continue with this registration?')
+    setConfirmHandler(async () => {
+      const result = await insertEvent(event)
       setEvent(result)
       setOriginalEvent(event)
       setMessage('Saved Successfully!')
@@ -203,6 +215,11 @@ const EventForm = () => {
             </button>
           </div>
           <div className="footer-right">
+            <button className="button-second"
+                onClick={handleCopy}
+                disabled={!event.event_id}>
+              <CopyPlus size={14} />
+            </button>
             <button className="button-save"
                 onClick={handleSave}>
               <Check size={16} />

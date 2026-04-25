@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Briefcase, CalendarDays, FileText, Flower2, HeartPlus, List, MicVocal, Plus, ShoppingCart } from 'lucide-react'
+import { ArrowLeft, Briefcase, CalendarDays, EyeClosed, PawPrint, FileText, Flower2, HeartPlus, List, MicVocal, Plus, ShoppingCart } from 'lucide-react'
 
 import { fetchEvents } from '@/actions/tasks/event-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -45,6 +45,7 @@ const EventList = () => {
   const [events, setEvents] = useState<EventItem[]>([])
   const [isListView, setIsListView] = useState<boolean>(false)
   const [selectMonth, setSelectMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+  const [hiddenNumber, setHiddenNumber] = useState<string>("")
   const calendarRef = useRef<FullCalendar | null>(null)
 
   const inEventType = searchParams.get('event_type') ?? ''
@@ -90,19 +91,24 @@ const EventList = () => {
   }, [])
 
   const calendarEvents = events.map(event => {
-    const colorBlue = '#60a5fa'
-    const colorGreen = '#4ade80'
-    const colorYellow = '#facc15'
-    const colorRed = '#f87171' // red-400
-    const colorPink = '#f687b3'
-    const colorPurple = '#c084fc'
-    const colorGray = '#9ca3af'
-    let color = colorGray
-    if (event.event_type === '01') color = colorRed
-    if (event.event_type === '03') color = colorBlue
-    if (event.event_type === '04') color = colorYellow
-    if (event.event_type === '06') color = colorPink
-    if (event.event_type === '08') color = colorPurple
+    if (event.event_type === '23' && hiddenNumber !== '423') return null
+// 赤	bg-red-400	#f87171
+// 青	bg-blue-400	#60a5fa
+// 緑	bg-green-500	#22c55e
+// 紫	bg-purple-400	#c084fc
+// ピンク	bg-pink-400	#f472b6
+// オレンジ	bg-orange-400	#fb923c
+// 黄色	bg-yellow-400	#fde047
+// ティール	bg-teal-500	#14b8a6
+// シアン	bg-cyan-500	#06b6d4
+// グレー	bg-gray-300	#9ca3af
+    let color = '#9ca3af'
+    if (event.event_type === '01') color = '#f87171'
+    if (event.event_type === '03') color = '#60a5fa'
+    if (event.event_type === '04') color = '#fde047'
+    if (event.event_type === '05') color = '#fb923c'
+    if (event.event_type === '06') color = '#f472b6'
+    if (event.event_type === '08') color = '#c084fc'
     return {
       id: event.event_id,
       title: event.event_name + 
@@ -111,14 +117,16 @@ const EventList = () => {
       start: event.start_at,
       backgroundColor: color
     }
-  })
+  }).filter((e): e is NonNullable<typeof e> => e !== null)
 
   const getEventTypeIcon = (eventType: string) => {
     if (eventType === '01') return <div className="border bg-red-400 text-white"><MicVocal size={16} /></div>
     if (eventType === '03') return <div className="border bg-yellow-400 text-white"><ShoppingCart size={16} /></div>
     if (eventType === '04') return <div className="border bg-blue-400 text-white"><Flower2 size={16} /></div>
+    if (eventType === '05') return <div className="border bg-orange-400 text-white"><PawPrint size={16} /></div>
     if (eventType === '06') return <div className="border bg-pink-400 text-white"><HeartPlus size={16} /></div>
     if (eventType === '08') return <div className="border bg-purple-400 text-white"><Briefcase size={16} /></div>
+    if (eventType === '23') return <div className="border bg-gray-400 text-white"><EyeClosed size={16} /></div>
   }
 
   const handleCalendarMove = (move: number) => {
@@ -252,6 +260,10 @@ const EventList = () => {
             </button>
           </div>
           <div className="footer-right">
+            <input type="text"
+                className="w-16 border-gray-100"
+                value={hiddenNumber ?? ""}
+                onChange={(e) => setHiddenNumber(e.target.value)} />
             <div className="hidden sm:block">
               {isListView &&
                 <button className="button-second"

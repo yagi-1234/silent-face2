@@ -127,8 +127,10 @@ export const CodeEventType: { [key: string]: string | '' } = {
   '01': 'Live',
   '03': 'Shopping',
   '04': 'Season Event',
+  '05': 'Pets',
   '06': 'Health Care',
-  '08': 'Work'
+  '08': 'Work',
+  '23': '***'
 }
 
 export const TrackListOrder = [
