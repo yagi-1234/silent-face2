@@ -38,6 +38,6 @@ async function insertBackupResult(tableName: string, jobStatus: number, jobMessa
     updated_at: new Date(),
     updated_count: 0
   })
-  if (error) console.log('oh' + tableName)
+  if (error) console.log('oh' + error)
   else console.log('ok' + tableName)
 }
