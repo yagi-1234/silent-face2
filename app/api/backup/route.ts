@@ -19,16 +19,16 @@ async function backupTable(tableName: string) {
   const { data, error } = await supabase.rpc('backup_' + tableName);
   if (error) {
     console.log('backupTable failed:::' + tableName)
-    insertBackupResult(tableName, -100, 'backupTable failed...')
+    await insertBackupResult(tableName, -100, 'backupTable failed...')
   }
   else {
     console.log('end:::backupTable:::' + tableName + '>>', data, 'data copied.')
-    insertBackupResult(tableName, 100, 'backupTable success >> ' + data + 'data copied.')
+    await insertBackupResult(tableName, 100, 'backupTable success >> ' + data + 'data copied.')
   }
 }
 
 async function insertBackupResult(tableName: string, jobStatus: number, jobMessage: string) {
-  await supabase.from('ct02_batch_logs').insert({
+  const { data, error } = await supabase.from('ct02_batch_logs').insert({
     job_id: 'backupTables',
     job_sub_id: tableName,
     job_executed_at: new Date(),
@@ -38,4 +38,13 @@ async function insertBackupResult(tableName: string, jobStatus: number, jobMessa
     updated_at: new Date(),
     updated_count: 0
   })
+  if (error) console.log('oh' + tableName)
+  else console.log('ok' + tableName)
 }
+
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchItems:', error)
+    return []
+  }
+  return result
