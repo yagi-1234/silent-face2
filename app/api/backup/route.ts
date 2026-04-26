@@ -41,10 +41,3 @@ async function insertBackupResult(tableName: string, jobStatus: number, jobMessa
   if (error) console.log('oh' + tableName)
   else console.log('ok' + tableName)
 }
-
-  const { data: result, error } = await query
-  if (error) {
-    console.error('Error fetchItems:', error)
-    return []
-  }
-  return result
