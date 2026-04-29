@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import type { NextPage } from 'next'
 import { AlarmClockCheck, BookImage, BookOpenText, BookText, Calendar, Clapperboard, Database, Disc3, Download, Gamepad2, 
-    Info, Music, MicVocal, NotebookPen, SquareLibrary, Tv, ScanHeart, Settings, Users} from 'lucide-react'
+    Info, Music, MicVocal, NotebookPen, SquareLibrary, Tv, ScanHeart, Server, Settings, Users} from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import HomeIconButton from '@/components/HomeIconButton'
@@ -17,11 +17,14 @@ const Page: NextPage = () => {
     await checkUser()
   }
 
+  const handleShowBatchMonitor = () => {
+    router.push('/information/batch')
+  }
   const handleShowMaster = () => {
-    router.push("/master/masterList")
+    router.push('/master/masterList')
   }
   const handleShowReleases = () => {
-    router.push("/information/release")
+    router.push('/information/release')
   }
 
   useEffect(() => {
@@ -33,6 +36,9 @@ const Page: NextPage = () => {
       <div className="flex">
         <div className="flex-1">
           <h2 className="header-title">This is Home</h2>
+        </div>
+        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-2">
+          <Server size={20} onClick={handleShowBatchMonitor} />
         </div>
         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-2">
           <Settings size={20} onClick={handleShowReleases} />
