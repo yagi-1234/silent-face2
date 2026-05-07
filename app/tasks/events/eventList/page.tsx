@@ -52,12 +52,16 @@ const EventList = () => {
 
   const handleShowForm = (eventType: string, eventId: string) => {
     console.log(eventType)
-    addToHistory({ title: 'eventCalendar', path: `${pathname}?is_list_view=${isListView}`})
+    addToHistory({ title: 'trackList', path: `${pathname}?${searchParams.toString()}`})
     if (eventType === '01') router.push(`/music/lives/liveTrackList?event_id=${eventId}`)
     else router.push(`/tasks/events/eventForm?event_id=${eventId}`)
   }
 
   const handleChangeView = (isList: boolean) => {
+    const query = new URLSearchParams()
+    if (inEventType) query.append('event_type', inEventType)
+    if (isList) query.append('is_list_view', 'true')
+    router.push(`/tasks/events/eventList?${query.toString()}`)
     setIsListView(isList)
   }
   
@@ -79,16 +83,6 @@ const EventList = () => {
   const checkLogin = async () => {
     await checkUser()
   }
-
-  useEffect(() => {
-    checkLogin()
-    if (searchParams.get('selectMonth')) {
-      setSelectMonth(new Date(searchParams.get('selectMonth') ?? '2019-01-01'))
-      calendarRef.current?.getApi().gotoDate(searchParams.get('selectMonth') ?? '2019-01-01')
-    }
-    setIsListView(searchParams.get('is_list_view') === 'true' ? true : false)
-    loadEvents()
-  }, [])
 
   const calendarEvents = events.map(event => {
     if (event.event_type === '23' && hiddenNumber !== '423') return null
@@ -133,6 +127,17 @@ const EventList = () => {
     setSelectMonth(new Date(selectMonth.getFullYear(), selectMonth.getMonth() + move, 1))
   }
 
+  useEffect(() => {
+    checkLogin()
+    if (searchParams.get('selectMonth')) {
+      setSelectMonth(new Date(searchParams.get('selectMonth') ?? '2019-01-01'))
+      calendarRef.current?.getApi().gotoDate(searchParams.get('selectMonth') ?? '2019-01-01')
+    }
+    setIsListView(searchParams.get('is_list_view') === 'true' ? true : false)
+    
+    loadEvents()
+  }, [])
+
   return (
     <div className="root-panel">
       <MessageBanner
@@ -141,7 +146,7 @@ const EventList = () => {
           errors={errors}
           onClose={() => setMessage('')} />
       <Breadcrumb />
-      <h2 className="header-title">Event</h2>
+      <h2 className="header-title">{"Event" + (inEventType === "01" ? " (Live)" : "")}</h2>
       <div className="block sm:hidden">
         <div>
           <div className="fc fc-direction-ltr">
@@ -279,7 +284,7 @@ const EventList = () => {
               }
             </div>
             <button className="button-save"
-                onClick={() => handleShowForm("", "")}>
+                onClick={() => handleShowForm(inEventType, "")}>
               <Plus size={16} />
             </button>
           </div>
