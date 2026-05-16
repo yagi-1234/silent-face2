@@ -61,7 +61,7 @@ const PlaylistTrackList = () => {
     const { name, value } = event.target
     setNewPlaylistTrack(prev => ({
       ...prev,
-      [name]: value ? value : null
+      [name]: value ? (event.target.type === 'number' ? Number(value) : value) : null
     }))
   }
 
@@ -73,6 +73,7 @@ const PlaylistTrackList = () => {
       rank_no: playlistTracks.length - (newPlaylistTrack.play_order ?? 0) + 2,
       edit_mode: 'i',
     }
+    // console.log(playlistTracks)
     setPlaylistTracks(prev => {
       const updated = prev.map(t => {
         if ((newData.play_order ?? 0) <= (t.play_order ?? 0)) {
@@ -93,7 +94,6 @@ const PlaylistTrackList = () => {
       })
       updated.push(newData)
       updated.sort((a, b) => (a.play_order ?? Infinity) - (b.play_order ?? Infinity))
-      console.log(updated)
       return updated
     })
     setNewPlaylistTrack(initialPlaylistTrack)
