@@ -223,6 +223,13 @@ button {
     @apply flex justify-between
   }
 
+  .div-rows-flexible {
+    @apply flex flex-col gap-1 border-b py-1
+  }
+  .div-row-flexible {
+    @apply flex items-center gap-4
+  }
+
   .input-check-label {
     @apply flex items-center space-x-2
   }
