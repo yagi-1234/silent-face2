@@ -37,6 +37,7 @@ const EatingList = () => {
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const { addToHistory } = useHistory()
   const { handleBack } = useCustomBack()
+  const isMobile = window.innerWidth < 640
 
   const [eatings, setEatings] = useState<EatingView[]>([])
   const today = formatDateTime(new Date(), 'yyyy-MM-dd')
@@ -83,20 +84,20 @@ const EatingList = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <div className="border-y divide-y">
+      <div className="border-y divide-y md:w-200">
         {eatings.map((eating, index) => (
           <div key={eating.work_date?.toString()}
-              className={formatDateTime(eating.work_date,'yyyy-MM-dd') === today ?
-                  "div-rows-flexible bg-yellow-50" :
-                  "div-rows-flexible"}>
-            <div className="div-row-flexible">
-              <span className="w-32">{formatDateTime(eating.work_date,'yyyy/MM/dd(EEE)')}</span>
+            className={formatDateTime(eating.work_date,'yyyy-MM-dd') === today ?
+                "flex flex-col md:flex-row gap-1 border-b py-1 bg-yellow-50" :
+                "flex flex-col md:flex-row gap-1 border-b py-1"}>
+            <div className="flex items-center gap-x-2 flex-wrap">
+              <span className="font-bold w-12 sm:w-24">{isMobile ? formatDateTime(eating.work_date,"MM/dd") : formatDateTime(eating.work_date,"yyyy/MM/dd")}</span>
               <Clock9 className="h-4 w-4" />
               <span>
                 <select
                     id="breakfast_score"
                     name="breakfast_score"
-                    className="w-16"
+                    className="w-16 h-7"
                     value={eating.breakfast_score ?? ''}
                     onChange={(event) => handleChange(formatDateTime(eating.work_date,'yyyy-MM-dd'), event)}>
                   <option key="" value=""></option>
@@ -115,7 +116,9 @@ const EatingList = () => {
                     value={eating.breakfast ?? ""}
                     onChange={(event) => handleChange(formatDateTime(eating.work_date,'yyyy-MM-dd'), event)} />
               </span>
-              <Clock2 className="h-4 w-4" />
+              <div className="w-full md:hidden"></div>
+              <span className="font-bold w-12 md:hidden">{isMobile ? formatDateTime(eating.work_date,"EEE") : null}</span>
+              <Clock9 className="h-4 w-4" />
               <span>
                 <select
                     id="lunch_score"
@@ -138,6 +141,15 @@ const EatingList = () => {
                     className="w-full"
                     value={eating.lunch ?? ""}
                     onChange={(event) => handleChange(formatDateTime(eating.work_date,'yyyy-MM-dd'), event)} />
+              </span>
+              <div className="w-full md:hidden"></div>
+              <span className="w-12 md:hidden">
+                {eating.is_edit ? (
+                  <button className="bg-blue-600 text-white flex items-center justify-center rounded-sm w-10 h-6">
+                    <Check className="h-4 w-4"
+                        onClick={() => handleSave(eating)} />
+                  </button>
+                ) : null}
               </span>
               <Clock7 className="h-4 w-4" />
               <span>
@@ -163,11 +175,11 @@ const EatingList = () => {
                     value={eating.dinner ?? ""}
                     onChange={(event) => handleChange(formatDateTime(eating.work_date,'yyyy-MM-dd'), event)} />
               </span>
-            </div>
-            <div className="div-row-flexible">
-              <span className="w-32">
+              <div className="w-full"></div>
+              <span className="font-bold w-12 sm:w-10">{isMobile ? null : formatDateTime(eating.work_date,"EEE")}</span>
+              <span className="w-12 hidden sm:inline">
                 {eating.is_edit ? (
-                  <button className="bg-blue-600 text-white flex items-center justify-center rounded-sm w-8 h-6">
+                  <button className="bg-blue-600 text-white flex items-center justify-center rounded-sm w-10 h-6">
                     <Check className="h-4 w-4"
                         onClick={() => handleSave(eating)} />
                   </button>
@@ -197,8 +209,10 @@ const EatingList = () => {
                     value={eating.othres ?? ""}
                     onChange={(event) => handleChange(formatDateTime(eating.work_date,'yyyy-MM-dd'), event)} />
               </span>
+              <div className="w-full md:hidden"></div>
+              <span className="w-12 md:hidden" />
               <Lollipop className="h-4 w-4" />
-              <span className="w-16 mr-36">
+              <span className="w-16 sm:mr-34">
                 <input type="number"
                     id="snacks"
                     name="snacks"
@@ -219,7 +233,7 @@ const EatingList = () => {
                 {eating.eating_id && ((eating.breakfast_score ?? 0) *5) + ((eating.lunch_score ?? 0) * 5) + ((eating.dinner_score ?? 0) * 5) + ((eating.others_score ?? 0) * 5)
                     + ((eating.snacks ?? 0) * -10) + ((eating.deserts ?? 0) * -10)}
               </span>
-            </div>
+              </div>
           </div>
         ))}
       </div>
