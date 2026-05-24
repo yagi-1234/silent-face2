@@ -72,6 +72,18 @@ const updateNote = async (newData: NoteView): Promise<NoteRow> => {
   console.log("updateNote Complete Result:", result)
   return result
 }
+export const deleteNote = async (deleteData: NoteView) => {
+  console.log('deleteData:', deleteData)
+  const { data: result, error } = await supabase
+      .from('tt04_notes')
+      .delete()
+      .eq('note_id', deleteData.note_id)
+  if (error) {
+    console.error('Error deleteNote:', error)
+    throw(error)
+  }
+  console.log('deleteNote Complete Result:')
+}
 
 const copyViewToRecord = (view: NoteView, processType: string): Partial<NoteRow> => {
   const nowDate = new Date()
