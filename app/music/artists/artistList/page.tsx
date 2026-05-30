@@ -10,11 +10,12 @@ import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
 import MessageBanner from '@/components/MessageBanner'
 import { ToggleButton } from '@/components/ToggleButton'
+import { useCodes } from '@/contexts/MasterContext'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { Artist, ArtistCondition, initialArtistCondition } from '@/types/music/artist-types'
-import { CodeArtistType, CodeArtistGrade } from '@/utils/codeUtils'
+import { CodeArtistType } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 
@@ -30,6 +31,7 @@ export default Page
 const ArtistList = () => {
   
   const { handleBack } = useCustomBack()
+  const codes = useCodes()
   const { addToHistory } = useHistory()
   const { message, setMessage, messageType, errors } = useMessage()
   const pathname = usePathname()
@@ -185,9 +187,8 @@ const ArtistList = () => {
                   value={condition.grade_from}
                   onChange={handleSearchChange} >
                 <option key="" value=""></option>
-                {Object.entries(CodeArtistGrade)
-                    .sort(([a], [b]) => a.localeCompare(b))
-                    .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+                {codes.map(row => (
+                  <option key={row.code_key} value={row.code_key ?? ""}>{row.code_value}</option>
                 ))}
               </select>
               <span>　～　</span>
@@ -198,9 +199,8 @@ const ArtistList = () => {
                   value={condition.grade_to}
                   onChange={handleSearchChange} >
                 <option key="" value=""></option>
-                {Object.entries(CodeArtistGrade)
-                    .sort(([a], [b]) => a.localeCompare(b))
-                    .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+                {codes.map(row => (
+                  <option key={row.code_key} value={row.code_key ?? ""}>{row.code_value}</option>
                 ))}
               </select>
             </div>
@@ -259,7 +259,7 @@ const ArtistList = () => {
                   </button>
                 </td>
                 <td>{artist.years_active}</td>
-                <td>{CodeArtistGrade[artist.grade ?? '']}</td>
+                <td>{codes.find(code => code.code_key === artist.grade)?.code_value}</td>
                 <td>{formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}</td>
                 <td>
                   <button
@@ -308,7 +308,7 @@ const ArtistList = () => {
               </div>
               <div className="div-card-row">
                 <Star size={14} />
-                {CodeArtistGrade[artist.grade ?? '']}
+                {codes.find(code => code.code_key === artist.grade)?.code_value}
                 <span>&ensp;</span>
                 <History size={14} />
                 {formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}

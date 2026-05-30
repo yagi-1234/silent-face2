@@ -198,7 +198,7 @@ const ArtistForm = () => {
               onChange={handleChange} >
             <option key="" value=""></option>
             {codes.map(row => (
-              <option key={row.code_key} value={row.code_key ?? ''}>{row.code_value}</option>
+              <option key={row.code_key} value={row.code_key ?? ""}>{row.code_value}</option>
             ))}
           </select>
         </div>
