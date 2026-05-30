@@ -15,9 +15,10 @@ import HiddenPanel from '@/components/HiddenPanel'
 import MessageBanner from '@/components/MessageBanner'
 import RegionList from '@/components/ReigonList'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
+import { useCodes } from '@/contexts/MasterContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { Artist, initialArtist } from '@/types/music/artist-types'
-import { CodeArtistType, CodeArtistGrade } from '@/utils/codeUtils'
+import { CodeArtistType } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { removeArticle, convertToRome, toLowerCase } from '@/utils/stringUtils'
@@ -40,6 +41,7 @@ const ArtistForm = () => {
   const [originalArtist, setOriginalArtist] = useState<Artist>(initialArtist)
 
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
+  const codes = useCodes()
   const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const { handleBack } = useCustomBack()
@@ -195,9 +197,8 @@ const ArtistForm = () => {
               value={artist.grade ?? ""}
               onChange={handleChange} >
             <option key="" value=""></option>
-            {Object.entries(CodeArtistGrade)
-                .sort(([a], [b]) => a.localeCompare(b))
-                .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+            {codes.map(row => (
+              <option key={row.code_key} value={row.code_key ?? ''}>{row.code_value}</option>
             ))}
           </select>
         </div>

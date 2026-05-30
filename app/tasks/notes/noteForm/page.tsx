@@ -188,7 +188,7 @@ const NoteForm = () => {
             <button
                 className="flex items-center cursor-pointer"
                 onClick={() => handleDelete()}>
-              <Minus className="bg-red-400 rounded-full mr-2 text-white " size={16} />
+              <Minus className="bg-red-400 rounded-full mr-2 text-white" size={16} />
               Delete
             </button>
           </div>

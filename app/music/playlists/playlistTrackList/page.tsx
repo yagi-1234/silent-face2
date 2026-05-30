@@ -277,7 +277,7 @@ const PlaylistTrackList = () => {
                     <button
                         className="button-page"
                         onClick={() => handleAdd()}>
-                      <CirclePlus className='w-5 h-5' />
+                      <CirclePlus className="w-5 h-5" />
                     </button>
                   </td>
                 </tr>

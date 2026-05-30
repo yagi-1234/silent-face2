@@ -56,8 +56,8 @@ a:hover {
 }
 
 input {
-  padding: 0.5rem;
-  margin-right: 0.5rem;
+  padding: 0.4rem;
+  /* margin-right: 0.5rem; */
 }
 
 button {
@@ -224,10 +224,10 @@ button {
   }
 
   .div-rows-flexible {
-    @apply flex flex-col gap-1 border-b py-1
+    @apply flex flex-col md:flex-row gap-1 border-b py-1
   }
   .div-row-flexible {
-    @apply flex items-center gap-4
+    @apply flex items-center gap-x-2 flex-wrap
   }
 
   .input-check-label {
@@ -278,7 +278,7 @@ button {
     }
   }
   .button-page {
-    @apply text-gray-600 flex items-center justify-center w-10 p-2
+    @apply text-gray-600 flex items-center justify-center
   }
   .button-plus {
     @apply w-7

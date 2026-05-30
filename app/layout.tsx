@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
 import { Noto_Sans_JP as FontSans } from "next/font/google"
-import "./globals.css"
+import './globals.css'
 
 import { ConfirmModalProvider } from '@/contexts/ConfirmModalContext'
 import { HistoryProvider } from '@/contexts/HistoryContext'
 import { MessageProvider } from '@/contexts/MessageContext'
+import { MasterProvider } from '@/contexts/MasterContext'
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -29,7 +30,9 @@ export default function RootLayout({
           <ConfirmModalProvider>
           <HistoryProvider>
           <MessageProvider>
+          <MasterProvider>
             {children}
+          </MasterProvider>
           </MessageProvider>
           </HistoryProvider>
           </ConfirmModalProvider>
