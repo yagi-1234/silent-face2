@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 
 import type { EatingRow, EatingView } from '@/types/health/eating-types'
+import { formatDateTime } from '@/utils/dateFormat'
 
 export const fetchEating = async (eatingId: string): Promise<EatingView> => {
   let query = supabase
@@ -16,11 +17,12 @@ export const fetchEating = async (eatingId: string): Promise<EatingView> => {
   return result
 }
 export const fetchEatings = async (): Promise<EatingView[]> => {
+  const today = new Date()
   let query = supabase
       .from('hv03_eatings')
       .select('*')
-      .gte('work_date', '2026-05-01')
-      .lte('work_date', '2026-05-31')
+      .gte('work_date', formatDateTime(today, 'yyyy-MM-01'))
+      .lte('work_date', formatDateTime(new Date(today.getFullYear(), today.getMonth() + 1, 0), 'yyyy-MM-dd'))
   query = query.order('work_date')
   // query = query.limit(1000)
   const { data: result, error } = await query
