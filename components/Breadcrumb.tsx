@@ -1,27 +1,32 @@
-import React from 'react';
-import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import React from 'react'
+import { useRouter } from 'next/navigation'
+import { ChevronRight, House } from 'lucide-react'
 
-import { useConfirmModal } from "@/contexts/ConfirmModalContext";
-import { useHistory } from "@/contexts/HistoryContext";
+import { useConfirmModal } from '@/contexts/ConfirmModalContext'
+import { useHistory } from '@/contexts/HistoryContext'
 
-export const Breadcrumb = () => {
+interface BreadcrumbProps {
+  edited?: boolean
+}
+
+export const Breadcrumb = ({ edited }: BreadcrumbProps) => {
   const router = useRouter();
   const { history, removeLastHistory } = useHistory()
 
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
   const handleClick = (index: number, path: string) => {
-    // setModalMessage(
-    //   "You have unsaved changes. Are you sure you want to leave this page?"
-    // );
-    removeLastHistory(index)
-    router.push(path);
-    // setConfirmHandler(() => {
-    //   removeLastHistory(index)
-    //   router.push(path);
-    // });
-    // setIsModalOpen(true);
-  };
+    if (edited) {
+      setModalMessage('You have unsaved changes. Are you sure you want to leave this page?')
+      setConfirmHandler(() => {
+        removeLastHistory(index)
+        router.push(path);
+      })
+      setIsModalOpen(true)
+    } else {
+      removeLastHistory(index)
+      router.push(path)
+    }
+  }
 
   return (
     <nav className="text-sm text-gray-600" aria-label="Breadcrumb">
@@ -30,7 +35,7 @@ export const Breadcrumb = () => {
           <button
               className="button-link"
               onClick={() => handleClick(0, "/home")}>
-            Home
+            <House className="w-4 h-4 mr-2" />
           </button>
         </li>
         <ChevronRight className="w-4 h-4 mx-1" />
@@ -47,24 +52,7 @@ export const Breadcrumb = () => {
             </li>
           )
         })}
-
-        {/* {items.map((item, index) => {
-                    const isLast = index === items.length -1
-                    return (
-                        <li key={index} className="flex items-center">
-                            {index > 0 && <ChevronRight className="w-4 h-4 mx-1" />}
-                            {item.href && !isLast ? (
-                                <button className="button-link"
-                                        onClick={handleClick}>
-                                    {item.label}
-                                </button>
-                            ) : (
-                                <span className="font-bold text-2xl">{item.label}</span>
-                            )}
-                        </li>
-                    )
-                })} */}
       </ol>
     </nav>
-  );
-};
+  )
+}

@@ -120,7 +120,8 @@ const ArtistForm = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <Breadcrumb
+          edited={isArtistEdited(originalArtist, artist)} />
       <h2 className="header-title">Artist Form</h2>
       <p className="timestamp">{artist.artist_id ? "last updated at: " + formatDateTime(artist.updated_at, 'yyyy/MM/dd HH:mm') + " (" + artist.updated_count + ")" : '(Not registered)'}</p>
       <div>

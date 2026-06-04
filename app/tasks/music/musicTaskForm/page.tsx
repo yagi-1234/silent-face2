@@ -132,7 +132,8 @@ const MusicTaskForm = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <Breadcrumb
+          edited={isMusicTaskEdited(originalTask, task)} />
       <h2 className="header-title">Task Form (Music)</h2>
       <p className="timestamp">
         {task.task_sub_id ? "last updated at: " + formatDateTime(task.updated_at, 'yyyy/MM/dd HH:mm') + " (" + task.updated_count + ")" : '(Not registered)'}

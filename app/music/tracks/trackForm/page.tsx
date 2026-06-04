@@ -234,7 +234,8 @@ const TrackForm = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <Breadcrumb
+          edited={isTrackEdited(originalTrack, track)} />
       <h2 className="header-title">Track Form</h2>
       <p className="timestamp">{track.track_id ? "last updated at: " + formatDateTime(track.updated_at, 'yyyy/MM/dd HH:mm') + " (" + track.updated_count + ")" : '(Not registered)'}</p>
       <div>

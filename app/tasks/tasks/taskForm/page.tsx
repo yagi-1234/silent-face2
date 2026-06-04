@@ -206,7 +206,8 @@ const TaskForm = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <Breadcrumb 
+          edited={isTaskEdited(originalTask, task)} />
       <h2 className="header-title">Task Form</h2>
       <p className="timestamp">
         {task.task_id ? "last updated at: " + formatDateTime(task.updated_at, 'yyyy/MM/dd HH:mm') + " (" + task.updated_count + ")" : '(Not registered)'}

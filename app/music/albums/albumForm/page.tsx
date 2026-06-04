@@ -159,7 +159,8 @@ const AlbumList = () => {
           type={messageType}
           errors={errors}
           onClose={() => setMessage('')} />
-      <Breadcrumb />
+      <Breadcrumb
+          edited={isAlbumEdited(originalAlbum, album)} />
       <h2 className="header-title">Album Form</h2>
       <p className="timestamp">{album.album_id ? "last updated at: " + formatDateTime(album.updated_at, 'yyyy/MM/dd HH:mm') + " (" + album.updated_count + ")" : '(Not registered)'}</p>
       <div>
