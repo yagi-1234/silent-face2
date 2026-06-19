@@ -207,3 +207,93 @@ export type MusicTaskCondition = {
 export const initialMusicTaskCondition: MusicTaskCondition = {
   taskStatusList: ['0','1','2']
 }
+
+
+
+
+export type TaskNewRow = {
+  task_id: string | null
+  task_name: string | null
+  task_type: string | null
+  schedule_type: string | null
+  next_period: number | null
+  next_date: Date | null
+  default_limit_period: number | null
+  task_comment: string | null
+  created_at: Date | null
+  updated_at: Date | null
+  updated_count: number | null
+}
+export type TaskNewView = TaskNewRow & {
+}
+export const initialTaskNew: TaskNewView = {
+  task_id: null,
+  task_name: null,
+  task_type: null,
+  schedule_type: null,
+  next_period: null,
+  next_date: null,
+  default_limit_period: null,
+  task_comment: null,
+  created_at: null,
+  updated_at: null,
+  updated_count: 0,
+}
+
+export type TaskContentRow = {
+  task_content_id: string | null
+  task_id: string | null
+  task_key: string | null
+  task_content_name: string | null
+  limit_date: Date | null
+  task_order: number | null
+  created_at: Date | null
+  updated_at: Date | null
+  updated_count: number | null
+}
+export type TaskContentView = TaskContentRow & {
+  task_name: string | null
+  task_type: string | null
+}
+export const initialTaskContent: TaskContentView = {
+  task_content_id: null,
+  task_id: null,
+  task_key: null,
+  task_content_name: null,
+  limit_date: null,
+  task_order: null,
+  created_at: null,
+  updated_at: null,
+  updated_count: 0,
+  task_name: null,
+  task_type: null
+}
+
+export type TaskHistoryRow = {
+  task_history_id: string | null
+  task_content_id: string | null
+  last_acted_at: Date | null
+  completed: string | null
+  created_at: Date | null
+  updated_at: Date | null
+  updated_count: number | null
+}
+export type TaskHistoryView = TaskHistoryRow & {
+  task_id: string | null
+  task_name: string | null
+  task_type: string | null
+  task_content_name: string | null
+}
+export const initialTaskHistory: TaskHistoryView = {
+  task_history_id: null,
+  task_content_id: null,
+  last_acted_at: null,
+  completed: null,
+  created_at: null,
+  updated_at: null,
+  updated_count: 0,
+  task_id: null,
+  task_name: null,
+  task_type: null,
+  task_content_name: null
+}

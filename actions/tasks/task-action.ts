@@ -3,7 +3,8 @@ import { supabase } from "@/lib/supabase"
 import { updateItemByUpdatingTask } from '@/actions/library/library-action'
 import { updateAlbumByUpdatingTask } from '@/actions/music/album-action'
 import type { ValidationErrors } from '@/types/common/common-types'
-import type { TaskRow, TaskView, TaskListView, Task, TaskCondition, MusicTask, MusicTaskCondition, TaskGroupView } from '@/types/tasks/task-types'
+import type { TaskRow, TaskView, TaskListView, Task, TaskCondition, MusicTask, MusicTaskCondition, TaskGroupView,
+    TaskNewView, TaskContentView, TaskHistoryView } from '@/types/tasks/task-types'
 
 export const fetchTask = async (taskId: string): Promise<TaskView> => {
     console.log('taskId:', taskId)
@@ -378,3 +379,295 @@ const copyViewToRecord = (view: TaskView, processType: string): Partial<TaskRow>
   return row
 }
 
+// ---------------------------
+
+
+export const fetchTaskNew = async (taskId: string): Promise<TaskNewView> => {
+  let query = supabase
+      .from('tt01_tasks_new')
+      .select('*')
+      .eq('task_id', taskId)
+      .single()
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchTaskNew:', error)
+    throw error
+  }
+  return result
+}
+export const fetchTasksNew = async (taskType?: string): Promise<TaskNewView[]> => {
+  // console.log('condition:', condition)
+  let query = supabase
+      .from('tv01_tasks_new')
+      .select('*')
+  if (taskType) query = query.eq('task_type', taskType)
+  query = query
+      .order('task_type')
+      .order('task_name')
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchTasksNew:', error)
+    return []
+  }
+  return result
+}
+// export const fetchTaskTypes = async (taskType: string): Promise<string[]> => {
+//   let query = supabase
+//       .from('tv01_tasks_new')
+//       .select('task_key', 'task_name')
+//       .eq('task_type', taskType)
+//       .order('task_name')
+//   const { data: result, error } = await query
+//   if (error) {
+//     console.error('Error fetchTaskTypes:', error)
+//     return []
+//   }
+//   return result.map(item => item.task_key ?? '')
+// }
+export const mergeTaskNew = async (newData: TaskNewView): Promise<string> => {
+  if (newData.task_id) {
+    const result = await updateTaskNew(newData)
+    return result.task_id || ''
+  } else {
+    const result = await insertTaskNew(newData)
+    return result.task_id || ''
+  }
+}
+export const insertTaskNew = async (newData: TaskNewView) => {
+  const insertData = copyViewToRecordTaskNew(newData, 'i')
+  console.log('insertData:', insertData)
+  const { data: result, error } = await supabase
+      .from('tt01_tasks_new')
+      .insert(insertData)
+      .select()
+      .single()
+  if (error || !result) {
+    console.error('Error insertTaskNew:', error)
+    throw(error)
+  }
+  console.log('insertTaskNew Complete Result:', result)
+  return result
+}
+export const updateTaskNew = async (newData: TaskNewView) => {
+  const updateData = copyViewToRecordTaskNew(newData, 'u')
+  console.log('updateData:', updateData)
+  const { data: result, error } = await supabase
+      .from('tt01_tasks_new')
+      .update(updateData)
+      .eq('task_id', newData.task_id)
+      .select()
+      .single()
+  if (error || !result) {
+    console.error('Error updateTaskNew:', error)
+    throw(error)
+  }
+  console.log("updateTaskNew Complete Result:", result)
+  return result
+}
+const copyViewToRecordTaskNew = (view: TaskNewView, processType: string): Partial<TaskNewView> => {
+  const nowDate = new Date()
+  const {
+    ...row
+  } = view
+  switch (processType) {
+    case 'i': {
+      const { task_id, ...insertData } = {
+        ...row,
+        created_at: nowDate,
+        updated_at: nowDate,
+      }
+      return insertData
+    }
+    case 'u': {
+      return {
+        ...row,
+        updated_at: nowDate,
+        updated_count: Number(row.updated_count ?? 0) + 1
+      }
+    }
+  }
+  return row
+}
+
+export const fetchTaskContent = async (taskContentId: string): Promise<TaskContentView> => {
+  console.log('taskContentId:', taskContentId)
+  let query = supabase
+      .from('tv02_task_contents')
+      .select('*')
+      .eq('task_content_id', taskContentId)
+      .single()
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchTaskContent:', error)
+    throw error
+  }
+  return result
+}
+export const fetchTaskContents = async (taskId: string): Promise<TaskContentView[]> => {
+  let query = supabase
+      .from('tt02_task_contents')
+      .select('*')
+      .eq('task_id', taskId)
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchTaskContents:', error)
+    return []
+  }
+  return result
+}
+export const mergeTaskContent = async (newData: TaskContentView): Promise<string> => {
+  if (newData.task_content_id) {
+    const result = await updateTaskContent(newData)
+    return result.task_content_id || ''
+  } else {
+    const result = await insertTaskContent(newData)
+    return result.task_content_id || ''
+  }
+}
+export const insertTaskContent = async (newData: TaskContentView) => {
+  const insertData = copyViewToRecordTaskContent(newData, 'i')
+  console.log('insertData:', insertData)
+  const { data: result, error } = await supabase
+      .from('tt02_task_contents')
+      .insert(insertData)
+      .select()
+      .single()
+  if (error || !result) {
+    console.error('Error insertTaskContent:', error)
+    throw(error)
+  }
+  console.log('insertTaskContent Complete Result:', result)
+  return result
+}
+export const updateTaskContent = async (newData: TaskContentView) => {
+  const updateData = copyViewToRecordTaskContent(newData, 'u')
+  console.log('updateData:', updateData)
+  const { data: result, error } = await supabase
+      .from('tt02_task_contents')
+      .update(updateData)
+      .eq('task_content_id', newData.task_content_id)
+      .select()
+      .single()
+  if (error || !result) {
+    console.error('Error updateTaskContent:', error)
+    throw(error)
+  }
+  console.log("updateTaskContent Complete Result:", result)
+  return result
+}
+const copyViewToRecordTaskContent = (view: TaskContentView, processType: string): Partial<TaskContentView> => {
+  const nowDate = new Date()
+  const {
+    ...row
+  } = view
+  switch (processType) {
+    case 'i': {
+      const { task_content_id, task_name, task_type, ...insertData } = {
+        ...row,
+        created_at: nowDate,
+        updated_at: nowDate,
+      }
+      return insertData
+    }
+    case 'u': {
+      const { task_name, task_type, ...updateData } = {
+        ...row,
+        updated_at: nowDate,
+        updated_count: Number(row.updated_count ?? 0) + 1
+      }
+      return updateData
+    }
+  }
+  return row
+}
+
+export const fetchTaskHistory = async (taskHistoryId: string): Promise<TaskHistoryView> => {
+  let query = supabase
+      .from('tv03_task_histories')
+      .select('*')
+      .eq('task_history_id', taskHistoryId)
+      .single()
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchTaskHistory:', error)
+    throw error
+  }
+  return result
+}
+export const fetchTaskHistories = async (taskContentId: string): Promise<TaskHistoryView[]> => {
+  let query = supabase
+      .from('tt03_task_histories')
+      .select('*')
+      .eq('task_content_id', taskContentId)
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchTaskHistories:', error)
+    return []
+  }
+  return result
+}
+export const mergeTaskHistory = async (newData: TaskHistoryView): Promise<string> => {
+  if (newData.task_history_id) {
+    const result = await updateTaskHistory(newData)
+    return result.task_history_id || ''
+  } else {
+    const result = await insertTaskHistory(newData)
+    return result.task_history_id || ''
+  }
+}
+export const insertTaskHistory = async (newData: TaskHistoryView) => {
+  const insertData = copyViewToRecordTaskHistory(newData, 'i')
+  console.log('insertData:', insertData)
+  const { data: result, error } = await supabase
+      .from('tt03_task_histories')
+      .insert(insertData)
+      .select()
+      .single()
+  if (error || !result) {
+    console.error('Error insertTaskHistory:', error)
+    throw(error)
+  }
+  console.log('insertTaskHistory Complete Result:', result)
+  return result
+}
+export const updateTaskHistory = async (newData: TaskHistoryView) => {
+  const updateData = copyViewToRecordTaskHistory(newData, 'u')
+  console.log('updateData:', updateData)
+  const { data: result, error } = await supabase
+      .from('tt03_task_histories')
+      .update(updateData)
+      .eq('task_history_id', newData.task_history_id)
+      .select()
+      .single()
+  if (error || !result) {
+    console.error('Error updateTaskHistory:', error)
+    throw(error)
+  }
+  console.log("updateTaskHistory Complete Result:", result)
+  return result
+}
+const copyViewToRecordTaskHistory = (view: TaskHistoryView, processType: string): Partial<TaskHistoryView> => {
+  const nowDate = new Date()
+  const {
+    ...row
+  } = view
+  switch (processType) {
+    case 'i': {
+      const { task_history_id, task_id, task_name, task_type, task_content_name, ...insertData } = {
+        ...row,
+        created_at: nowDate,
+        updated_at: nowDate,
+      }
+      return insertData
+    }
+    case 'u': {
+      const { task_id, task_name, task_type, task_content_name, ...updateData } = {
+        ...row,
+        updated_at: nowDate,
+        updated_count: Number(row.updated_count ?? 0) + 1
+      }
+      return updateData
+    }
+  }
+  return row
+}

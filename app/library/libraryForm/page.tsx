@@ -9,7 +9,9 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
 import MessageBanner from '@/components/MessageBanner'
+import Modal from '@/components/Modal'
 import PartialDateInput from '@/components/PartialDateInput'
+import { TaskContentForm } from '@/components/TaskContentForm'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
@@ -44,6 +46,7 @@ const LibraryForm = () => {
   const [item, setItem] = useState<LibraryItem>(initialLibraryItem)
   const [originalItem, setOriginalItem] = useState<LibraryItem>(initialLibraryItem)
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
+  const [showTaskForm, setShowTaskForm] = useState(false)
 
   const loadMst = async () => {
     const fetchData = await fetchItemMst(inLibraryType)
@@ -101,6 +104,10 @@ const LibraryForm = () => {
       setMessageType('info')
     })
     setIsModalOpen(true)
+  }
+
+  const handleShowTaskForm = () => {
+    setShowTaskForm(true)
   }
 
   const checkLogin = async () => {
@@ -380,7 +387,7 @@ const LibraryForm = () => {
           <div className="footer-right">
             <button className="button-second"
                 disabled={!item.item_id}
-                onClick={handleAddTask}>
+                onClick={handleShowTaskForm}>
               <ArrowRight size={14} />
               <span>&nbsp;</span>
               <Clock size={16} />
@@ -393,6 +400,17 @@ const LibraryForm = () => {
         </div>
       </div>
       <ConfirmModal />
+      {showTaskForm && (
+        <Modal onClose={() => setShowTaskForm(false)}>
+          <TaskContentForm 
+              taskId=""
+              taskContentId=""
+              taskType={item.library_type}
+              taskKey={item.item_id ?? ''}
+              taskContentName={item.item_name_1 ?? ''}
+              onSave={() => setShowTaskForm(false)} />
+        </Modal>
+      )}
       <HiddenPanel
           isOpen={hiddenPanelOpen}
           content={

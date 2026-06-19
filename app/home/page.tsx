@@ -58,10 +58,11 @@ const Page: NextPage = () => {
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-10 text-center">
-        <HomeIconButton icon={AlarmClockCheck} label="Task List" path="/tasks/tasks/taskList" />
-        <HomeIconButton icon={AlarmClockCheck} label="Music Task" path="/tasks/music/musicTaskList" />
+        <HomeIconButton icon={AlarmClockCheck} label="Tasks" path="/tasks/tasks/taskListNew" />
+        <HomeIconButton icon={AlarmClockCheck} label="Music Tasks" path="/tasks/music/musicTaskList" />
         <HomeIconButton icon={Calendar} label="Events" path="/tasks/events/eventList" />
         <HomeIconButton icon={NotebookPen} label="Notes" path="/tasks/notes/noteList" />
+        <HomeIconButton icon={AlarmClockCheck} label="Tasks (Old)" path="/tasks/tasks/taskList" />
       </div>
 
       <div className="flex items-center my-6">
