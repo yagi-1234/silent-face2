@@ -110,6 +110,14 @@ const MusicTaskList = () => {
     if (taskStatus === '9') return "bg-blue-200"
     return ''
   }
+  const TaskTypeClass = (taskType: string): string => {
+    if (taskType === '01') return "bg-yellow-100 border-yellow-300"
+    if (taskType === '02') return "bg-red-100 border-red-300"
+    if (taskType === '03') return "bg-blue-100 border-blue-300"
+    if (taskType === '04') return "bg-green-100 border-green-300"
+    if (taskType === '05') return "bg-purple-100 border-purple-300"
+    return ''
+  }
 
   return (
     <div className="root-panel">
@@ -181,7 +189,11 @@ const MusicTaskList = () => {
                       ))}
                   </select>
                 </td>
-                <td>{CodeMusicTaskType[task.task_sub_type ?? ""]}</td>
+                <td>
+                  <span className={"inline-flex items-center justify-center w-24 py-0.5 border rounded-md text-sm " + TaskTypeClass(task.task_sub_type ?? "")}>
+                    {CodeMusicTaskType[task.task_sub_type ?? ""]}
+                  </span>
+                </td>
                 <td className="numeric-field">{task.task_priority}</td>
                 <td>
                   <button

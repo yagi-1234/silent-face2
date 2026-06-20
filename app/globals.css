@@ -155,6 +155,9 @@ button {
   table td {
     @apply px-2 py-0 leading-none whitespace-nowrap h-6
   }
+  table tr {
+    @apply odd:bg-white even:bg-gray-100
+  }
   .numeric-field {
     @apply text-right
   }
