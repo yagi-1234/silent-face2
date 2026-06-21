@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, Check, Search } from 'lucide-react'
+import { ArrowLeft, Check, MapPin, Search } from 'lucide-react'
 import { FaInstagram, FaTiktok, FaWikipediaW, FaYoutube } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
 import { useSearchParams } from 'next/navigation'
@@ -39,6 +39,7 @@ const ArtistForm = () => {
 
   const [artist, setArtist] = useState<Artist>(initialArtist)
   const [originalArtist, setOriginalArtist] = useState<Artist>(initialArtist)
+  const [artistNameWork, setArtistNameWork] = useState<string>('')
 
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
   const codes = useCodes()
@@ -57,12 +58,14 @@ const ArtistForm = () => {
 
   const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
+    if (artistNameWork === value && artist.artist_name_0) return
     const artistName0 = removeArticle(toLowerCase(await convertToRome(value)))
     setErrors(removeErrorKey(errors, 'artist_name_0'))
     setArtist(prev => ({
       ...prev,
       artist_name_0: artistName0
     }))
+    setArtistNameWork(value)
   }
 
   const handleRegionSelect = (regionCode: string, regionName: string) => {
@@ -97,6 +100,7 @@ const ArtistForm = () => {
     const fetchData = await fetchArtist(artistId)
     setArtist(fetchData)
     setOriginalArtist(fetchData)
+    setArtistNameWork(fetchData.artist_name_1)
   }
   useEffect(() => {
     loadArtist(inArtistId)
@@ -109,8 +113,9 @@ const ArtistForm = () => {
     return () => window.removeEventListener('keydown', handler)
   }, [])
 
-  const handleShowWikipedia = (key:string) => {
-
+  const handleShowMap = () => {
+    const placeName = artist.origin_full_name_1
+    if (placeName) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(placeName)}`, '_blank')
   }
 
   return (
@@ -178,6 +183,10 @@ const ArtistForm = () => {
             <button className="button-normal"
                 onClick={() => setShowRegionModal(true)}>
               <Search size={16} />
+            </button>
+            <button
+                onClick={handleShowMap}>
+              <MapPin className="w-6 h-6" />
             </button>
           </div>
         </div>

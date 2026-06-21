@@ -48,6 +48,7 @@ const AlbumList = () => {
 
   const [album, setAlbum] = useState<Album>(initialAlbum)
   const [originalAlbum, setOriginalAlbum] = useState<Album>(initialAlbum)
+  const [albumNameWork, setAlbumNameWork] = useState<string>('')
 
   const checkLogin = async () => {
     await checkUser()
@@ -71,12 +72,14 @@ const AlbumList = () => {
 
   const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
+    if (albumNameWork === value && album.album_name_0) return
     const albumName0 = removeArticle(toLowerCase(await convertToRome(value)))
     setErrors(removeErrorKey(errors, 'album_name_0'))
     setAlbum(prev => ({
       ...prev,
       album_name_0: albumName0
     }))
+    setAlbumNameWork(value)
   }
 
   const handleChangeDate = (value: string, name: string) => {
@@ -140,6 +143,7 @@ const AlbumList = () => {
         const fetchData = await fetchAlbum(inAlbumId)
         setAlbum(fetchData)
         setOriginalAlbum(fetchData)
+        setAlbumNameWork(fetchData.album_name_1)
       } else return
     }
     loadAlbum()

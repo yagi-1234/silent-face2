@@ -179,9 +179,9 @@ const MusicTaskList = () => {
           </thead>
           <tbody>
             {tasks.map(task => (
-              <tr key={task.task_sub_id}>
+              <tr key={task.task_sub_id} className="h-8">
                 <td>
-                  <select
+                  <select className="h-7"
                       value={task.task_status ?? ""}
                       onChange={(e) => handleStatusChange(task.task_sub_id ?? "", e.target.value) } >
                       {Object.entries(CodeTaskStatus).map(([key, label]) => (

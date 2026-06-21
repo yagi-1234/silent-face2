@@ -50,6 +50,7 @@ const TrackForm = () => {
   const [originalTrack, setOriginalTrack] = useState<TrackView>(initialTrack)
   const [artistAlbums, setArtistAlbums] = useState<ArtistAlbum[]>([])
   const [albumTracks, setAlbumTracks] = useState<ComboBoxOption[]>()
+  const [trackNameWork, setTrackNameWork] = useState<string>('')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, type, value } = event.target
@@ -76,12 +77,14 @@ const TrackForm = () => {
 
   const handleNameOneToZero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
+    if (trackNameWork === value && track.track_name_0) return
     const trackName0 = removeArticle(toLowerCase(await convertToRome(value)))
     setErrors(removeErrorKey(errors, 'track_name_0'))
     setTrack(prev => ({
       ...prev,
       track_name_0: trackName0
     }))
+    setTrackNameWork(value)
   }
   const handleChangeDate = (value: string) => {
     const newLastListenedAt = value + " " + formatDateTime(track.last_listened_at, 'HH:mm:ss')
@@ -119,9 +122,11 @@ const TrackForm = () => {
     if (fetchData) {
       setTrack(fetchData)
       setOriginalTrack(fetchData)
+      setTrackNameWork(fetchData.track_name_1)
     } else {
       setTrack(prev => setInitialTrack(prev, trackNo))
       setOriginalTrack(prev => setInitialTrack(prev, trackNo))
+      setTrackNameWork('')
     }
     setIsModalOpen(false)
     setMessage('')
@@ -208,6 +213,7 @@ const TrackForm = () => {
         discNo = fetchData.disc_no
         setTrack(fetchData)
         setOriginalTrack(fetchData)
+        setTrackNameWork(fetchData.track_name_1)
       } else return
 
       const artistAlbums = await fetchArtistAlbums(aritstId)
