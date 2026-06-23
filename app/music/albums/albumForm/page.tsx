@@ -1,12 +1,12 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { Check, Clock, ArrowLeft, ArrowRight, Plus } from 'lucide-react'
+import { Check, ChevronsLeft, ChevronsRight, Clock, ArrowLeft, ArrowRight, Plus } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { DayPicker } from 'react-day-picker'
 
 import { fetchArtist } from '@/actions/music/artist-action'
-import { fetchAlbum, mergeAlbum, isAlbumEdited, validateAlbum } from '@/actions/music/album-action'
+import { fetchAlbum, fetchAlbumByAlbumNo, mergeAlbum, isAlbumEdited, validateAlbum } from '@/actions/music/album-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import { removeErrorKey } from '@/components/form-error'
@@ -124,6 +124,40 @@ const AlbumList = () => {
     queryPrams.append('album_name', album.album_name_1)
     router.push(`/tasks/music/musicTaskForm/?${queryPrams.toString()}`)
   }
+
+  const handleMoveAlbum = (newAlbumNo: number) => {
+    if (!album.artist_id) return
+    if (isAlbumEdited(originalAlbum, album)) {
+      setModalMessage('You have unsaved changes. Are you sure you want to leave this page?')
+      setConfirmHandler(() => {
+        moveAlbum(newAlbumNo)
+        setIsModalOpen(false)
+      })
+      setIsModalOpen(true)
+    } else moveAlbum(newAlbumNo)
+    setMessage('')
+  }
+  const moveAlbum = async (albumNo: number) => {
+    const fetchData = await fetchAlbumByAlbumNo(album.artist_id ?? '', albumNo)
+    if (fetchData) {
+      setAlbum(fetchData)
+      setOriginalAlbum(fetchData)
+      setAlbumNameWork(fetchData.album_name_1)
+    } else {
+      setAlbum(prev => setInitialAlbum(prev, albumNo))
+      setOriginalAlbum(prev => setInitialAlbum(prev, albumNo))
+      setAlbumNameWork('')
+    }
+  }
+  const setInitialAlbum = (prev: Album, newAlbumNo: number): Album => ({
+    ...initialAlbum,
+    artist_id: prev.artist_id,
+    artist_name_0: prev.artist_name_0,
+    artist_name_1: prev.artist_name_1,
+    artist_name_2: prev.artist_name_2,
+    album_type: prev.album_type,
+    album_no: newAlbumNo
+  })
 
   useEffect(() => {
     checkLogin()
@@ -321,6 +355,20 @@ const AlbumList = () => {
               <ArrowRight size={14} />
               <span>&nbsp;</span>
               <Clock size={16} />
+            </button>
+            <button
+                name="prev_button"
+                className="button-normal"
+                disabled={album.album_type !== "01" || !album.album_no || album.album_no === 1}
+                onClick={() => handleMoveAlbum((album.album_no ?? 0) - 1)}>
+              <ChevronsLeft size={18} />
+            </button>
+            <button
+                name="next_button"
+                className="button-normal"
+                disabled={album.album_type !== "01" || !album.album_no}
+                onClick={() => handleMoveAlbum((album.album_no ?? 0) + 1)}>
+              <ChevronsRight size={18} />
             </button>
             <button className="button-save"
                 disabled={!isAlbumEdited(originalAlbum, album)}

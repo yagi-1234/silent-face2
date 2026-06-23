@@ -18,7 +18,6 @@ export const fetchAlbum = async (albumId: string): Promise<Album> => {
   console.log('album:', result)
   return result
 }
-
 export const fetchAlbums = async (condition: AlbumCondition): Promise<Album[]> => {
   console.log('condition:', condition)
   let query = supabase
@@ -77,6 +76,21 @@ export const fetchArtistAlbums = async (artistId: string): Promise<ArtistAlbum[]
     throw error
   }
   return result
+}
+export const fetchAlbumByAlbumNo = async (artistId: string, albumNo: number): Promise<Album | null> => {
+  let query = supabase
+      .from('mv21_albums')
+      .select('*')
+  query = query.eq('artist_id', artistId)
+  query = query.eq('album_type', '01')
+  query = query.eq('album_no', albumNo)
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchAlbumByAlbumNo:', error)
+    throw error
+  }
+  if (result.length === 0) return null
+  return result[0]
 }
 
 export const mergeAlbum = async (newData: Album): Promise<Album> => {
@@ -145,6 +159,7 @@ export const isAlbumEdited = (original?: Album, current?: Album): boolean => {
   if (original.total_track_count !== current.total_track_count) return true
   if (original.owned_flag !== current.owned_flag) return true
   if (!compareDate(original.added_at, current.added_at)) return true
+  if (original.listening_count !== current.listening_count) return true
   if (!compareDate(original.last_listened_at, current.last_listened_at)) return true
   if (original.album_comment !== current.album_comment) return true
   return false

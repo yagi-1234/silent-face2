@@ -109,7 +109,6 @@ const TrackForm = () => {
     if (eventName === 'next_button') newTrackNo = newTrackNo + 1
     if (isTrackEdited(originalTrack, track)) {
       setModalMessage('You have unsaved changes. Are you sure you want to leave this page?')
-      const eventName = event.currentTarget.name
       setConfirmHandler(() => {
         moveTrack(newTrackNo)
       })
