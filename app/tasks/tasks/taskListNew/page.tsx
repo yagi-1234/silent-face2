@@ -179,6 +179,11 @@ const TaskList = () => {
                                     {formatDateTime(history.last_acted_at, "yyyy/MM/dd")}
                                   </button>
                                 </span>
+                                <span className="w-24">
+                                  {history.completed ? (
+                                    <Check className="w-5 h-5 text-green-600" />
+                                  ) : null}
+                                </span>
                               </div>
                             </div>
                           </React.Fragment>
@@ -189,7 +194,7 @@ const TaskList = () => {
                             <span className="w-8">
                               <button
                                   onClick={() => handleShowHistoryForm(content.task_content_id ?? "", "")}>
-                                <SquarePlus className="text-blue-800 w-4 h-4" />
+                                <SquarePlus className="text-blue-600 w-4 h-4" />
                               </button>
                             </span>
                           </div>
@@ -204,7 +209,7 @@ const TaskList = () => {
                     <span className="w-8">
                       <button
                           onClick={() => handleShowContentForm(task.task_id ?? "", "")}>
-                        <SquarePlus className="text-blue-800 w-4 h-4" />
+                        <SquarePlus className="text-blue-600 w-4 h-4" />
                       </button>
                     </span>
                   </div>
