@@ -81,6 +81,14 @@ const TrackList = () => {
     setTracks([])
   }
 
+  const handleShowArtist = (artistId: string) => {
+    addToHistory({ title: 'Track List', path: `${pathname}?${searchParams.toString()}`})
+    router.push(`/music/artists/artistForm?artist_id=${artistId}`)
+  }
+  const handleShowAlbum = (albumId: string) => {
+    addToHistory({ title: 'Track List', path: `${pathname}?${searchParams.toString()}`})
+    router.push(`/music/albums/albumForm?album_id=${albumId}`)
+  }
   const handleShowForm = (trackId: string) => {
     addToHistory({ title: 'trackList', path: `${pathname}?${searchParams.toString()}`})
     if (trackId)
@@ -319,37 +327,46 @@ const TrackList = () => {
             <tr>
               <th>Artist Name</th>
               <th>Album Name</th>
-              <th>Track No</th>
+              <th>#</th>
               <th>Track Name</th>
               <th>Point</th>
               <th>Single</th>
+              <th>Bonus</th>
               <th>Year</th>
               <th>Length</th>
               <th>Last Listened</th>
-              <th />
             </tr>
           </thead>
           <tbody>
             {tracks.map(track => (
               <tr key={track.track_id} className="leading-none">
-                <td>{EllipsisAndTooltip(track.track_artist_name_1 ?? '', 24)}</td>
-                <td>{EllipsisAndTooltip(track.album_name_1 ?? '', 32)}</td>
+                <td>
+                  <button className="button-link"
+                      onClick={() => handleShowArtist(track.artist_id ?? "")}>
+                    {EllipsisAndTooltip(track.track_artist_name_1 ?? '', 24)}
+                  </button>  
+                </td>
+                <td>
+                  <button className="button-link"
+                      onClick={() => handleShowAlbum(track.album_id ?? "")}>
+                    {EllipsisAndTooltip(track.album_name_1 ?? '', 32)}
+                  </button>  
+                </td>
                 <td className="numeric-field">
                   {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}
                 </td>
-                <td>{EllipsisAndTooltip(track.track_name_1 ?? '', 40)}</td>
+                <td>
+                  <button className="button-link"
+                      onClick={() => handleShowForm(track.track_id ?? "")}>
+                    {EllipsisAndTooltip(track.track_name_1 ?? '', 40)}
+                  </button>  
+                </td>
                 <td className="numeric-field">{track.is_point_except === "1" ? "-" : track.track_point}</td>
                 <td className="numeric-field">{!!track.single_no ? track.single_no : track.is_single === "1" ? "◯" : ""}</td>
+                <td>{track.is_bonus_track === "1" ? "◯" : ""}</td>
                 <td className="numeric-field">{!!track.track_year ? track.track_year : track.album_year}</td>
-                <td>{track.track_length}</td>
+                <td className="numeric-field">{track.track_length}</td>
                 <td>{formatDateTime(track.last_listened_at, "yyyy/MM/dd")}</td>
-                <td>
-                  <button
-                      className="button-page"
-                      onClick={() => handleShowForm(track.track_id ?? "")} >
-                    <FileText className="w-5 h-5" />
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>

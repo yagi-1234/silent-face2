@@ -269,9 +269,12 @@ button {
     @apply w-16 h-8
   }
   .button-normal {
-    @apply bg-gray-300 text-gray-600 flex items-center justify-center rounded-sm w-16 h-8;
+    @apply border-2 text-gray-600 flex items-center justify-center rounded-sm w-16 h-8;
     &:hover {
-      @apply bg-gray-400;
+      @apply bg-gray-200
+    }
+    &:disabled {
+      @apply border-0 bg-gray-300 text-white
     }
   }
   .button-search {
@@ -290,6 +293,9 @@ button {
     @apply bg-blue-600 text-white flex items-center justify-center rounded-sm w-20 h-8;
     &:hover {
       @apply bg-blue-800;
+    }
+    &:disabled {
+      @apply bg-gray-300
     }
   }
   .button-second {

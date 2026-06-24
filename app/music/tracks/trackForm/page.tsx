@@ -143,6 +143,7 @@ const TrackForm = () => {
     disc_no: prev.disc_no,
     track_no: newTrackNo,
     album_year: prev.album_year,
+    is_bonus_track: prev.is_bonus_track
   })
 
   const handleSave = () => {
