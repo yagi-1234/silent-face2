@@ -388,7 +388,7 @@ const TrackForm = () => {
                       id="is_bonus_track"
                       name="is_bonus_track"
                       checked={track.is_bonus_track === '1'}
-                      value={track.is_bonus_track}
+                      value={track.is_bonus_track ?? ""}
                       onChange={handleChange} />
                 </label>
                 <span>&emsp;</span>

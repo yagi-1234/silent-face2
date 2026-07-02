@@ -158,6 +158,9 @@ button {
   table tr {
     @apply odd:bg-white even:bg-gray-100 h-7 py-0
   }
+  table input {
+    @apply h-6
+  }
   .numeric-field {
     @apply text-right
   }

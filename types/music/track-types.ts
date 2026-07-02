@@ -8,7 +8,7 @@ export type TrackRow = {
   track_name_1: string
   track_name_2: string | null
   track_artist_name: string | null
-  is_bonus_track: string
+  is_bonus_track: string | null
   track_year: number | null
   track_length: string | null
   is_single: string
