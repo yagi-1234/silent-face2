@@ -3,14 +3,16 @@
 import React from 'react'
 import { Suspense, useEffect, useState } from 'react'
 import clsx from 'clsx';
-import { ArrowLeft, Check, CircleMinus, CirclePlus, CircleStar, CopyPlus, Disc3, Menu, Music, Shield, SquareStar, Users } from 'lucide-react'
+import { ArrowLeft, Check, CircleMinus, CirclePlus, CircleStar, CopyPlus, Disc3, Menu, Music, Pencil, Shield, SquareStar, TriangleAlert, Users } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { fetchPlaylist, copyPlaylist, mergePlaylist, fetchPlaylistTracks, mergePlaylistTracks } from '@/actions/music/playlist-action'
+import { fetchArtistTrack } from '@/actions/music/track-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
 import MessageBanner from '@/components/MessageBanner'
+import Modal from '@/components/Modal'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
@@ -42,6 +44,8 @@ const PlaylistTrackList = () => {
   const [playlistTracks, setPlaylistTracks] = useState<PlaylistTrackView[]>([])
   const [newPlaylistTrack, setNewPlaylistTrack] = useState<PlaylistTrackView>(initialPlaylistTrack)
   const [deletePlaylistTracks, setDeletePlaylistTracks] = useState<PlaylistTrackView[]>([])
+  const [showForm, setShowForm] = useState(false)
+  const [formPlaylistTrack, setFormPlaylistTrack] = useState(initialPlaylistTrack)
 
   const inPlaylistId = searchParams.get('playlist_id') ?? ''
 
@@ -186,6 +190,42 @@ const PlaylistTrackList = () => {
     return content
   }
 
+  const handleCheckTrack = async (playlistTrack: PlaylistTrackView) => {
+    const fetchData = await fetchArtistTrack(playlistTrack.artist_name_1 ?? '', playlistTrack.album_name_1 ?? '', playlistTrack.track_name_1 ?? '')
+    if (!fetchData) return
+    setPlaylistTracks(prev =>
+      prev.map(row =>
+        playlistTrack.playlist_track_id === row.playlist_track_id ? {
+          ...row,
+          artist_id: fetchData.artist_id,
+          album_id: fetchData.album_id,
+          track_id: fetchData.track_id,
+          edit_mode: 'u'
+        } : row
+      )
+    )
+  }
+
+  const handleShowForm = (playlistTrack: PlaylistTrackView) => {
+    setFormPlaylistTrack(playlistTrack)
+    setShowForm(true)
+  }
+
+  const handleUpdate = (updateData: PlaylistTrackView) => {
+    setPlaylistTracks(prev =>
+      prev.map(row =>
+        updateData.playlist_track_id === row.playlist_track_id ? {
+          ...row,
+          artist_name_1: updateData.artist_name_1,
+          album_name_1: updateData.album_name_1,
+          track_name_1: updateData.track_name_1,
+          edit_mode: 'u'
+        } : row
+      )
+    )
+    setShowForm(false)
+  }
+
   useEffect(() => {
     checkLogin()
     loadData(inPlaylistId)
@@ -222,7 +262,8 @@ const PlaylistTrackList = () => {
             <table>
               <thead>
                 <tr>
-                  <th>Play Order</th>
+                  <th />
+                  <th>#</th>
                   <th>Artist Name</th>
                   <th>Album Name</th>
                   <th>Track Name</th>
@@ -230,6 +271,7 @@ const PlaylistTrackList = () => {
                   <th>Rank</th>
                   <th>+/-</th>
                   <th>Max</th>
+                  <th></th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -240,13 +282,16 @@ const PlaylistTrackList = () => {
                   <SortableRow
                       key={playlistTrack.playlist_track_id}
                       playlistTrack={playlistTrack} 
-                      onDelete={id => handleDelete(id, playlistTrack.play_order ?? 0)} />
+                      onDelete={id => handleDelete(id, playlistTrack.play_order ?? 0)}
+                      onCheck={() => handleCheckTrack(playlistTrack)}
+                      onUpdate={() => handleShowForm(playlistTrack)} />
                 ))}
                 <tr>
+                  <td />
                   <td>
                     <input type="number"
                         name="play_order"
-                        className='w-20 numeric-field'
+                        className='w-16 numeric-field'
                         value={newPlaylistTrack.play_order ?? ""}
                         onChange={handleChangeTrack} />
                   </td>
@@ -268,6 +313,7 @@ const PlaylistTrackList = () => {
                         value={newPlaylistTrack.track_name_1 ?? ""}
                         onChange={handleChangeTrack} />
                   </td>
+                  <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
@@ -350,6 +396,13 @@ const PlaylistTrackList = () => {
         </div>
       </div>
       <ConfirmModal />
+      {showForm && (
+        <Modal onClose={() => setShowForm(false)}>
+          <PlaylistTrackForm
+              playlistTrack={formPlaylistTrack}
+              onSave={(updateData) => handleUpdate(updateData)} />
+        </Modal>
+      )}
       <HiddenPanel
           isOpen={hiddenPanelOpen}
           content={
@@ -363,9 +416,11 @@ const PlaylistTrackList = () => {
 type Props = {
   playlistTrack: PlaylistTrackView
   onDelete: (id: string, playOrder: number) => void
+  onCheck: () => void
+  onUpdate: () => void
 }
 
-const SortableRow = ({ playlistTrack, onDelete }: Props) => {
+const SortableRow = ({ playlistTrack, onDelete, onCheck, onUpdate }: Props) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: playlistTrack.playlist_track_id ?? '',
   })
@@ -389,10 +444,19 @@ const SortableRow = ({ playlistTrack, onDelete }: Props) => {
     <tr
         className={clsx(
           playlistTrack.edit_mode === "i" ? "text-red-400" : "",
-          playlistTrack.edit_mode === "d" ? "bg-gray-300" : ""
+          playlistTrack.edit_mode === "d" ? "bg-gray-300" : "",
         )}
         ref={setNodeRef}
         style={style}>
+      <td>
+        {!!!playlistTrack.track_id ? (
+          <button
+              className="button-page"
+              onClick={onCheck}>
+            <TriangleAlert className="text-red-400 w-5 h-5" />
+          </button>
+        ) : null}
+      </td>
       <td className="numeric-field">{playlistTrack.play_order}</td>
       <td>{ellipsis(playlistTrack.artist_name_1, 24)}</td>
       <td>{ellipsis(playlistTrack.album_name_1, 24)}</td>
@@ -420,10 +484,73 @@ const SortableRow = ({ playlistTrack, onDelete }: Props) => {
       <td>
         <button
             className="button-page"
+            onClick={onUpdate}>
+          <Pencil className='w-4 h-4' />
+        </button>
+      </td>
+      <td>
+        <button
+            className="button-page"
             onClick={() => onDelete(playlistTrack.playlist_track_id ?? "", playlistTrack.play_order ?? 0)}>
           <CircleMinus className='w-5 h-5' />
         </button>
       </td>
     </tr>
+  )
+}
+
+interface PlaylistTrackFormProps {
+  playlistTrack: PlaylistTrackView
+  onSave: (updateData: PlaylistTrackView) => void
+}
+
+export function PlaylistTrackForm({ playlistTrack, onSave }: PlaylistTrackFormProps) {
+  
+  const [updateData, setUpdateData] = useState<PlaylistTrackView>(initialPlaylistTrack)
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setUpdateData(prev => ({ ...prev, [name]: value }))
+  }
+
+  useEffect(() => {
+    setUpdateData(playlistTrack)
+  }, [])
+
+  return (
+    <div className="w-80 md:w-168">
+      <div className="div-input-row">
+        <label htmlFor="artist_name_1" className="input-label">Artist Name</label>
+        <input type="text"
+            id="artist_name_1"
+            name="artist_name_1"
+            className="w-full"
+            value={updateData.artist_name_1 ?? ''}
+            onChange={handleChange} />
+      </div>
+      <div className="div-input-row">
+        <label htmlFor="album_name_1" className="input-label">Album Name</label>
+        <input type="text"
+            id="album_name_1"
+            name="album_name_1"
+            className="w-full"
+            value={updateData.album_name_1 ?? ''}
+            onChange={handleChange} />
+      </div>
+      <div className="div-input-row">
+        <label htmlFor="track_name_1" className="input-label">Track Name</label>
+        <input type="text"
+            id="track_name_1"
+            name="track_name_1"
+            className="w-full"
+            value={updateData.track_name_1 ?? ''}
+            onChange={handleChange} />
+      </div>
+      <div className="flex justify-end items-center">
+        <button className="button-save" onClick={() => onSave(updateData)}>
+          <Check size={16}/>
+        </button>
+      </div>
+    </div>
   )
 }

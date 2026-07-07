@@ -54,15 +54,16 @@ const PlaylistList = () => {
 
   const checkDataCount = async () => {
     const rowCount = await fetchPlaylistsCount()
-    setTotalPage(rowCount / 10)
+    setTotalPage((rowCount - 1) / 20 + 1)
   }
   const loadData = async (pageNo: number) => {
+    setCurrentPageNo(pageNo)
     const fetchData = await fetchPlaylists(pageNo)
     setPlaylists(fetchData)
   }
 
   const handleSelectPage = async (pageNo: number) => {
-    setCurrentPageNo(pageNo)
+    router.push(`/music/playlists/playlistsList?page=${pageNo}`)
     loadData(pageNo)
   }
 
@@ -116,7 +117,7 @@ const PlaylistList = () => {
   useEffect(() => {
     checkLogin()
     checkDataCount()
-    loadData(1)
+    loadData(searchParams.get('page') ? Number(searchParams.get('page')) : 1)
   }, [])
 
   const handleDragEnd = async (event: DragEndEvent) => {
