@@ -252,7 +252,7 @@ const copyToPlaylistTrackRecord = (PlaylistTrackView: PlaylistTrackView, process
 
 export const isPlaylistTrackEdited = (original?: PlaylistTrackView, current?: PlaylistTrackView): boolean => {
   if (!original || !current) return true
-  if (original.aritst_id !== current.aritst_id) return true
+  if (original.artist_id !== current.artist_id) return true
   if (original.artist_name_1 !== current.artist_name_1) return true
   if (original.album_id !== current.album_id) return true
   if (original.album_name_1 !== current.album_name_1) return true

@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { AlarmClockCheck, ArrowLeft, AtSign, CalendarCheck, FileText, Pen, Plus, Search, Spotlight, Star } from 'lucide-react'
+import { AlarmClockCheck, ArrowLeft, AtSign, CalendarCheck, FileText, OctagonX, 
+    Pen, Plus, Search, Spotlight, Star } from 'lucide-react'
 
 import { fetchItems, fetchItemsCount, fetchItemMst } from '@/actions/library/library-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -55,6 +56,7 @@ const LibraryList = () => {
   }
 
   const loadData = async (condition1: LibraryCondition, pageNo: number) => {
+    setCurrentPageNo(pageNo)
     const fetchData = await fetchItems(condition1, pageNo)
     setItems(fetchData)
   }
@@ -80,6 +82,17 @@ const LibraryList = () => {
     else router.push(`/library/libraryForm?library_type=${inLibraryType}`)
   }
 
+  const handleClear = () => {
+    const condition1 = {
+      ...initialLibraryCondition,
+      library_type: searchParams.get('library_type') ?? '',
+    }
+    setCondition(condition1)
+    setItems([])
+    setCurrentPageNo(0)
+    setTotalPages(0)
+  }
+
   const handleSearch = async () => {
     const query = new URLSearchParams()
     if (condition.library_type) query.append('library_type', condition.library_type)
@@ -96,7 +109,7 @@ const LibraryList = () => {
   }
 
   const handleSelectPage = async (pageNo: number) => {
-    setCurrentPageNo(pageNo)
+    router.push(`${pathname}?${searchParams.toString()}&page=${pageNo}`)
     loadData(condition, pageNo)
   }
 
@@ -119,7 +132,7 @@ const LibraryList = () => {
     }
     setCondition(condition1)
     loadDataCount(condition1)
-    loadData(condition1, 0)
+    loadData(condition1, searchParams.get('page') ? Number(searchParams.get('page')) : 0)
   }, [])
 
   return (
@@ -252,20 +265,31 @@ const LibraryList = () => {
             </label>
           </div>
         </div>
-        <div className="div-input-row">
-          <label htmlFor="order" className="input-label">Order</label>
-          <div className="mb-2">
-            <SelectButton
-                options={OrderLibraryList}
-                value={condition.order_condition}
-                onChange={(val) => (setCondition(prev => ({...prev, order_condition: val})))} />
+        <div>
+          <div className="flex justify-between items-center">
+            <div>
+              <label htmlFor="order" className="input-label">Order</label>
+              <div className="div-row-left">
+                <SelectButton
+                    options={OrderLibraryList}
+                    value={condition.order_condition}
+                    onChange={(val) => (setCondition(prev => ({...prev, order_condition: val})))} />
+              </div>
+            </div>
+            <div>
+              <span>　</span>
+              <div className="div-row-right">
+                <button className="button-normal"
+                    onClick={handleClear}>
+                  <OctagonX size={16} />
+                </button>
+                <button className="button-search"
+                    onClick={handleSearch}>
+                  <Search size={16} />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="div-row-right">
-          <button className="button-search"
-              onClick={handleSearch}>
-            <Search size={16} />
-          </button>
         </div>
       </div>
       <div className="hidden sm:block">
@@ -297,7 +321,7 @@ const LibraryList = () => {
                 {itemMst?.item_type && 
                   <td>{item.item_type}</td>
                 }
-                <td>{EllipsisAndTooltip(item.item_name_1, 16)}</td>
+                <td>{EllipsisAndTooltip(item.item_name_1, 30)}</td>
                 {itemMst?.item_name_2 && 
                   <td>{EllipsisAndTooltip(item.item_name_2, 16)}</td>
                 }

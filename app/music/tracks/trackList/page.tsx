@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useCallback, useEffect, useState } from 'react'
-import { ArrowLeft, Calendar, Clock, FileText, History, Plus, Search, OctagonX, Star } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, History, Plus, Search, OctagonX, Star } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchTracks } from '@/actions/music/track-action'

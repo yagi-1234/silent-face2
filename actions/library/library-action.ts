@@ -42,8 +42,8 @@ export const fetchItems = async (condition: LibraryCondition, pageNo: number): P
     query = query.or(`item_name_1.ilike.${itemName},item_name_2.ilike.${itemName}`)
   }
   if (condition.task_status) query = query.eq('task_status', condition.task_status)
-  if (condition.actioned === '1') query = query.not('last_actioned_at', 'is', null)
-  if (condition.not_actioned === '1') query = query.is('last_actioned_at', null)
+  if (condition.actioned === '1') query = query.neq('action_count', 0)
+  if (condition.not_actioned === '1') query = query.eq('action_count', 0)
   if (condition.order_condition === '1') {
     query = query.not('last_actioned_at', 'is', null)
     query = query.order('last_actioned_at', {ascending: false})
@@ -51,6 +51,7 @@ export const fetchItems = async (condition: LibraryCondition, pageNo: number): P
     query = query.order('released', { ascending: false })
   }
   query = query.range(fetchCount * pageNo, fetchCount * (pageNo + 1) - 1)
+
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchItems:', error)

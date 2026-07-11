@@ -272,7 +272,7 @@ button {
     @apply w-16 h-8
   }
   .button-normal {
-    @apply border-2 text-gray-600 flex items-center justify-center rounded-sm w-16 h-8;
+    @apply border-2 text-gray-600 flex items-center justify-center rounded-sm w-16 h-8 mr-2 mb-1;
     &:hover {
       @apply bg-gray-200
     }
@@ -281,7 +281,7 @@ button {
     }
   }
   .button-search {
-    @apply bg-green-600 text-white flex items-center justify-center rounded-sm w-20 h-8 mr-2;
+    @apply bg-green-600 text-white flex items-center justify-center rounded-sm w-20 h-8 mb-1;
     &:hover {
       @apply bg-green-800;
     }

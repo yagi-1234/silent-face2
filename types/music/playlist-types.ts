@@ -32,7 +32,7 @@ export type PlaylistFunc = {
 export type PlaylistTrackRow = {
   playlist_track_id: string | null,
   playlist_id: string | null,
-  aritst_id: string | null,
+  artist_id: string | null,
   artist_name_1: string | null,
   album_id: string | null,
   album_name_1: string | null,
@@ -57,7 +57,7 @@ export type PlaylistTrackView = PlaylistTrackRow & {
 export const initialPlaylistTrack: PlaylistTrackView = {
   playlist_track_id: null,
   playlist_id: null,
-  aritst_id: null,
+  artist_id: null,
   artist_name_1: null,
   album_id: null,
   album_name_1: null,
