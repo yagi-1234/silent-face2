@@ -92,6 +92,10 @@ export type LibraryCondition = {
   library_type: string | null
   item_type: string | null
   item_name: string | null
+  keyword: string | null
+  author_name: string | null
+  author_name_2: string | null
+  actors: string | null
   task_status: string | null
   actioned: string
   not_actioned: string
@@ -102,6 +106,10 @@ export const initialLibraryCondition: LibraryCondition = {
   library_type: null,
   item_type: null,
   item_name: null,
+  keyword: null,
+  author_name: null,
+  author_name_2: null,
+  actors: null,
   task_status: null,
   actioned: '0',
   not_actioned: '0',

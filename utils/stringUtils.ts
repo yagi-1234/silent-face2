@@ -19,6 +19,15 @@ export const makeKeywordForSql = (str: string | null, isLike: boolean): string |
   else
     return `"${raw}"`
 }
+export const makeKeywordForSql2 = (str: string | null, isLike: boolean): string | null => {
+  if (!str)
+    return str
+  const raw = str.trim().replace(/"/g, '\\"')
+  if (isLike)
+    return `${`%${raw}%`}`
+  else
+    return `${raw}`
+}
 
 export const convertToRome = async (text: string): Promise<string>  => {
   if (!text) return text

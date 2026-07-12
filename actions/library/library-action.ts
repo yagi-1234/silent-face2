@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase'
 
 import type { LibraryItem, LibraryItemMst, LibraryCondition } from '@/types/library/library-types'
 import { TaskView, initialTask } from '@/types/tasks/task-types'
-import { makeKeywordForSql } from '@/utils/stringUtils'
+import { makeKeywordForSql, makeKeywordForSql2 } from '@/utils/stringUtils'
 
 export const fetchItem = async (itemId: string): Promise<LibraryItem> => {
   console.log('itemId:', itemId)
@@ -41,6 +41,22 @@ export const fetchItems = async (condition: LibraryCondition, pageNo: number): P
     const itemName = makeKeywordForSql(condition.item_name, true)
     query = query.or(`item_name_1.ilike.${itemName},item_name_2.ilike.${itemName}`)
   }
+  if (condition.keyword) {
+    const keyWord = makeKeywordForSql(condition.keyword, true)
+    query = query.or(`author_name_1.ilike.${keyWord},author_name_2.ilike.${keyWord},actors_1.ilike.${keyWord},actors_2.ilike.${keyWord}`)
+  }
+  // if (condition.author_name) {
+  //   const authorName = makeKeywordForSql2(condition.author_name, true)
+  //   query = query.ilike('author_name_1', `${authorName}`)
+  // }
+  // if (condition.author_name_2) {
+  //   const authorName2 = makeKeywordForSql2(condition.author_name_2, true)
+  //   query = query.ilike('author_name_2', `${authorName2}`)
+  // }
+  // if (condition.actors) {
+  //   const actors = makeKeywordForSql(condition.actors, true)
+  //   query = query.or(`actors_1.ilike.${actors},actors_2.ilike.${actors}`)
+  // }
   if (condition.task_status) query = query.eq('task_status', condition.task_status)
   if (condition.actioned === '1') query = query.neq('action_count', 0)
   if (condition.not_actioned === '1') query = query.eq('action_count', 0)
@@ -51,7 +67,6 @@ export const fetchItems = async (condition: LibraryCondition, pageNo: number): P
     query = query.order('released', { ascending: false })
   }
   query = query.range(fetchCount * pageNo, fetchCount * (pageNo + 1) - 1)
-
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchItems:', error)
@@ -70,12 +85,29 @@ export const fetchItemsCount = async (condition: LibraryCondition): Promise<numb
     const itemName = makeKeywordForSql(condition.item_name, true)
     query = query.or(`item_name_1.ilike.${itemName},item_name_2.ilike.${itemName}`)
   }
+  if (condition.keyword) {
+    const keyWord = makeKeywordForSql(condition.keyword, true)
+    query = query.or(`author_name_1.ilike.${keyWord},author_name_2.ilike.${keyWord},actors_1.ilike.${keyWord},actors_2.ilike.${keyWord}`)
+  }
+  // if (condition.author_name) {
+  //   const authorName = makeKeywordForSql2(condition.author_name, true)
+  //   query = query.ilike('author_name_1', `${authorName}`)
+  // }
+  // if (condition.author_name_2) {
+  //   const authorName2 = makeKeywordForSql2(condition.author_name_2, true)
+  //   query = query.ilike('author_name_2', `${authorName2}`)
+  // }
+  // if (condition.actors) {
+  //   const actors = makeKeywordForSql(condition.actors, true)
+  //   query = query.or(`actors_1.ilike.${actors},actors_2.ilike.${actors}`)
+  // }
   if (condition.task_status) query = query.eq('task_status', condition.task_status)
-  if (condition.actioned === '1') query = query.not('last_actioned_at', 'is', null)
-  if (condition.not_actioned === '1') query = query.is('last_actioned_at', null)
+  if (condition.actioned === '1') query = query.neq('action_count', 0)
+  if (condition.not_actioned === '1') query = query.eq('action_count', 0)
   if (condition.order_condition === '1') {
     query = query.not('last_actioned_at', 'is', null)
   }
+  console.log(query)
   const { count, error } = await query
   if (error) {
     console.error('Error fetchItemsCount:', error)

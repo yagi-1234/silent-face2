@@ -98,7 +98,11 @@ const LibraryList = () => {
     if (condition.library_type) query.append('library_type', condition.library_type)
     if (condition.item_type) query.append('item_type', condition.item_type)
     if (condition.item_name) query.append('item_name', condition.item_name)
-    if (condition.task_status) query.append('item_name', condition.task_status)
+    if (condition.keyword) query.append('keyword', condition.keyword)
+    // if (condition.author_name) query.append('author_name', condition.author_name)
+    // if (condition.author_name_2) query.append('author_name_2', condition.author_name_2)
+    // if (condition.actors) query.append('actors', condition.actors)
+    if (condition.task_status) query.append('task_status', condition.task_status)
     if (condition.actioned) query.append('actioned', condition.actioned)
     if (condition.not_actioned) query.append('not_actioned', condition.not_actioned)
     if (condition.order_condition) query.append('order_condition', condition.order_condition)
@@ -125,6 +129,10 @@ const LibraryList = () => {
       library_type: searchParams.get('library_type') ?? '',
       item_type: searchParams.get('item_type') ?? '',
       item_name: searchParams.get('item_name') ?? '',
+      keyword: searchParams.get('keyword') ?? '',
+      // author_name: searchParams.get('author_name') ?? '',
+      // author_name_2: searchParams.get('author_name_2') ?? '',
+      // actors: searchParams.get('actors') ?? '',
       task_status: searchParams.get('task_status') ?? '',
       actioned: searchParams.get('actioned') ?? '',
       not_actioned: searchParams.get('not_actioned') ?? '',
@@ -166,11 +174,55 @@ const LibraryList = () => {
               name="item_name"
               className="w-full sm:w-160"
               value={condition.item_name ?? ''}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch()
-              }}
+              onKeyDown={(e) => { if (e.key === "Enter") handleSearch() }}
               onChange={handleSearchChange} />
         </div>
+        <div className="div-input-row">
+          <label htmlFor="keyword" className="input-label">Keyword</label>
+          <input type="text"
+              id="keyword"
+              name="keyword"
+              className="w-full sm:w-160"
+              value={condition.keyword ?? ''}
+              onKeyDown={(e) => { if (e.key === "Enter") handleSearch() }}
+              onChange={handleSearchChange} />
+        </div>
+        {/* {itemMst?.author_name &&
+          <div className="div-input-row">
+            <label htmlFor="author_name" className="input-label">{itemMst?.author_name}</label>
+            <input type="text"
+                id="author_name"
+                name="author_name"
+                className="w-full sm:w-160"
+                value={condition.author_name ?? ''}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSearch() }}
+                onChange={handleSearchChange} />
+          </div>
+        }
+        {itemMst?.author_name_2 &&
+          <div className="div-input-row">
+            <label htmlFor="author_name_2" className="input-label">{itemMst?.author_name_2}</label>
+            <input type="text"
+                id="author_name_2"
+                name="author_name_2"
+                className="w-full sm:w-160"
+                value={condition.author_name_2 ?? ''}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSearch() }}
+                onChange={handleSearchChange} />
+          </div>
+        }
+        {itemMst?.actors_1 &&
+          <div className="div-input-row">
+            <label htmlFor="actors" className="input-label">{itemMst?.actors_1}</label>
+            <input type="text"
+                id="actors"
+                name="actors"
+                className="w-full sm:w-160"
+                value={condition.actors ?? ''}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSearch() }}
+                onChange={handleSearchChange} />
+          </div>
+        } */}
         <div className="hidden sm:block">
           <div className="div-input-row">
             <div className="div-row-left">
