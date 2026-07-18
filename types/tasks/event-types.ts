@@ -37,3 +37,15 @@ export const initialEventItem: EventItem = {
   updated_at: null,
   updated_count: 0
 }
+
+export type eventCondition = {
+  event_type: string | null
+  start_at_from: Date | null
+  start_at_to: Date | null
+}
+
+export const initialEventCondition: eventCondition = {
+  event_type: null,
+  start_at_from: null,
+  start_at_to: null
+}

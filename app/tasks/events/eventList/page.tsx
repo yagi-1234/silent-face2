@@ -2,13 +2,15 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Briefcase, CalendarDays, EyeClosed, PawPrint, FileText, Flower2, HeartPlus, List, MicVocal, Plus, ShoppingCart } from 'lucide-react'
+import { ArrowLeft, Briefcase, CalendarDays, EyeClosed, PawPrint, Flower2, HeartPlus, List, MicVocal,
+    Plus, Search, ShoppingCart } from 'lucide-react'
 
 import { fetchEvents } from '@/actions/tasks/event-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import MessageBanner from '@/components/MessageBanner'
+import PartialDateInput from '@/components/PartialDateInput'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
@@ -16,10 +18,10 @@ import { checkUser } from '@/contexts/RooterContext'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import { CodeEventType } from '@/utils/codeUtils'
-import { formatDateTime, formatDateVariousTime } from '@/utils/dateFormat'
+import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 
-import type { EventItem } from '@/types/tasks/event-types'
+import { EventItem, eventCondition, initialEventCondition } from '@/types/tasks/event-types'
 import { EventClickArg } from '@fullcalendar/core'
 
 const Page = () => {
@@ -46,6 +48,7 @@ const EventList = () => {
   const [isListView, setIsListView] = useState<boolean>(false)
   const [selectMonth, setSelectMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
   const [hiddenNumber, setHiddenNumber] = useState<string>("")
+  const [condition, setCondition] = useState<eventCondition>(initialEventCondition)
   const calendarRef = useRef<FullCalendar | null>(null)
 
   const inEventType = searchParams.get('event_type') ?? ''
@@ -114,17 +117,25 @@ const EventList = () => {
   }).filter((e): e is NonNullable<typeof e> => e !== null)
 
   const getEventTypeIcon = (eventType: string) => {
-    if (eventType === '01') return <div className="border bg-red-400 text-white"><MicVocal size={16} /></div>
-    if (eventType === '03') return <div className="border bg-yellow-400 text-white"><ShoppingCart size={16} /></div>
-    if (eventType === '04') return <div className="border bg-blue-400 text-white"><Flower2 size={16} /></div>
-    if (eventType === '05') return <div className="border bg-orange-400 text-white"><PawPrint size={16} /></div>
-    if (eventType === '06') return <div className="border bg-pink-400 text-white"><HeartPlus size={16} /></div>
-    if (eventType === '08') return <div className="border bg-purple-400 text-white"><Briefcase size={16} /></div>
-    if (eventType === '23') return <div className="border bg-gray-400 text-white"><EyeClosed size={16} /></div>
+    if (eventType === '01') return <div className="border bg-red-400 text-white rounded-md"><MicVocal size={16} /></div>
+    if (eventType === '03') return <div className="border bg-yellow-400 text-white rounded-md"><ShoppingCart size={16} /></div>
+    if (eventType === '04') return <div className="border bg-blue-400 text-white rounded-md"><Flower2 size={16} /></div>
+    if (eventType === '05') return <div className="border bg-orange-400 text-white rounded-md"><PawPrint size={16} /></div>
+    if (eventType === '06') return <div className="border bg-pink-400 text-white rounded-md"><HeartPlus size={16} /></div>
+    if (eventType === '08') return <div className="border bg-purple-400 text-white rounded-md"><Briefcase size={16} /></div>
+    if (eventType === '23') return <div className="border bg-gray-400 text-white rounded-md"><EyeClosed size={16} /></div>
   }
 
   const handleCalendarMove = (move: number) => {
     setSelectMonth(new Date(selectMonth.getFullYear(), selectMonth.getMonth() + move, 1))
+  }
+
+  const handleChangeDate = (value: string, name: string) => {
+    setCondition(prev => ({
+      ...prev, [name]: value
+    }))
+  }
+  const handleSearch = () => {
   }
 
   useEffect(() => {
@@ -135,6 +146,12 @@ const EventList = () => {
     }
     setIsListView(searchParams.get('is_list_view') === 'true' ? true : false)
     
+    setCondition({
+      ...condition,
+      event_type: inEventType ? inEventType : null,
+      start_at_from: new Date(new Date().getFullYear(), new Date().getMonth() - 6, 1)
+    })
+
     loadEvents()
   }, [])
 
@@ -175,54 +192,94 @@ const EventList = () => {
         </div>
         <div className="space-y-1">
           {events.filter(e => new Date(e.start_at) >= new Date(selectMonth) && new Date(e.start_at) < new Date(selectMonth.getFullYear(), selectMonth.getMonth() + 1, 1)).map(event => (
-            <div className="border rounded-sm p-1 shadow-sm flex items-center" key={event.event_id}>
-              <span className="font-bold w-14">{formatDateTime(event.start_at, "MM/dd EEE")}</span>
-              {getEventTypeIcon(event.event_type)}
-              <span>&ensp;</span>
-              <button
-                  className="button-link card-title"
-                  onClick={() => handleShowForm(event.event_type, event.event_id ?? "")}>
-                {event.event_name}
-              </button>
-            </div>
+            <>
+              {(event.event_type !== '23' || hiddenNumber === '423') && (
+                <div className="border rounded-sm p-1 shadow-sm flex items-center" key={event.event_id}>
+                  <span className="font-bold w-14">{formatDateTime(event.start_at, "MM/dd EEE")}</span>
+                  {getEventTypeIcon(event.event_type)}
+                  <span>&ensp;</span>
+                  <button
+                      className="button-link card-title"
+                      onClick={() => handleShowForm(event.event_type, event.event_id ?? "")}>
+                    {event.event_name}
+                  </button>
+                </div>
+              )}
+            </>
           ))}
         </div>
       </div>
       <div className="hidden sm:block">
         {isListView &&
           <>
-            <div className="searchPanel">
+            {/* <div className="flex justify-between items-center">
+              <div>
+                <label htmlFor="artist_name" className="input-label">
+                  Date Range
+                </label>
+                <div className="div-row-left">
+                  <PartialDateInput
+                      name="start_at_from"
+                      mode="flexible"
+                      value={formatDateTime(condition.start_at_from, "yyyy/MM/dd")}
+                      onChange={handleChangeDate} />
+                  <span className="flex items-center">　～　</span>
+                  <PartialDateInput
+                      name="start_at_to"
+                      mode="flexible"
+                      value={formatDateTime(condition.start_at_to, "yyyy/MM/dd")}
+                      onChange={handleChangeDate} />
+                </div>
+              </div>
+              <div>
+                <span>　</span>
+                <div className="div-row-right">
+                  <button className="button-search"
+                      onClick={handleSearch}>
+                    <Search size={16} />
+                  </button>
+                </div>
+              </div>
+            </div> */}
+            <div className="div-row-flexible div-row-header">
+              <span className="w-24">Date</span>
+              <span className="w-12">Time</span>
+              <span className="w-29">Type</span>
+              <span className="w-96">Event Name</span>
+              <span className="w-64">Location</span>
             </div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Event Name</th>
-                  <th>Location</th>
-                  <th>Start At</th>
-                  <th />
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {events.map(event => (
-                  <tr key={event.event_id} className="leading-none">
-                    <td>{CodeEventType[event.event_type]}</td>
-                    <td>{event.event_name}</td>
-                    <td>{event.location}</td>
-                    <td>{formatDateTime(event.start_at, "yyyy/MM/dd")}</td>
-                    <td>{event.start_time}</td>
-                    <td>
-                      <button
-                          className="button-page"
-                          onClick={() => handleShowForm(event.event_type, event.event_id ?? "")} >
-                        <FileText className="w-5 h-5" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {/* {events.filter(row => formatDateTime(row.start_at,"yyyy-MM") >= (condition.start_at_from ? formatDateTime(condition.start_at_from,"yyyy-MM") : "1900-01")).map((event, index) => { */}
+            {events.map((event, index) => {
+              const prev = index > 0 ? events[index - 1] : null
+              return (
+                <>
+                  {formatDateTime(prev?.start_at, "yyyyMM") !== formatDateTime(event.start_at, "yyyyMM") ? (
+                    <div className="div-rows-flexible bg-yellow-100">
+                      <div className="div-row-flexible">
+                        <span className="w-228 font-semibold flex justify-center">{formatDateTime(event.start_at, "MMMM yyyy")}</span>
+                      </div>
+                    </div>
+                  ) : null}
+                  {(event.event_type !== "23" || hiddenNumber === '423') && (
+                    <div key={event.event_id} className="div-rows-flexible">
+                      <div className="div-row-flexible">
+                        <span className="w-24">{formatDateTime(event.start_at, "dd EEE")}</span>
+                        <span className="w-12">{event.start_time}</span>
+                        <span className="w-4 flex justify-center">{getEventTypeIcon(event.event_type)}</span>
+                        <span className="w-24">{CodeEventType[event.event_type]}</span>
+                        <span className="w-96">
+                          <button className="button-link"
+                              onClick={() => handleShowForm(event.event_type, event.event_id ?? "")}>
+                            {event.event_name}
+                          </button>
+                        </span>
+                        <span className="w-64">{event.location}</span>
+                      </div>
+                    </div>
+                )}
+                </>
+              )
+            })}
           </>
         }
         {!isListView &&

@@ -235,6 +235,12 @@ button {
   .div-row-flexible {
     @apply flex items-center gap-x-2 flex-wrap
   }
+  .div-row-header {
+    @apply bg-blue-100 font-semibold rounded-sm py-1
+  }
+  .div-row-header span {
+    @apply flex justify-center
+  }
 
   .input-check-label {
     @apply flex items-center space-x-2
