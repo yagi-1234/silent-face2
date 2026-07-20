@@ -20,7 +20,7 @@ async function backupTable(tableName: string) {
   console.log('start:::backupTable:::' + tableName)
   const { data, error } = await supabase.rpc('backup_' + tableName);
   if (error) {
-    console.log('backupTable failed:::' + tableName)
+    console.log('backupTable failed:::' + tableName + '>>', error)
     await insertBackupResult(tableName, -100, 'backupTable failed...')
   }
   else {
