@@ -7,6 +7,8 @@ export async function GET() {
   await backupTable('mt11_artists')
   await backupTable('mt21_albums')
   await backupTable('mt31_tracks')
+  await backupTable('mt41_playlists')
+  await backupTable('mt42_playlist_tracks')
   await backupTable('ct01_tasks')
   await backupTable('ct02_music_tasks')
   await backupTable('tt03_events')
