@@ -1,10 +1,12 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, CirclePlus, Check, MapPin, Pencil } from 'lucide-react'
+import { Suspense, useEffect, useRef, useState } from 'react'
+import { ArrowLeft, CirclePlus, Check, FileText, Link, Link2Off, MapPin, Pencil } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchLives, mergeLive, fetchLiveTracks, insertLiveTrack, updateLiveTrack } from '@/actions/music/live-action'
+import { fetchArtists } from '@/actions/music/artist-action'
+import { fetchTracks } from '@/actions/music/track-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
@@ -14,6 +16,8 @@ import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { LiveView, initialLive, LiveTrackView, initialLiveTrack } from '@/types/music/liveTrack-types'
+import { initialArtistCondition } from '@/types/music/artist-types'
+import { initialTrackCondition } from '@/types/music/track-types'
 import { useCustomBack } from '@/utils/navigationUtils'
 
 const Page = () => {
@@ -43,7 +47,6 @@ const LiveTrackList = () => {
   const [liveTracks, setLiveTracks] = useState<LiveTrackView[]>([])
   const [liveTrackForEdit, setLiveTrackForEdit] = useState<LiveTrackView>(initialLiveTrack)
   const [isEdit, setIsEdit] = useState<boolean>(false)
-  //const [condition, setCondition] = useState<TrackCondition>(initialTrackCondition)
 
   const inEventId = searchParams.get('event_id')
 
@@ -63,13 +66,14 @@ const LiveTrackList = () => {
       )
     )
   }
-  const handleLiveChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLiveChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setNewLive(prev => ({
       ...prev,
       [name]: value ? value : null
     }))
   }
+
   const handleLiveSave = async () => {
     setModalMessage('Do you want to continue with this registration?')
     setConfirmHandler(async () => {
@@ -104,42 +108,9 @@ const LiveTrackList = () => {
     setIsEdit(false)
   }
 
-  const handleSearch = async () => {
-    // const query = new URLSearchParams()
-    // if (condition.artist_id) query.append('artist_id', condition.artist_id)
-    // if (condition.artist_name) query.append('artist_name', condition.artist_name)
-    // if (condition.artist_name_exact_match) query.append('artist_name_exact_match', 'true')
-    // if (condition.album_id) query.append('album_id', condition.album_id)
-    // if (condition.album_name) query.append('album_name', condition.album_name)
-    // if (condition.album_name_exact_match) query.append('album_name_exact_match', 'true')
-    // if (condition.track_id) query.append('track_id', condition.track_id)
-    // if (condition.track_name) query.append('track_name', condition.track_name)
-    // if (condition.track_name_exact_match) query.append('track_name_exact_match', 'true')
-    // router.push(`/music/tracks/trackList?${query.toString()}`)
-    // const fetchData = await fetchTracks(condition)
-    // console.log("fetchData", fetchData[0])
-    // setTracks(fetchData)
-  }
-
-  const handleClear = () => {
-    // setCondition(initialTrackCondition)
-    // setTracks([])
-  }
-
-  const handleShowForm = (trackId: string) => {
-    // addToHistory({ title: 'trackList', path: `${pathname}?${searchParams.toString()}`})
-    // if (trackId)
-    //   router.push(`/music/tracks/trackForm?track_id=${trackId}`)
-    // else if (condition.album_id)
-    //   router.push(`/music/tracks/trackForm?album_id=${condition.album_id}`)
-    // else if (condition.artist_id)
-    //   router.push(`/music/tracks/trackForm?artist_id=${condition.artist_id}`)
-    // else if (tracks[0].album_id)
-    //   router.push(`/music/tracks/trackForm?album_id=${tracks[0].album_id}`)
-    // else if (tracks[0].artist_id)
-    //   router.push(`/music/tracks/trackForm?artist_id=${tracks[0].artist_id}`)
-    // else
-    //   router.push("/music/tracks/trackForm")
+  const handleShowEvent = () => {
+    addToHistory({ title: 'liveTrackList', path: `${pathname}?${searchParams.toString()}`})
+    router.push(`/tasks/events/eventForm?event_id=${inEventId}`)
   }
 
   const checkLogin = async () => {
@@ -156,19 +127,76 @@ const LiveTrackList = () => {
     setLiveTracks(fetchData)
   }
 
+  const searchId = useRef(0)
   useEffect(() => {
     checkLogin()
     loadLive()
-    //loadData()
-
-    const handler = (e: WindowEventMap["keydown"]) => {
-      if (e.ctrlKey && e.altKey && e.key === 'd')
-        setHiddenPanelOpen(prev => !prev)
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
   }, [])
-  
+  useEffect(() => {
+    if (!newLive.artist_name || newLive.artist_name.length < 2) return
+    const timer = setTimeout(async () => {
+      const id = ++searchId.current
+      const condition1 = {
+        ...initialArtistCondition,
+        artist_name: newLive.artist_name ?? '',
+        artist_name_exact_match: true
+      }
+      const result = await fetchArtists(condition1)
+      if (id === searchId.current) {
+        if (result.length === 1) {
+          setNewLive(prev => ({
+            ...prev,
+            artist_id: result[0].artist_id
+          }))
+        } else if (result.length === 0) {
+          setNewLive(prev => ({
+            ...prev,
+            artist_id: null
+          }))
+        }
+      }
+    }, 400)
+    return () => clearTimeout(timer)
+
+    // const handler = (e: WindowEventMap["keydown"]) => {
+    //   if (e.ctrlKey && e.altKey && e.key === 'd')
+    //     setHiddenPanelOpen(prev => !prev)
+    // }
+    // window.addEventListener('keydown', handler)
+    // return () => window.removeEventListener('keydown', handler)
+  }, [newLive.artist_name])
+  useEffect(() => {
+    if (!liveTrackForEdit.track_name || liveTrackForEdit.track_name.length < 2) return
+    const timer = setTimeout(async () => {
+      const id = ++searchId.current
+      const condition1 = {
+        ...initialTrackCondition,
+        artist_id: lives.filter(live => live.is_select).at(0)?.artist_id ?? '',
+        track_name: liveTrackForEdit.track_name ?? '',
+        track_name_exact_match: true
+      }
+      const result = await fetchTracks(condition1)
+      if (id === searchId.current) {
+        if (result.length === 1) {
+          setLiveTrackForEdit(prev => ({
+            ...prev,
+            album_id: result[0].album_id,
+            album_name: result[0].album_name_1,
+            track_id: result[0].track_id
+          }))
+        } else if (result.length === 0) {
+          setLiveTrackForEdit(prev => ({
+            ...prev,
+            album_id: null,
+            album_name: null,
+            track_id: null
+          }))
+        }
+      }
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [liveTrackForEdit.track_name])
+
   return (
     <div className="root-panel">
       <Breadcrumb />
@@ -192,7 +220,15 @@ const LiveTrackList = () => {
               {live.stage_name ? (
                 <span>{live.stage_name}</span>
               ) : null}
-              <span>{live.artist_name}</span>
+              {!!!live.artist_id ? (
+                <button
+                    className="button-page" >
+                  <Link2Off className="h-3 w-3" />
+                </button>
+              ) : ( null )}
+              <span>
+                {live.artist_name}
+              </span>
               <button
                   className="button-page"
                   onClick={() => handleLiveEdit(live)} >
@@ -217,6 +253,17 @@ const LiveTrackList = () => {
                 placeholder="Stage"
                 value={newLive.stage_name ?? ''}
                 onChange={handleLiveChange} />
+            {newLive.artist_id ? (
+              <button
+                  className="button-page text-orange-600" >
+                <Link className="h-3 w-3" />
+              </button>
+            ) : (
+              <button
+                  className="button-page" >
+                <Link2Off className="h-3 w-3" />
+              </button>
+            )}
             <input type="text"
                 id="artist_name"
                 name="artist_name"
@@ -247,6 +294,7 @@ const LiveTrackList = () => {
               <tr>
                 <th></th>
                 <th>#</th>
+                <th />
                 <th>Track Name</th>
                 <th>Album Name</th>
                 <th>Guest</th>
@@ -259,6 +307,14 @@ const LiveTrackList = () => {
                 <tr key={liveTrack.live_track_id} className="leading-none">
                   <td>{liveTrack.part_name}</td>
                   <td className="numeric-field">{liveTrack.play_order}</td>
+                  <td>
+                    {!!!liveTrack.track_id ? (
+                      <button
+                          className="button-page" >
+                        <Link2Off className="h-3 w-3" />
+                      </button>
+                    ) : ( null )}
+                  </td>
                   <td>{liveTrack.track_name}</td>
                   <td>{liveTrack.album_name}</td>
                   <td>{liveTrack.guest_artist_name}</td>
@@ -286,6 +342,19 @@ const LiveTrackList = () => {
                       className="w-20 numeric-field"
                       value={liveTrackForEdit.play_order ?? ""}
                       onChange={handleChange} />
+                </td>
+                <td>
+                  {liveTrackForEdit.track_id ? (
+                    <button
+                        className="button-page text-orange-600" >
+                      <Link className="h-3 w-3" />
+                    </button>
+                  ) : (
+                    <button
+                        className="button-page" >
+                      <Link2Off className="h-3 w-3" />
+                    </button>
+                  )}
                 </td>
                 <td>
                   <input type="text"
@@ -337,6 +406,12 @@ const LiveTrackList = () => {
             <button className="button-back"
                 onClick={() => handleBack(false)}>
               <ArrowLeft size={16} />
+            </button>
+          </div>
+          <div className="footer-right">
+            <button className="button-normal w-20"
+                onClick={handleShowEvent}>
+              <FileText size={16} />
             </button>
           </div>
         </div>

@@ -58,7 +58,9 @@ export const fetchTracks = async (condition: TrackCondition): Promise<TrackView[
   let query = supabase
       .from('mv31_tracks')
       .select('*')
-  if (condition.artist_name) {
+  if (condition.artist_id) {
+    query = query.eq('artist_id', condition.artist_id)
+  } else if (condition.artist_name) {
     if (condition.artist_name_exact_match) {
       const keyword = makeKeywordForSql(condition.artist_name, false)
       query = query.or(`artist_name_0.eq.${keyword},artist_name_1.eq.${keyword},artist_name_2.eq.${keyword},track_artist_name_1.eq.${keyword}`)
