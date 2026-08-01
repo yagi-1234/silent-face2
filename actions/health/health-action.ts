@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 
-import type { WeightRow, WeightView } from '@/types/health/health-types'
+import type { WeightRow, WeightView, WeightCondition } from '@/types/health/health-types'
+import { formatDateTime } from '@/utils/dateFormat'
 
 export const fetchWeight = async (weightId: string): Promise<WeightView> => {
   let query = supabase
@@ -16,10 +17,14 @@ export const fetchWeight = async (weightId: string): Promise<WeightView> => {
   return result
 }
 
-export const fetchWeights = async (): Promise<WeightView[]> => {
+export const fetchWeights = async (condition: WeightCondition): Promise<WeightView[]> => {
   let query = supabase
       .from('ht01_weights')
       .select('*')
+  if (condition.weight_date_from)
+    query = query.gte('weight_date', formatDateTime(condition.weight_date_from, 'yyyy-MM-dd'))
+  if (condition.weight_date_to)
+    query = query.lte('weight_date', formatDateTime(condition.weight_date_to, 'yyyy-MM-dd'))
   query = query.order('weight_date')
   query = query.limit(1000)
   const { data: result, error } = await query

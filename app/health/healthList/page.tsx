@@ -1,14 +1,15 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, Plus, Weight } from 'lucide-react'
+import { ArrowLeft, Plus, Search, Weight } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchWeights } from '@/actions/health/health-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
+import PartialDateInput from '@/components/PartialDateInput'
 import { useHistory } from '@/contexts/HistoryContext'
 import { checkUser } from '@/contexts/RooterContext'
-import { WeightView } from '@/types/health/health-types'
+import { WeightView, WeightCondition, initialWeightCondition } from '@/types/health/health-types'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 
@@ -30,13 +31,29 @@ const HealthList = () => {
   const searchParams = useSearchParams()
 
   const [weights, setWeights] = useState<WeightView[]>([])
+  const [condition, setCondition] = useState<WeightCondition>(initialWeightCondition)
 
   const checkLogin = async () => {
     await checkUser()
   }
 
-  const loadData = async () => {
-    const fetchData = await fetchWeights()
+  const loadData = async (condition1: WeightCondition) => {
+    const fetchData = await fetchWeights(condition1)
+    setWeights(fetchData)
+  }
+
+  const handleChangeDate = (value: string, name: string) => {
+    const fromDate = new Date(new Date(value).getFullYear(), new Date(value).getMonth(), 1)
+    const toDate = new Date(fromDate.getFullYear(), fromDate.getMonth() + 1, 0)
+    setCondition(prev => ({
+      ...prev,
+      weight_date_from: fromDate,
+      weight_date_to: toDate
+    }))
+  }
+
+  const handleSearch = async () => {
+    const fetchData = await fetchWeights(condition)
     setWeights(fetchData)
   }
 
@@ -53,7 +70,13 @@ const HealthList = () => {
 
   useEffect(() => {
     checkLogin()
-    loadData()
+    const condition1 = {
+      ...initialWeightCondition,
+      weight_date_from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      weight_date_to: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+    }
+    setCondition(condition1)
+    loadData(condition1)
   }, [])
 
   return (
@@ -62,9 +85,25 @@ const HealthList = () => {
       <h2 className="header-title">Health List</h2>
       <div>
         <div className="hidden sm:block">
-
         </div>
         <div className="block sm:hidden">
+          <div>
+            <div className="flex justify-between items-center">
+              <div>
+                <PartialDateInput
+                    name="weight_date_from"
+                    value={formatDateTime(condition.weight_date_from, 'yyyy/MM/dd') ?? ''}
+                    onChange={handleChangeDate}
+                    mode="flexible" />
+              </div>
+              <div className="div-row-right">
+                <button className="button-search"
+                    onClick={handleSearch}>
+                    <Search size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
           <div className="div-card-area">
             {weights.map(weight => (
               <div key={weight.weight_id} className="div-card">

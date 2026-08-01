@@ -30,3 +30,13 @@ export const initialWeight: WeightView = {
   updated_at: null,
   updated_count: 0,
 }
+
+export type WeightCondition = {
+  weight_date_from: Date | null,
+  weight_date_to: Date | null,
+}
+
+export const initialWeightCondition: WeightCondition = {
+  weight_date_from: null,
+  weight_date_to: null,
+}
