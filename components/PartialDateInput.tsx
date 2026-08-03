@@ -9,6 +9,7 @@ type PartialDateInputProps = {
   value: string
   onChange: (value: string, name: string) => void
   mode?: PartialDateMode
+  scope?: string
 }
 
 const parseDate = (value: string) => {
@@ -33,7 +34,8 @@ const PartialDateInputWithCalendar: React.FC<PartialDateInputProps> = ({
   name,
   value,
   onChange,
-  mode = 'flexible'
+  mode = 'flexible',
+  scope = 'ymd'
 }) => {
   const [year, setYear] = useState('')
   const [month, setMonth] = useState('')
@@ -65,30 +67,38 @@ const PartialDateInputWithCalendar: React.FC<PartialDateInputProps> = ({
           onChange={(e) => { setYear(e.target.value) }}
           placeholder="yyyy"
           className="numeric-field w-16 sm:w-20 border p-1" />
-      <span>/</span>
-      <input type="number"
-          value={month}
-          onChange={(e) => { setMonth(e.target.value) }}
-          onBlur={() => {
-            const padded = month ? month.padStart(2, '0') : ''
-            if (padded !== month) setMonth(padded)
-            // handleUpdate(year, padded, day)
-          }}
-          placeholder="mm"
-          className="numeric-field w-12 sm:w-15 border p-1"
-          disabled={mode === 'fullOnly'} />
-      <span>/</span>
-      <input type="number"
-          value={day}
-          onChange={(e) => { setDay(e.target.value) }}
-          onBlur={() => {
-            const padded = day ? day.padStart(2, '0') : ''
-            if (padded !== day) setDay(padded)
-            handleUpdate(year, month, day)
-          }}
-          placeholder="dd"
-          className="numeric-field w-12 sm:w-15 border p-1"
-          disabled={mode === 'fullOnly'} />
+      {(scope === 'ym' || scope === 'ymd')&& (
+        <>
+          <span>/</span>
+          <input type="number"
+              value={month}
+              onChange={(e) => { setMonth(e.target.value) }}
+              onBlur={() => {
+                const padded = month ? month.padStart(2, '0') : ''
+                if (padded !== month) setMonth(padded)
+                handleUpdate(year, padded, day)
+              }}
+              placeholder="mm"
+              className="numeric-field w-12 sm:w-15 border p-1"
+              disabled={mode === 'fullOnly'} />
+        </>
+      )}
+      {scope === 'ymd' && (
+        <>
+          <span>/</span>
+          <input type="number"
+              value={day}
+              onChange={(e) => { setDay(e.target.value) }}
+              onBlur={() => {
+                const padded = day ? day.padStart(2, '0') : ''
+                if (padded !== day) setDay(padded)
+                handleUpdate(year, month, day)
+              }}
+              placeholder="dd"
+              className="numeric-field w-12 sm:w-15 border p-1"
+              disabled={mode === 'fullOnly'} />
+        </>
+      )}
       <button>
         <Calendar size={16} 
             onClick={() => setShowCalendar(true)}/>

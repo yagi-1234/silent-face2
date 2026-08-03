@@ -42,7 +42,7 @@ const HealthList = () => {
     setWeights(fetchData)
   }
 
-  const handleChangeDate = (value: string, name: string) => {
+  const handleChangeDate = (value: string) => {
     const fromDate = new Date(new Date(value).getFullYear(), new Date(value).getMonth(), 1)
     const toDate = new Date(fromDate.getFullYear(), fromDate.getMonth() + 1, 0)
     setCondition(prev => ({
@@ -94,7 +94,8 @@ const HealthList = () => {
                     name="weight_date_from"
                     value={formatDateTime(condition.weight_date_from, 'yyyy/MM/dd') ?? ''}
                     onChange={handleChangeDate}
-                    mode="flexible" />
+                    mode="flexible"
+                    scope="ym" />
               </div>
               <div className="div-row-right">
                 <button className="button-search"
