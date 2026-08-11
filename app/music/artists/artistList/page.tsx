@@ -31,7 +31,7 @@ export default Page
 const ArtistList = () => {
   
   const { handleBack } = useCustomBack()
-  const codes = useCodes()
+  const codes = useCodes('ArtistGrade')
   const { addToHistory } = useHistory()
   const { message, setMessage, messageType, errors } = useMessage()
   const pathname = usePathname()

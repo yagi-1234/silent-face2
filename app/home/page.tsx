@@ -2,8 +2,9 @@
 
 import { useEffect } from 'react'
 import type { NextPage } from 'next'
-import { AlarmClockCheck, BookImage, BookMarked, BookOpenText, BookText, Calendar, Clapperboard, Database, Disc3, Download, Gamepad2, 
-    Hamburger, Info, Music, MicVocal, NotebookPen, SquareLibrary, Tv, ScanHeart, Server, Settings, Users} from 'lucide-react'
+import { AlarmClockCheck, BookImage, BookMarked, BookOpenText, BookText, Calendar, Clapperboard, 
+    Database, Disc3, Download, Dumbbell, Gamepad2, Hamburger, Info, Music, MicVocal, NotebookPen,
+    SquareLibrary, Tv, ScanHeart, Server, Settings, Users} from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import HomeIconButton from '@/components/HomeIconButton'
@@ -106,6 +107,7 @@ const Page: NextPage = () => {
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-10 text-center">
         <HomeIconButton icon={ScanHeart} label="Health" path="/health/healthList" />
         <HomeIconButton icon={Hamburger} label="Eatings" path="/health/eatingList" />
+        <HomeIconButton icon={Dumbbell} label="Exercises" path="/health/exercise" />
         <HomeIconButton icon={BookMarked} label="IT Studies" path="/study/it/itStudies" />
       </div>
     </div>
