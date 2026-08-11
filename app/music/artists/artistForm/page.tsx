@@ -42,7 +42,7 @@ const ArtistForm = () => {
   const [artistNameWork, setArtistNameWork] = useState<string>('')
 
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
-  const codes = useCodes()
+  const codes = useCodes('ArtistGrade')
   const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const { handleBack } = useCustomBack()
