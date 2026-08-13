@@ -30,3 +30,12 @@ export const initialItDics: ItDicsView = {
   updated_count: 0,
   edited: null,
 }
+
+export type ItDicCondition = {
+  word: string | null,
+  word_category: string | null,
+}
+export const initialItDicCondition: ItDicCondition = {
+  word: null,
+  word_category: null,
+}

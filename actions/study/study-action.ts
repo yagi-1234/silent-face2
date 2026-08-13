@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
 
-import type { ItDicsRow, ItDicsView } from '@/types/study/study-types'
+import type { ItDicsView, ItDicCondition } from '@/types/study/study-types'
 
 export const fetchItDic = async (dicsId: string): Promise<ItDicsView> => {
   let query = supabase
@@ -15,17 +15,44 @@ export const fetchItDic = async (dicsId: string): Promise<ItDicsView> => {
   }
   return result
 }
-export const fetchItDics = async (): Promise<ItDicsView[]> => {
+export const fetchItDics = async (condition: ItDicCondition, pageNo: number): Promise<ItDicsView[]> => {
+  console.log('fetchItDics condition:', condition, 'pageNo:', pageNo)
+  const fetchCount = 20
   let query = supabase
       .from('st01_it_dics')
       .select('*')
-      .order('word')
+  query = CreatefetchItDicsQuery(query, condition)
+  query = query.order('word')
+  query = query.range(fetchCount * pageNo, fetchCount * (pageNo + 1) - 1)
+  console.log('fetchItDics query:', query.toString())
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchItDics:', error)
     return []
   }
   return result
+}
+export const fetchItDicsCount = async (condition: ItDicCondition): Promise<number> => {
+  let query = supabase
+      .from('st01_it_dics')
+      .select('*', { count: 'exact', head: true })
+  query = CreatefetchItDicsQuery(query, condition)
+  const { count, error } = await query
+  if (error) {
+    console.error('Error fetchItDicsCount:', error)
+    return 0
+  }
+  return count ?? 0
+}
+const CreatefetchItDicsQuery = (query: any, condition: ItDicCondition) => {
+  console.log('CreatefetchItDicsQuery condition:', condition)
+  if (condition.word) {
+    query = query.ilike('word', `%${condition.word}%`)
+  }
+  if (condition.word_category) {
+    query = query.or(`word_category_1.ilike.${condition.word_category}, word_category_2.ilike.${condition.word_category}, word_category_3.ilike.${condition.word_category}`)
+  }
+  return query
 }
 
 export const mergeItDic = async (newData: ItDicsView): Promise<string> => {

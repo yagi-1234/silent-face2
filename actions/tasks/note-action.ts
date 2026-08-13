@@ -20,7 +20,7 @@ export const fetchNotes = async (): Promise<NoteView[]> => {
   let query = supabase
       .from('tt04_notes')
       .select('*')
-  query = query.order('updated_at')
+  query = query.order('updated_at' , { ascending: false })
   query = query.limit(1000)
   const { data: result, error } = await query
   if (error) {
