@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { Check, ChevronsDown, ChevronsLeft, ChevronsUp, ChevronsRight, ArrowLeft, Plus } from 'lucide-react'
+import { Check, ChevronsDown, ChevronsLeft, ChevronsUp, ChevronsRight, Cog, ArrowLeft, Plus } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { fetchArtist } from '@/actions/music/artist-action'
@@ -43,6 +43,7 @@ const TrackForm = () => {
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
   const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [showComment, setShowComment] = useState(false)
   const { handleBack } = useCustomBack()
 
@@ -117,6 +118,7 @@ const TrackForm = () => {
   }
   const moveTrack = async (trackNo: number) => {
     if (!track.album_id || !track.track_no) return
+    setIsLoading(true)
     const fetchData = await fetchTrackByTrackNo(track.album_id, track.disc_no_for_sort, trackNo)
     if (fetchData) {
       setTrack(fetchData)
@@ -127,6 +129,7 @@ const TrackForm = () => {
       setOriginalTrack(prev => setInitialTrack(prev, trackNo))
       setTrackNameWork('')
     }
+    setIsLoading(false)
     setIsModalOpen(false)
     setMessage('')
   }
@@ -156,11 +159,13 @@ const TrackForm = () => {
         setErrors(validationErrors)
         return
       }
+      setIsLoading(true)
       const result = await mergeTrack(track)
       setTrack(result)
       setOriginalTrack(result)
       setMessage('Saved Successfully!')
       setMessageType('info')
+      setIsLoading(false)
     })
     setIsModalOpen(true)
   }
@@ -176,6 +181,7 @@ const TrackForm = () => {
       let albumId = ''
       let discNo = null
       if (inArtistId) {
+        setIsLoading(true)
         const fetchData = await fetchArtist(inArtistId)
         const fetchData2 = {
           ...track,
@@ -189,6 +195,7 @@ const TrackForm = () => {
         setTrack(fetchData2)
         setOriginalTrack(fetchData2)
       } else if (inAlbumId) {
+        setIsLoading(true)
         const fetchData = await fetchAlbum(inAlbumId)
         const fetchData2 = {
           ...track,
@@ -207,6 +214,7 @@ const TrackForm = () => {
         setTrack(fetchData2)
         setOriginalTrack(fetchData2)
       } else if (inTrackId) {
+        setIsLoading(true)
         const fetchData = await fetchTrack(inTrackId)
         aritstId = fetchData.artist_id ?? ''
         albumId = fetchData.album_id ?? ''
@@ -222,6 +230,7 @@ const TrackForm = () => {
         const albumTracks = await fetchTracksByAlbumId(discNo, albumId)
         setAlbumTracks(albumTracks)
       }
+      setIsLoading(false)
     }
     loadTrack()
 
@@ -235,6 +244,11 @@ const TrackForm = () => {
 
   return (
     <div className="root-panel">
+      {isLoading && (
+        <div className="div-loading">
+          <Cog className="icon-loading" />
+        </div>
+      )}
       <MessageBanner
           message={message}
           type={messageType}

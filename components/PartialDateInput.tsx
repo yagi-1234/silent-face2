@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Calendar } from 'lucide-react'
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
+
+import { formatDateTime } from '@/utils/dateFormat'
 
 type PartialDateMode = 'flexible' | 'fullOnly'
 
@@ -76,7 +78,7 @@ const PartialDateInputWithCalendar: React.FC<PartialDateInputProps> = ({
               onBlur={() => {
                 const padded = month ? month.padStart(2, '0') : ''
                 if (padded !== month) setMonth(padded)
-                handleUpdate(year, padded, day)
+                if (scope === 'ym') handleUpdate(year, padded, day)
               }}
               placeholder="mm"
               className="numeric-field w-12 sm:w-15 border p-1"
@@ -112,9 +114,12 @@ const PartialDateInputWithCalendar: React.FC<PartialDateInputProps> = ({
                 ✕
               </button>
             </div>
-            <CalendarOnly
-                selected={new Date(value)}
-                onSelect={handleSelectDate} />
+            <div>
+              <DatePicker
+                  mode="single"
+                  selected={new Date(value)}
+                  onSelect={handleSelectDate} />
+            </div>
         </div>
       )}
     </div>
@@ -138,3 +143,109 @@ export function CalendarOnly({ selected, onSelect }: Props) {
 }
 
 export default PartialDateInputWithCalendar
+
+interface DatePickerProps {
+  mode: string
+  selected?: Date
+  onSelect?: (date: Date) => void
+}
+
+const DatePicker = ({ mode, selected, onSelect }: DatePickerProps) => {
+  
+  const weekNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  const [selectedDate, setSelectedDate] = useState<Date>(selected ?? new Date())
+  const [displayMonth, setDisplayMonth] = useState<Date>(
+    new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+  )
+
+  const firstDay = new Date(
+    displayMonth.getFullYear(), displayMonth.getMonth(), 1
+  ).getDay()
+  const startDay = firstDay % 7
+  const daysInMonth = new Date(
+    displayMonth.getFullYear(), displayMonth.getMonth() + 1, 0
+  ).getDate()
+
+  const isToday = (day: number) => {
+    const today = new Date()
+    return (
+      today.getFullYear() === displayMonth.getFullYear() &&
+      today.getMonth() === displayMonth.getMonth() &&
+      today.getDate() === day
+    )
+  }
+  const isSelected = (day: number) => {
+    return (
+      selectedDate.getFullYear() === displayMonth.getFullYear() &&
+      selectedDate.getMonth() === displayMonth.getMonth() &&
+      selectedDate.getDate() === day
+    )
+  }
+
+  const handlePrevMonth = () => {
+    setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() - 1, 1))
+  }
+  const handleNextMonth = () => {
+    setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1, 1))
+  }
+  const handleToday = () => {
+    setDisplayMonth(new Date())
+  }
+
+  const handleSelect = (day: number) => {
+    const date = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), day)
+    setSelectedDate(date)
+    onSelect?.(date)
+  }
+  const handleClose = () => {
+    onSelect?.(selectedDate)
+  }
+
+  return (
+    <div className="w-72 rounded border bg-white p-3 shadow-lg">
+      <div className="mb-3 flex items-center justify-between">
+        <button className="p-1 hover:bg-gray"
+            onClick={handlePrevMonth}>
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <div className="font-semibold">{formatDateTime(displayMonth, 'MMMM yyyy')}</div>
+        <button className="p-1 hover:bg-gray"
+            onClick={handleNextMonth}>
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="mb-1 grid grid-cols-7 text-center text-sm">
+        {weekNames.map(day => (
+          <div key={day} className="font-semibold">
+            {day}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 text-center gap-1">
+        {Array.from({ length: startDay }).map((_, index) => (
+          <div key={`empty-${index}`} />
+        ))}
+        {Array.from({ length: daysInMonth }, (_, index) => index + 1).map(day => (
+          <button key={day}
+              className={`h-6 w-6 rounded-full hover:bg-blue-200
+                  ${isSelected(day)? 'border border-blue-500 bg-blue-100' : ''}
+                  ${(isToday(day) && !isSelected(day)) ? 'border border-yellow-500 bg-yellow-100' : ''}`}
+              onClick={() => handleSelect(day)}>
+            {day}
+          </button>
+        ))}
+      </div>
+      <div className="flex justify-between">
+        <button className="button-back h-7 mb-0 text-sm"
+            onClick={handleClose}>
+          Close
+        </button>
+        <button className="button-normal h-7 mb-0 text-sm"
+            onClick={handleToday}>
+          Today
+        </button>
+      </div>
+    </div>
+  )
+}

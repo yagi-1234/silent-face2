@@ -242,6 +242,13 @@ button {
     @apply flex justify-center
   }
 
+  .div-loading {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/30
+  }
+  .icon-loading {
+    @apply h-16 w-16 animate-spin text-white
+  }
+
   .input-check-label {
     @apply flex items-center space-x-2
   }

@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useCallback, useEffect, useState } from 'react'
-import { ArrowLeft, Calendar, Clock, History, Plus, Search, OctagonX, Star } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, Cog, History, Plus, Search, OctagonX, Star } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchTracks } from '@/actions/music/track-action'
@@ -37,6 +37,7 @@ const TrackList = () => {
 
   const { message, setMessage, messageType, errors } = useMessage()
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const { addToHistory } = useHistory()
   const { handleBack } = useCustomBack()
 
@@ -59,6 +60,7 @@ const TrackList = () => {
   }, [])
 
   const handleSearch = async () => {
+    setIsLoading(true)
     const query = new URLSearchParams()
     if (condition.artist_id) query.append('artist_id', condition.artist_id)
     if (condition.artist_name) query.append('artist_name', condition.artist_name)
@@ -74,6 +76,7 @@ const TrackList = () => {
     const fetchData = await fetchTracks(condition)
     console.log("fetchData", fetchData[0])
     setTracks(fetchData)
+    setIsLoading(false)
   }
 
   const handleClear = () => {
@@ -112,7 +115,7 @@ const TrackList = () => {
   useEffect(() => {
     checkLogin()
     const loadData = async () => {
-      console.log(searchParams.get('album_name'))
+      setIsLoading(true)
       const condition1 = {
         ...condition,
         artist_id: searchParams.get('artist_id') ?? '',
@@ -129,6 +132,7 @@ const TrackList = () => {
       setCondition(condition1)
       const fetchData = await fetchTracks(condition1)
       setTracks(fetchData)
+      setIsLoading(false)
     }
     loadData()
 
@@ -142,6 +146,11 @@ const TrackList = () => {
   
   return (
     <div className="root-panel">
+      {isLoading && (
+        <div className="div-loading">
+          <Cog className="icon-loading" />
+        </div>
+      )}
       <Breadcrumb />
       <h2 className="header-title">Track List</h2>
       <MessageBanner
