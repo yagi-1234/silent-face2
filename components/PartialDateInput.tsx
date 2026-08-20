@@ -107,19 +107,12 @@ const PartialDateInputWithCalendar: React.FC<PartialDateInputProps> = ({
       </button>
       {showCalendar && (
         <div className="absolute mb-2 z-50 bg-white shadow p-2">
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowCalendar(false)}
-                className="text-gray-500 hover:text-black" >
-                ✕
-              </button>
-            </div>
-            <div>
-              <DatePicker
-                  mode="single"
-                  selected={new Date(value)}
-                  onSelect={handleSelectDate} />
-            </div>
+          <div>
+            <DatePicker
+                scope={scope}
+                selected={new Date(value)}
+                onSelect={handleSelectDate} />
+          </div>
         </div>
       )}
     </div>
@@ -136,7 +129,7 @@ export function CalendarOnly({ selected, onSelect }: Props) {
     <div>
       <DayPicker
           mode="single"
-          selected={selected}
+          selected={selected ?? new Date()}
           onSelect={onSelect} />
     </div>
   )
@@ -145,16 +138,16 @@ export function CalendarOnly({ selected, onSelect }: Props) {
 export default PartialDateInputWithCalendar
 
 interface DatePickerProps {
-  mode: string
-  selected?: Date
+  scope: string
+  selected: Date
   onSelect?: (date: Date) => void
 }
 
-const DatePicker = ({ mode, selected, onSelect }: DatePickerProps) => {
+const DatePicker = ({ scope, selected, onSelect }: DatePickerProps) => {
   
   const weekNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-  const [selectedDate, setSelectedDate] = useState<Date>(selected ?? new Date())
+  const [selectedDate, setSelectedDate] = useState<Date>(formatDateTime(selected, 'yyyy') ? selected : new Date())
   const [displayMonth, setDisplayMonth] = useState<Date>(
     new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
   )
@@ -175,14 +168,27 @@ const DatePicker = ({ mode, selected, onSelect }: DatePickerProps) => {
       today.getDate() === day
     )
   }
-  const isSelected = (day: number) => {
+  const isThisMonth = (month: number) => {
+    const today = new Date()
+    return (
+      today.getFullYear() === displayMonth.getFullYear() &&
+      today.getMonth() === month
+    )
+  }
+  const isSelected = (month: number, day: number) => {
     return (
       selectedDate.getFullYear() === displayMonth.getFullYear() &&
-      selectedDate.getMonth() === displayMonth.getMonth() &&
+      selectedDate.getMonth() === month &&
       selectedDate.getDate() === day
     )
   }
 
+  const handlePrevYear = () => {
+    setDisplayMonth(new Date(displayMonth.getFullYear() -1, 1, 1))
+  }
+  const handleNextYear = () => {
+    setDisplayMonth(new Date(displayMonth.getFullYear() + 1, 1, 1))
+  }
   const handlePrevMonth = () => {
     setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() - 1, 1))
   }
@@ -198,44 +204,79 @@ const DatePicker = ({ mode, selected, onSelect }: DatePickerProps) => {
     setSelectedDate(date)
     onSelect?.(date)
   }
+  const handleSelectMonth = (month: number) => {
+    const date = new Date(displayMonth.getFullYear(), month - 1, 1)
+    setSelectedDate(date)
+    onSelect?.(date)
+  }
   const handleClose = () => {
     onSelect?.(selectedDate)
   }
 
   return (
     <div className="w-72 rounded border bg-white p-3 shadow-lg">
-      <div className="mb-3 flex items-center justify-between">
-        <button className="p-1 hover:bg-gray"
-            onClick={handlePrevMonth}>
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <div className="font-semibold">{formatDateTime(displayMonth, 'MMMM yyyy')}</div>
-        <button className="p-1 hover:bg-gray"
-            onClick={handleNextMonth}>
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      </div>
-      <div className="mb-1 grid grid-cols-7 text-center text-sm">
-        {weekNames.map(day => (
-          <div key={day} className="font-semibold">
-            {day}
+      {scope === 'ymd' && (
+        <>
+          <div className="mb-3 flex items-center justify-between">
+            <button className="p-1 hover:bg-gray"
+                onClick={handlePrevMonth}>
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="font-semibold">{formatDateTime(displayMonth, 'MMMM yyyy')}</div>
+            <button className="p-1 hover:bg-gray"
+                onClick={handleNextMonth}>
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-7 text-center gap-1">
-        {Array.from({ length: startDay }).map((_, index) => (
-          <div key={`empty-${index}`} />
-        ))}
-        {Array.from({ length: daysInMonth }, (_, index) => index + 1).map(day => (
-          <button key={day}
-              className={`h-6 w-6 rounded-full hover:bg-blue-200
-                  ${isSelected(day)? 'border border-blue-500 bg-blue-100' : ''}
-                  ${(isToday(day) && !isSelected(day)) ? 'border border-yellow-500 bg-yellow-100' : ''}`}
-              onClick={() => handleSelect(day)}>
-            {day}
-          </button>
-        ))}
-      </div>
+          <div className="mb-1 grid grid-cols-7 text-center text-sm">
+            {weekNames.map(day => (
+              <div key={day} className="font-semibold">
+                {day}
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 text-center gap-1">
+            {Array.from({ length: startDay }).map((_, index) => (
+              <div key={`empty-${index}`} />
+            ))}
+            {Array.from({ length: daysInMonth }, (_, index) => index + 1).map(day => (
+              <button key={day}
+                  className={`h-6 w-6 rounded-full hover:bg-blue-200
+                      ${isSelected(displayMonth.getMonth(), day)? 'border border-blue-500 bg-blue-100' : ''}
+                      ${(isToday(day) && !isSelected(displayMonth.getMonth(), day)) ? 'border border-yellow-500 bg-yellow-100' : ''}`}
+                  onClick={() => handleSelect(day)}>
+                {day}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      {scope === 'ym' && (
+        <>
+          <div className="mb-3 flex items-center justify-between">
+            <button className="p-1 hover:bg-gray"
+                onClick={handlePrevYear}>
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="font-semibold">{formatDateTime(displayMonth, 'yyyy')}</div>
+            <button className="p-1 hover:bg-gray"
+                onClick={handleNextYear}>
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="grid grid-cols-4 text-center gap-1">
+            {Array.from({ length: 12 }).map((_, index) => (
+              <button key={`month-${index}`}
+                  className={`h-6 rounded-full hover:bg-blue-200
+                      ${isSelected(index, 1)? 'border border-blue-500 bg-blue-100' : ''}
+                      ${(isThisMonth(index) && !isSelected(index, 1)) ? 'border border-yellow-500 bg-yellow-100' : ''}`}
+                  onClick={() => handleSelectMonth(index + 1)}>
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
       <div className="flex justify-between">
         <button className="button-back h-7 mb-0 text-sm"
             onClick={handleClose}>
