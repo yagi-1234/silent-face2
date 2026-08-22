@@ -562,7 +562,7 @@ const copyViewToRecordTaskContent = (view: TaskContentView, processType: string)
   } = view
   switch (processType) {
     case 'i': {
-      const { task_content_id, task_name, task_type, ...insertData } = {
+      const { task_content_id, task_name, task_type, act_count, last_acted_at, completed, ...insertData } = {
         ...row,
         created_at: nowDate,
         updated_at: nowDate,
@@ -570,7 +570,7 @@ const copyViewToRecordTaskContent = (view: TaskContentView, processType: string)
       return insertData
     }
     case 'u': {
-      const { task_name, task_type, ...updateData } = {
+      const { task_name, task_type, act_count, last_acted_at, completed, ...updateData } = {
         ...row,
         updated_at: nowDate,
         updated_count: Number(row.updated_count ?? 0) + 1

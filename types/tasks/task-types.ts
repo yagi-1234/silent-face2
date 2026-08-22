@@ -254,6 +254,9 @@ export type TaskContentRow = {
 export type TaskContentView = TaskContentRow & {
   task_name: string | null
   task_type: string | null
+  act_count: number | null
+  last_acted_at: Date | null
+  completed: string | null
 }
 export const initialTaskContent: TaskContentView = {
   task_content_id: null,
@@ -266,7 +269,10 @@ export const initialTaskContent: TaskContentView = {
   updated_at: null,
   updated_count: 0,
   task_name: null,
-  task_type: null
+  task_type: null,
+  act_count: 0,
+  last_acted_at: null,
+  completed: null,
 }
 
 export type TaskHistoryRow = {

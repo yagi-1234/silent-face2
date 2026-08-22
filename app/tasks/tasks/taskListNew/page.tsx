@@ -180,7 +180,7 @@ const TaskList = () => {
                                   </button>
                                 </span>
                                 <span className="w-24">
-                                  {history.completed ? (
+                                  {history.completed === '1' ? (
                                     <Check className="w-5 h-5 text-green-600" />
                                   ) : null}
                                 </span>
