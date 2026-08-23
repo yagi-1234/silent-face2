@@ -65,11 +65,11 @@ export function TaskHistoryForm({ taskContentId, taskHistoryId, onSave }: TaskHi
         <span>{history.task_content_name ?? ""}</span>
       </div>
       <div className="div-input-row">
-        <label htmlFor="last_acted_at" className="input-label">Last Acted</label>
+        <label htmlFor="acted_at" className="input-label">Last Acted</label>
         <div className="div-input-left">
           <PartialDateInput
-              name="last_acted_at"
-              value={formatDateTime(history.last_acted_at, "yyyy-MM-dd")}
+              name="acted_at"
+              value={formatDateTime(history.acted_at, "yyyy-MM-dd")}
               onChange={handleChangeDate} />
         </div>
       </div>

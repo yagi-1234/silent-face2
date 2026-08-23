@@ -278,7 +278,7 @@ export const initialTaskContent: TaskContentView = {
 export type TaskHistoryRow = {
   task_history_id: string | null
   task_content_id: string | null
-  last_acted_at: Date | null
+  acted_at: Date | null
   completed: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -293,7 +293,7 @@ export type TaskHistoryView = TaskHistoryRow & {
 export const initialTaskHistory: TaskHistoryView = {
   task_history_id: null,
   task_content_id: null,
-  last_acted_at: null,
+  acted_at: null,
   completed: null,
   created_at: null,
   updated_at: null,

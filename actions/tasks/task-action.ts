@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase"
 import { updateItemByUpdatingTask } from '@/actions/library/library-action'
 import { updateAlbumByUpdatingTask } from '@/actions/music/album-action'
 import type { ValidationErrors } from '@/types/common/common-types'
-import type { TaskRow, TaskView, TaskListView, Task, TaskCondition, MusicTask, MusicTaskCondition, TaskGroupView,
+import type { TaskRow, TaskView, TaskListView, TaskCondition, MusicTask, MusicTaskCondition, TaskGroupView,
     TaskNewView, TaskContentView, TaskHistoryView } from '@/types/tasks/task-types'
 
 export const fetchTask = async (taskId: string): Promise<TaskView> => {

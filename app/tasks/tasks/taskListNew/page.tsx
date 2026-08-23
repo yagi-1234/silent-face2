@@ -176,7 +176,7 @@ const TaskList = () => {
                                 <span className="w-24">
                                   <button className="button-link"
                                       onClick={() => handleShowHistoryForm(content.task_content_id ?? "", history.task_history_id ?? "")}>
-                                    {formatDateTime(history.last_acted_at, "yyyy/MM/dd")}
+                                    {formatDateTime(history.acted_at, "yyyy/MM/dd")}
                                   </button>
                                 </span>
                                 <span className="w-24">
