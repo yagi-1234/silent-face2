@@ -47,6 +47,8 @@ const TaskList = () => {
   const [showHistoryForm, setShowHistoryForm] = useState(false)
   const [formTaskHistoryId, setFormTaskHistoryId] = useState<string>('')
 
+  const isMobile = window.innerWidth < 640
+
   const checkLogin = async () => {
     await checkUser()
   }
@@ -54,6 +56,20 @@ const TaskList = () => {
     const fetchData = await fetchTasksNew()
     setTasks(fetchData)
   }
+  const howManyTimesActed = (actCount: number | null) => {
+    if (!actCount) return
+    if (isMobile) return '(' + actCount + ')'
+    if (actCount === 0) return 'Not started'
+    return actCount.toString() + (actCount === 1 ? ' time' : ' times')
+  }
+  const howLongDaysPassed = (lastActedAt: Date | null) => {
+    if (!lastActedAt) return
+    const days = Math.floor((new Date().getTime() - new Date(lastActedAt).getTime()) / (1000 * 60 * 60 * 24))
+    if (isMobile) return '(' + days + ')'
+    if (days === 0) return 'Today'
+    return days.toString() + (days === 1 ? ' day' : ' days' + ' go')
+  }
+
   const hadleOpenContents = async(task: TaskNewView) => {
     if (task.task_id === openedTaskId) {
       setOpenedTaskId('')
@@ -130,7 +146,7 @@ const TaskList = () => {
           <>
             <div key={task.task_id} className="div-rows-flexible">
               <div className="div-row-flexible">
-                <span className="w-24">{CodeTaskType[task.task_type ?? ""]}</span>
+                <span className="w-18 md:w-24">{CodeTaskType[task.task_type ?? ""]}</span>
                 <span className="w-48 md:w-64">
                   <button className="button-link"
                       onClick={() => handleShowTaskForm(task.task_id ?? "")}>
@@ -151,12 +167,18 @@ const TaskList = () => {
                   <React.Fragment key={content.task_content_id}>
                     <div className="div-rows-flexible">
                       <div className="div-row-flexible">
-                        <span className="w-28"></span>
+                        <span className="w-20 md:w-28"></span>
                         <span className="w-44 md:w-64">
-                          <button className="button-link"
+                          <button className="button-link block w-full text-left whitespace-normal break-words"
                               onClick={() => handleShowContentForm(task.task_id ?? "", content.task_content_id ?? "")}>
                             {content.task_content_name}
                           </button>
+                        </span>
+                        <span>{howManyTimesActed(content.act_count)}</span>
+                        <span className="w-6 md:w-24">
+                          {content.completed === '1' ? (
+                            <Check className="w-5 h-5 text-green-600" />
+                          ) : (howLongDaysPassed(content.last_acted_at))}
                         </span>
                         <span className="w-4">
                           <button

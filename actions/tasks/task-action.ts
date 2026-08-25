@@ -505,9 +505,10 @@ export const fetchTaskContent = async (taskContentId: string): Promise<TaskConte
 }
 export const fetchTaskContents = async (taskId: string): Promise<TaskContentView[]> => {
   let query = supabase
-      .from('tt02_task_contents')
+      .from('tv02_task_contents')
       .select('*')
       .eq('task_id', taskId)
+      .order('last_acted_at')
   const { data: result, error } = await query
   if (error) {
     console.error('Error fetchTaskContents:', error)
