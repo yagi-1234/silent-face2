@@ -47,7 +47,7 @@ const TaskList = () => {
   const [showHistoryForm, setShowHistoryForm] = useState(false)
   const [formTaskHistoryId, setFormTaskHistoryId] = useState<string>('')
 
-  const isMobile = window.innerWidth < 640
+  const [isMobile, setIsMobile] = useState(false)
 
   const checkLogin = async () => {
     await checkUser()
@@ -128,6 +128,7 @@ const TaskList = () => {
   useEffect(() => {
     checkLogin()
     loadData()
+    setIsMobile(window.innerWidth < 768)
   }, [])
 
   return (

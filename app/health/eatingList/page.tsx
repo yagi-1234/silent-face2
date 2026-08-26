@@ -37,7 +37,7 @@ const EatingList = () => {
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const { addToHistory } = useHistory()
   const { handleBack } = useCustomBack()
-  const [isMobile, setIsMobile] = useState(false)
+  const isMobile = window.innerWidth < 640
 
   const [eatings, setEatings] = useState<EatingView[]>([])
   const today = formatDateTime(new Date(), 'yyyy-MM-dd')
@@ -73,7 +73,6 @@ const EatingList = () => {
   useEffect(() => {
     checkLogin()
     loadData()
-     setIsMobile(window.innerWidth < 640)
   }, [])
 
   return (
