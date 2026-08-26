@@ -279,6 +279,7 @@ export type TaskHistoryRow = {
   task_history_id: string | null
   task_content_id: string | null
   acted_at: Date | null
+  progress: string | null
   completed: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -294,6 +295,7 @@ export const initialTaskHistory: TaskHistoryView = {
   task_history_id: null,
   task_content_id: null,
   acted_at: null,
+  progress: null,
   completed: null,
   created_at: null,
   updated_at: null,
