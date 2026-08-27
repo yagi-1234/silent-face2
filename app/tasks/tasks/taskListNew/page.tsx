@@ -195,17 +195,20 @@ const TaskList = () => {
                           <React.Fragment key={history.task_history_id}>
                             <div className="div-rows-flexible">
                               <div className="div-row-flexible">
-                                <span className="w-32"></span>
+                                <span className="w-24 md:w-32"></span>
                                 <span className="w-24">
                                   <button className="button-link"
                                       onClick={() => handleShowHistoryForm(content.task_content_id ?? "", history.task_history_id ?? "")}>
                                     {formatDateTime(history.acted_at, "yyyy/MM/dd")}
                                   </button>
                                 </span>
-                                <span className="w-24">
+                                <span className="w-4">
                                   {history.completed === '1' ? (
                                     <Check className="w-5 h-5 text-green-600" />
                                   ) : null}
+                                </span>
+                                <span className="w-8">
+                                  {history.progress}
                                 </span>
                               </div>
                             </div>
@@ -213,7 +216,7 @@ const TaskList = () => {
                         ))}
                         <div className="div-rows-flexible">
                           <div className="div-row-flexible">
-                            <span className="w-32"></span>
+                            <span className="w-24 md:w-32"></span>
                             <span className="w-8">
                               <button
                                   onClick={() => handleShowHistoryForm(content.task_content_id ?? "", "")}>
@@ -228,7 +231,7 @@ const TaskList = () => {
                 ))}
                 <div className="div-rows-flexible">
                   <div className="div-row-flexible">
-                    <span className="w-28"></span>
+                    <span className="w-20"></span>
                     <span className="w-8">
                       <button
                           onClick={() => handleShowContentForm(task.task_id ?? "", "")}>

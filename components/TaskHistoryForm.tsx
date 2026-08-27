@@ -18,9 +18,9 @@ export function TaskHistoryForm({ taskContentId, taskHistoryId, onSave }: TaskHi
   const [history, setHistory] = useState<TaskHistoryView>(initialTaskHistory)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target
+    const { name, type, value, checked } = event.target
     setHistory(prev => ({
-      ...prev, [name]: checked ? '1' : '0'
+      ...prev, [name]: type === 'checkbox' ? (checked ? '1' : '0') : value
     }))
   }
   const handleChangeDate = (value: string, name: string) => {
@@ -72,6 +72,15 @@ export function TaskHistoryForm({ taskContentId, taskHistoryId, onSave }: TaskHi
               value={formatDateTime(history.acted_at, "yyyy-MM-dd")}
               onChange={handleChangeDate} />
         </div>
+      </div>
+      <div className="div-input-row">
+        <label htmlFor="progress" className="input-label">Progress</label>
+        <input type="text"
+            id="progress"
+            name="progress"
+            className="w-full"
+            value={history.progress ?? ''}
+            onChange={handleChange} />
       </div>
       <div className="div-input-row">
         <label htmlFor="completed" className="input-label">Completed</label>
