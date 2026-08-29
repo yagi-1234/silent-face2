@@ -172,10 +172,10 @@ export const fetchItemMst = async (libraryType: string): Promise<LibraryItemMst>
   return result
 }
 
-export const updateItemByUpdatingTask = async (itemId: string, actionCount: number | null, lastActedAt: Date | null) => {
+export const updateItemByUpdatingTask = async (itemId: string, lastActedAt: Date | null) => {
   const oldData = await fetchItem(itemId)
   const updateData = { ...oldData,
-    action_count: actionCount,
+    action_count: (oldData.action_count ?? 0 ) + 1,
     last_actioned_at: lastActedAt,
     updated_at: new Date(),
     updated_count: Number(oldData.updated_count ?? 0) + 1,

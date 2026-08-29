@@ -78,7 +78,6 @@ const TaskList = () => {
       const result = await fetchTaskContents(task.task_id ?? '')
       setTaskContents(result)
       setOpenedTaskId(task.task_id ?? '')
-      console.log(result)
     }
     setOpenedContentId('')
     setTaskHistories([])
@@ -123,6 +122,9 @@ const TaskList = () => {
     const result = await fetchTaskHistories(formTaskContentId ?? '')
     setTaskHistories(result)
     setShowHistoryForm(false)
+
+    const result2 = await fetchTaskContents(openedTaskId ?? '')
+    setTaskContents(result2)
   }
 
   useEffect(() => {
@@ -175,10 +177,10 @@ const TaskList = () => {
                             {content.task_content_name}
                           </button>
                         </span>
-                        <span>{howManyTimesActed(content.act_count)}</span>
-                        <span className="w-6 md:w-24">
+                        <span className="w-6 md:w-20">{howManyTimesActed(content.act_count)}</span>
+                        <span className="w-6 md:w-20">
                           {content.completed === '1' ? (
-                            <Check className="w-5 h-5 text-green-600" />
+                            <Check className="w-6 h-5 text-green-600" />
                           ) : (howLongDaysPassed(content.last_acted_at))}
                         </span>
                         <span className="w-4">
@@ -231,7 +233,7 @@ const TaskList = () => {
                 ))}
                 <div className="div-rows-flexible">
                   <div className="div-row-flexible">
-                    <span className="w-20"></span>
+                    <span className="w-20 md:w-28"></span>
                     <span className="w-8">
                       <button
                           onClick={() => handleShowContentForm(task.task_id ?? "", "")}>

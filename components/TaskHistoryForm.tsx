@@ -83,14 +83,28 @@ export function TaskHistoryForm({ taskContentId, taskHistoryId, onSave }: TaskHi
             onChange={handleChange} />
       </div>
       <div className="div-input-row">
-        <label htmlFor="completed" className="input-label">Completed</label>
-        <input type="checkbox"
-            id="completed"
-            name="completed"
-            className="w-5"
-            checked={history.completed === "1"}
-            value={history.completed ?? "0"}
-            onChange={handleChange} />
+        <div className="div-row-left">
+          <div className="w-32">
+            <label htmlFor="completed" className="input-label">Completed</label>
+            <input type="checkbox"
+                id="completed"
+                name="completed"
+                className="w-5"
+                checked={history.completed === "1"}
+                value={history.completed ?? "0"}
+                onChange={handleChange} />
+          </div>
+          <div>
+            <label htmlFor="is_last_step" className="input-label">Update Library</label>
+            <input type="checkbox"
+                id="is_last_step"
+                name="is_last_step"
+                className="w-5"
+                checked={history.is_last_step === "1"}
+                value={history.is_last_step ?? "0"}
+                onChange={handleChange} />
+          </div>
+        </div>
       </div>
       <div className="flex justify-end items-center">
         <button className="button-save" onClick={handleSave}>

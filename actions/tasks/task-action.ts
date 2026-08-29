@@ -24,7 +24,7 @@ export const fetchTask = async (taskId: string): Promise<TaskView> => {
 export const mergeTask = async (newData: TaskView, updateTaskKey: string): Promise<TaskView> => {
   if (newData.task_id) {
     const result = await updateTask(newData)
-    if (updateTaskKey) await updateItemByUpdatingTask(updateTaskKey, newData.action_count, newData.last_acted_at)
+    if (updateTaskKey) await updateItemByUpdatingTask(updateTaskKey, newData.last_acted_at)
     return await fetchTask(result.task_id ?? '')
   } else {
     const result = await insertTask(newData)
@@ -504,6 +504,7 @@ export const fetchTaskContent = async (taskContentId: string): Promise<TaskConte
   return result
 }
 export const fetchTaskContents = async (taskId: string): Promise<TaskContentView[]> => {
+  console.log(taskId)
   let query = supabase
       .from('tv02_task_contents')
       .select('*')
@@ -608,13 +609,14 @@ export const fetchTaskHistories = async (taskContentId: string): Promise<TaskHis
   return result
 }
 export const mergeTaskHistory = async (newData: TaskHistoryView): Promise<string> => {
-  if (newData.task_history_id) {
-    const result = await updateTaskHistory(newData)
-    return result.task_history_id || ''
-  } else {
-    const result = await insertTaskHistory(newData)
-    return result.task_history_id || ''
-  }
+  let result;
+  if (newData.task_history_id)
+    result = await updateTaskHistory(newData)
+  else
+    result = await insertTaskHistory(newData)
+  if (result.task_key && newData.is_last_step === '1' && newData.completed_before !== '1' && newData.completed === '1')
+    updateItemByUpdatingTask(result.task_key, newData.acted_at)
+  return result.task_history_id || ''
 }
 export const insertTaskHistory = async (newData: TaskHistoryView) => {
   const insertData = copyViewToRecordTaskHistory(newData, 'i')
@@ -654,7 +656,7 @@ const copyViewToRecordTaskHistory = (view: TaskHistoryView, processType: string)
   } = view
   switch (processType) {
     case 'i': {
-      const { task_history_id, task_id, task_name, task_type, task_content_name, ...insertData } = {
+      const { task_history_id, task_id, task_name, task_type, task_key, task_content_name, is_last_step, completed_before, ...insertData } = {
         ...row,
         created_at: nowDate,
         updated_at: nowDate,
@@ -662,7 +664,7 @@ const copyViewToRecordTaskHistory = (view: TaskHistoryView, processType: string)
       return insertData
     }
     case 'u': {
-      const { task_id, task_name, task_type, task_content_name, ...updateData } = {
+      const { task_id, task_name, task_type, task_key, task_content_name, is_last_step, completed_before, ...updateData } = {
         ...row,
         updated_at: nowDate,
         updated_count: Number(row.updated_count ?? 0) + 1
