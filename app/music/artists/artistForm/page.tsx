@@ -102,6 +102,74 @@ const ArtistForm = () => {
     setOriginalArtist(fetchData)
     setArtistNameWork(fetchData.artist_name_1)
   }
+
+  type AIArtistInfo = {
+    overview: string
+  }
+  const [aiResult, setAiResult] = useState<AIArtistInfo | null>(null)
+  const handleAiSearch = async () => {
+    try {
+      const response = await fetch('/api/ai/artist-info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ artistName: artist.artist_name_1.trim() })
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        console.log('AI search error', data)
+        return
+      }
+      console.log('AI result:', data)
+      setAiResult(data)
+    } catch (error) {
+      console.log('AI search error:', error)
+    } finally {
+//      setLoading(false)
+    }
+  }
+
+  type WikiArtistInfo = {
+    overview: string
+  }
+  type WikiKeywordSettings = {
+    addBand: string
+  }
+  const [wikiKeywordSetting, setWikiKeywordSetting] = useState<WikiKeywordSettings>({ addBand: '' })
+  const [wikiData, setWikiData] = useState<WikiArtistInfo | null>(null)
+  const handleWikiKeywordAddBand = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, type, value } = event.target
+    const checked = type === 'checkbox' ? (event.target as HTMLInputElement).checked : null
+    setWikiKeywordSetting(prev => ({
+      ...prev, [name]: type === 'checkbox' ? checked ? '1' : '0' : (value ? value : null)
+    }))
+    setArtist(prev => ({
+      ...prev, keyword_wiki: (artist.artist_name_1 ?? '') + (checked ? ' (band)' : '')
+    }))
+  }
+  const handleWikiSearch = async () => {
+    try {
+      const keyword = artist.keyword_wiki ? artist.keyword_wiki : artist.artist_name_1
+      const response = await fetch('/api/wiki/artist-info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          artist_name: keyword.trim(),
+          country_name: artist.country_name_1})
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        console.log('Wiki search error', data)
+        setWikiData({ ...wikiData, overview: 'Not Found' })
+        return
+      }
+      setWikiData(data)
+    } catch (error) {
+      console.log('Wiki search error:', error)
+    } finally {
+//      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     loadArtist(inArtistId)
 
@@ -112,6 +180,9 @@ const ArtistForm = () => {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [])
+  // useEffect(() => {
+  //   setWikiKeyword(artist.artist_name_1)
+  // }, [artist.artist_name_1])
 
   const handleShowMap = () => {
     const placeName = artist.origin_full_name_1
@@ -276,6 +347,52 @@ const ArtistForm = () => {
               onChange={handleChange} >
           </textarea>
         </div>
+        <div className="div-input-row">
+          <div className="flex items-center">
+            <button className="border-2 flex items-center justify-center rounded-sm w-20 h-6 mr-2" onClick={handleWikiSearch}>
+              Wiki
+            </button>
+            <label className="input-check-label mr-2">
+              <input type="checkbox"
+                  id="addBand"
+                  name="addBand"
+                  className="w-5"
+                  checked={wikiKeywordSetting.addBand === '1'}
+                  value={wikiKeywordSetting.addBand}
+                  onChange={handleWikiKeywordAddBand} />
+              <span>Band</span>
+            </label>
+            <input type="text"
+                id="artist.keyword_wiki"
+                name="artist.keyword_wiki"
+                className="w-60"
+                value={artist.keyword_wiki ?? ""}
+                onChange={handleChange} />
+          </div>
+          {wikiData?.overview ? (
+            <textarea id="artist_comment"
+                name="artist_comment"
+                rows={4}
+                readOnly
+                value={wikiData?.overview ?? ''}
+                onChange={handleChange} >
+            </textarea>
+          ) : null}
+        </div>
+  {/* .button-normal {
+    @apply border-2 text-gray-600 flex items-center justify-center rounded-sm w-16 h-8 mr-2 mb-1;
+    &:hover {
+      @apply bg-gray-200
+    }
+    &:disabled {
+      @apply border-0 bg-gray-300 text-white
+    }
+  } */}
+
+        {/* <div className="div-input-row">
+          <button onClick={handleAiSearch}>AI Search</button>
+          {aiResult?.overview}
+        </div> */}
       </div>
       <div className="footer-area">
         <div className="footer-area-sub">

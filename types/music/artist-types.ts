@@ -8,6 +8,7 @@ export type Artist = {
   years_active: string | null
   grade: string | null
   artist_comment: string | null
+  keyword_wiki: string | null
   updated_count: number | null
   updated_at: Date | null
   country_name_1: string | null
@@ -28,6 +29,7 @@ export const initialArtist: Artist = {
   years_active: '',
   grade: '',
   artist_comment: '',
+  keyword_wiki: null,
   country_name_1: null,
   origin_full_name_1: '',
   album_count: 0,
