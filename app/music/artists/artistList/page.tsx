@@ -235,13 +235,18 @@ const ArtistList = () => {
               <th>Years Active</th>
               <th>Grade</th>
               <th>Last Listened At</th>
-              <th />
             </tr>
           </thead>
           <tbody>
             {artists.map(artist => (
               <tr key={artist.artist_id}>
-                <td>{artist.artist_name_1}</td>
+                <td>
+                  <button
+                      className="button-link"
+                      onClick={() => handleShowForm(artist.artist_id ?? '')}>
+                    {artist.artist_name_1}
+                  </button>
+                </td>
                 <td>{CodeArtistType[artist.artist_type ?? '']}</td>
                 <td>{artist.country_name_1}</td>
                 <td className="numeric-field">
@@ -261,13 +266,6 @@ const ArtistList = () => {
                 <td>{artist.years_active}</td>
                 <td>{codes.find(code => code.code_key === artist.grade)?.code_value}</td>
                 <td>{formatDateTime(artist.last_listened_at, "yyyy/MM/dd")}</td>
-                <td>
-                  <button
-                      className="button-page"
-                      onClick={() => handleShowForm(artist.artist_id ?? '')} >
-                    <FileText className="w-5 h-5" />
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>
