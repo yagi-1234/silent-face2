@@ -365,7 +365,7 @@ const ArtistForm = () => {
             <input type="text"
                 id="artist.keyword_wiki"
                 name="artist.keyword_wiki"
-                className="w-60"
+                className="w-48 md:w-60"
                 value={artist.keyword_wiki ?? ""}
                 onChange={handleChange} />
           </div>

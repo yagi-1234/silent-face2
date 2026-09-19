@@ -1,10 +1,10 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ArrowLeft, AtSign, ChevronsUp, ChevronsDown, Disc3, FileText, History, Music, Plus, Star, Search } from 'lucide-react'
 
-import { fetchArtists } from '@/actions/music/artist-action'
+import { fetchArtists, fetchArtistforCandidates } from '@/actions/music/artist-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
@@ -43,12 +43,25 @@ const ArtistList = () => {
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const [candidates, setCandidates] = useState<string[]>([])
+  const [showCandidates, setShowCandidates] = useState(false)
+  const skipCandidate = useRef(false)
+
+  const handleSearchChange = async (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = event.target
     setCondition(prev => ({
       ...prev, 
       [name]: type === 'checkbox' ? (event.target as HTMLInputElement).checked : value
     }))
+  }
+  const handleSetArtistNameFromCandidate = (artistName: string) => {
+    skipCandidate.current = true
+    setCondition(prev => ({
+      ...prev,
+      artist_name: artistName
+    }))
+    setCandidates([])
+    setShowCandidates(false)
   }
 
   const handleShowForm = (artistId: string) => {
@@ -112,6 +125,24 @@ const ArtistList = () => {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [])
+  useEffect(() => {
+    if (skipCandidate.current) {
+      skipCandidate.current = false
+      return
+    }
+    if (condition.artist_name.length < 2) {
+      setCandidates([])
+      setShowCandidates(false)
+      return
+    }
+    const timer = setTimeout(async () => {
+      const candidates = await fetchArtistforCandidates(condition.artist_name)
+      setCandidates(candidates)
+      if (candidates.length > 0) setShowCandidates(true)
+      else setShowCandidates(false)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [condition.artist_name])
 
   return (
     <div className="root-panel">
@@ -126,7 +157,7 @@ const ArtistList = () => {
         <div className="hidden sm:block">
           <div>
             <label htmlFor="artist_name" className="input-label">Artist Name</label>
-            <div className="div-row-between">
+            <div className="div-row-between relative">
               <input type="text"
                   id="artist_name"
                   name="artist_name"
@@ -136,7 +167,8 @@ const ArtistList = () => {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleSearch()
                   }}
-                  onChange={handleSearchChange} />
+                  onChange={handleSearchChange}
+                  autoComplete="off" />
               <div className="w-50">
                 <ToggleButton
                     name="artist_name_exact_match"
@@ -144,6 +176,21 @@ const ArtistList = () => {
                     checked={condition.artist_name_exact_match}
                     onChange={handleSearchChange} />
               </div>
+              {showCandidates && (
+                <div className="absolute left-0 right-0 top-full w-122 z-50 mt-1 overflow-hidden rounded-md border bg-white show-lg">
+                  {candidates.length > 0 ? (
+                    <>
+                      {candidates.map(candidate => (
+                        <button key={candidate}
+                            className="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                            onClick={() => handleSetArtistNameFromCandidate(candidate)}>
+                          {candidate}
+                        </button>
+                      ))}
+                    </>
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
         </div>

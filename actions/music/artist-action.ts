@@ -90,8 +90,6 @@ const updateArtist = async (newData: Artist): Promise<Artist> => {
     updated_at: new Date(),
     updated_count: Number(newData2.updated_count ?? 0) + 1
   }
-
-  console.log("updateData:", updateData)
   const { data: result, error } = await supabase    
       .from('mt11_artists')
       .update(updateData)
@@ -125,4 +123,20 @@ export const validateArtist = (artist: Artist): ValidationErrors => {
   if (!artist.artist_name_0.trim()) errors.artist_name_0 = "Artist Name 0 is required."
   if (!artist.artist_name_1.trim()) errors.artist_name_1 = "Artist Name 1 is required."
   return errors
+}
+
+export const fetchArtistforCandidates = async (artistName: string): Promise<string[]> => {
+  let query = supabase
+      .from('mv11_artists')
+      .select('artist_name_1')
+  const keyword = makeKeywordForSql(artistName, true)
+  query = query.or(`artist_name_0.ilike.${keyword},artist_name_1.ilike.${keyword},artist_name_2.ilike.${keyword}`)
+  query = query.limit(10)
+  query = query.order('artist_name_0')
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchArtists:', error)
+    return []
+  }
+  return result.map((row: any) => row.artist_name_1)
 }
