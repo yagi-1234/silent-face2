@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
+
+  type LastFmAlbum = {
+    name: string
+    mbid: string
+    url: string
+    duration: number
+    ['@attr']?: { rank: number }
+  }
+
   const artist = request.nextUrl.searchParams.get('artist')
   const album = request.nextUrl.searchParams.get('album')
   const mbid = request.nextUrl.searchParams.get('mbid')
@@ -30,7 +39,7 @@ export async function GET(request: NextRequest) {
       )
     }
     const albumData = data.album
-    const tracks = albumData?.tracks?.track?.map((track: any, index: number) => ({
+    const tracks = albumData?.tracks?.track?.map((track: LastFmAlbum, index: number) => ({
       trackNumber: track['@attr']?.rank ?? index + 1,
       title: track.name,
       duration: track.duration ?? 0,

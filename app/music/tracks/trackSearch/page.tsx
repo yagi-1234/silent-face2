@@ -50,7 +50,7 @@ const TrackSearch = () => {
     )
     const data = await response.json()
     const albums: MbAlbumData[] = []
-    data.forEach((album: any) => {
+    data.forEach((album: MbAlbumData) => {
       albums.push({
         mbid: album.mbid,
         artist: album.artist,

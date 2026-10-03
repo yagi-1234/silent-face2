@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
+
+  type MusicBrainzAlbum = {
+    id: string
+    title: string
+    ['artist-credit']: { name: string }[]
+    ['first-release-date']: string
+    ['primary-type']: string
+    score: number
+  }
   const artist = request.nextUrl.searchParams.get('artist')
   const album = request.nextUrl.searchParams.get('album')
   if (!artist || !album) {
@@ -25,7 +34,7 @@ export async function GET(request: NextRequest) {
       )
     }
     const data = await response.json()
-    const albums = data['release-groups']?.map((item: any) => ({
+    const albums = data['release-groups']?.map((item: MusicBrainzAlbum) => ({
       mbid: item.id,
       title: item.title,
       artist: item['artist-credit']?.[0]?.name ?? '',

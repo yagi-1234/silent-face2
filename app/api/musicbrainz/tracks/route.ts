@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
+  type MusicBrainzTrack = {
+    position: number
+    title: string
+    length: number
+    recording?: { id: string }
+  }
+  type MusicBrainzRelease = {
+    tracks?: MusicBrainzTrack[]
+  }
   const mbid = request.nextUrl.searchParams.get('mbid')
   if (!mbid) {
     return NextResponse.json({ error: 'Missing mbid parameter' }, { status: 400 })
@@ -43,8 +52,8 @@ export async function GET(request: NextRequest) {
     }
     const trackData = await trackResponse.json()
     const tracks =
-      trackData.media?.flatMap((media: any) =>
-        media.tracks?.map((track: any) => ({
+      trackData.media?.flatMap((media: MusicBrainzRelease) =>
+        media.tracks?.map((track: MusicBrainzTrack) => ({
           trackNumber: track.position,
           title: track.title,
           length: track.length,

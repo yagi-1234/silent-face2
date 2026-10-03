@@ -95,6 +95,7 @@ const ArtistList = () => {
     router.push(`/music/artists/artistList?${query.toString()}`)
     const fetchData = await fetchArtists(condition)
     setArtists(fetchData)
+    setShowCandidates(false)
   }
 
   const checkLogin = async () => {
