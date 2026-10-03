@@ -272,6 +272,8 @@ const copyViewToRecord = (view: TrackView, processType: string): Partial<TrackRo
     track_artist_name_1,
     track_count,
     album_track_length,
+    recording_mbid,
+    checked,
     ...row
   } = view
   switch (processType) {
@@ -310,6 +312,8 @@ const copyToTrackView = (track: TrackRow): TrackView => {
     track_artist_name_1: null,
     track_count: null,
     album_track_length: null,
+    recording_mbid: null,
+    checked: null
   }
   return trackView
 }

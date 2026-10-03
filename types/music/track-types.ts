@@ -11,7 +11,7 @@ export type TrackRow = {
   is_bonus_track: string | null
   track_year: number | null
   track_length: string | null
-  is_single: string
+  is_single: string | null
   single_no: number | null
   track_point: number | null
   is_point_except: string
@@ -37,6 +37,8 @@ export type TrackView = TrackRow & {
   track_artist_name_1: string | null
   track_count: number | null
   album_track_length: string | null
+  recording_mbid: string | null
+  checked: string | null
 }
 
 export const initialTrack: TrackView = {
@@ -75,6 +77,8 @@ export const initialTrack: TrackView = {
   updated_at: null,
   track_count: null,
   album_track_length: null,
+  recording_mbid: null,
+  checked: null
 }
 
 export type TrackCondition = {
@@ -109,4 +113,26 @@ export type ArtistTrackKey = {
   track_point: number | null,
   listening_count: number | null,
   last_listened_at: Date | null,
+}
+
+export type MbAlbumData = {
+  mbid: string
+  artist: string
+  firstReleaseDate: string
+  primaryType: string
+  title: string
+}
+
+export type MbTrackData = {
+  trackNumber: number
+  title: string
+  recordingMbid: string
+  length: number
+}
+
+export type TrackSearchCondition = {
+  artist_id: string
+  artist_name: string
+  album_id: string
+  album_name: string
 }

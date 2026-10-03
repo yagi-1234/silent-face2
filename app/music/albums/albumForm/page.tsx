@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { Check, ChevronsLeft, ChevronsRight, Clock, ArrowLeft, ArrowRight, Plus } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, ChevronsLeft, ChevronsRight, Clock, Plus, Search } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { DayPicker } from 'react-day-picker'
 
@@ -159,6 +159,29 @@ const AlbumList = () => {
     album_no: newAlbumNo
   })
 
+  const searchAlbum = async () => {
+    const response = await fetch(
+      `/api/musicbrainz/album?artist=${encodeURIComponent(album.artist_name_1)}&album=${encodeURIComponent(album.album_name_1)}`
+    )
+    const data = await response.json()
+    console.log(data)
+  }
+  const getPopularTracks = async (mbid: string) => {
+    const response = await fetch(`/api/lastfm/album?mbid=${encodeURIComponent(mbid)}`)
+    const data = await response.json()
+    console.log(data)
+  }
+
+  const handleSearchTracks = () => {
+    addToHistory({ title: 'albumForm', path: `${pathname}?${searchParams.toString()}`})
+    const queryPrams = new URLSearchParams()
+    queryPrams.append('artist_id', album.artist_id ?? '')
+    queryPrams.append('artist_name', album.artist_name_1)
+    queryPrams.append('album_id', album.album_id)
+    queryPrams.append('album_name', album.album_name_1)
+    router.push(`/music/tracks/trackSearch/?${queryPrams.toString()}`)
+  }
+
   useEffect(() => {
     checkLogin()
     const loadAlbum = async () => {
@@ -280,12 +303,18 @@ const AlbumList = () => {
         </div>
         <div className="div-input-row">
           <label htmlFor="total_track_count" className="input-label">Total Track Count</label>
-          <input type="number"
-              id="total_track_count"
-              name="total_track_count"
-              className={errors.total_track_count ? "numeric-field isError w-20" : "numeric-field w-20"}
-              value={album.total_track_count ?? ""}
-              onChange={handleChangeNumber} />
+          <div className="div-input-left">
+            <input type="number"
+                id="total_track_count"
+                name="total_track_count"
+                className={errors.total_track_count ? "numeric-field isError w-20" : "numeric-field w-20"}
+                value={album.total_track_count ?? ""}
+                onChange={handleChangeNumber} />
+            <button className="button-normal"
+                onClick={handleSearchTracks}>
+              <Search size={16} />
+            </button>
+          </div>
         </div>
         <div className="div-input-row">
           <label htmlFor="owned_flag" className="input-label">Owned</label>
@@ -338,6 +367,12 @@ const AlbumList = () => {
               value={album.album_comment ?? ''}
               onChange={handleChange} >
           </textarea>
+        </div>
+        <div>
+          <button className="button-normal"
+              onClick={searchAlbum}>
+            Search MusicBrainz
+          </button>
         </div>
       </div>
       <div className="footer-area">
