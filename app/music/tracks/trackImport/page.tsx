@@ -75,6 +75,8 @@ const TrackImport = () => {
         track_artist_name_1: null,
         track_count: null,
         album_track_length: null,
+        recording_mbid: null,
+        checked: null
       })
     }
     console.log('texts', newTexts)

@@ -384,7 +384,7 @@ const TrackForm = () => {
                     name="is_single"
                     className="w-5"
                     checked={track.is_single === '1'}
-                    value={track.is_single}
+                    value={track.is_single ?? ""}
                     onChange={handleChange} />
                 <input type="number"
                     id="single_no"
