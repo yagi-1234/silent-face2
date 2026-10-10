@@ -49,3 +49,23 @@ export const initialRegionCondition: RegionCondition = {
     region_level: null,
     priority: true,
 }
+
+export type AiPrompt = {
+  prompt_id: string | null
+  prompt_name: string | null
+  prompt_base_text: string | null
+  prompt_text: string | null
+  created_at: Date | null
+  updated_at: Date | null
+  updated_count: number | null
+}
+
+export const initialAiPrompt: AiPrompt = {
+  prompt_id: null,
+  prompt_name: null,
+  prompt_base_text: null,
+  prompt_text: null,
+  created_at: null,
+  updated_at: null,
+  updated_count: 0,
+}

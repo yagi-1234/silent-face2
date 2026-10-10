@@ -30,14 +30,17 @@ export async function GET(request: NextRequest) {
     params.set('album', album!)
   }
   try {
+    console.log(mbid)
     const response = await fetch(`https://ws.audioscrobbler.com/2.0/?${params.toString()}`)
     const data = await response.json()
     if (!response.ok || data.error) {
+      console.log('Test2')
       return NextResponse.json(
         { error: `Last.fm API error: ${data.message || response.status}` },
         { status: response.status | 500 }
       )
     }
+    console.log('Test3')
     const albumData = data.album
     const tracks = albumData?.tracks?.track?.map((track: LastFmAlbum, index: number) => ({
       trackNumber: track['@attr']?.rank ?? index + 1,

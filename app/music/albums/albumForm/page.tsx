@@ -1,16 +1,19 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, ChevronsLeft, ChevronsRight, Clock, Plus, Search } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, ChevronsLeft, ChevronsRight, Clock, Copy, Plus, Search, Settings } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { DayPicker } from 'react-day-picker'
 
+import { fetchAiPrompt } from '@/actions/common/ai-action'
 import { fetchArtist } from '@/actions/music/artist-action'
 import { fetchAlbum, fetchAlbumByAlbumNo, mergeAlbum, isAlbumEdited, validateAlbum } from '@/actions/music/album-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
+import { AiPromptForm } from '@/components/form/AiPromptForm'
 import { removeErrorKey } from '@/components/form-error'
 import HiddenPanel from '@/components/HiddenPanel'
+import Modal from '@/components/Modal'
 import PartialDateInput from '@/components/PartialDateInput'
 import MessageBanner from '@/components/MessageBanner'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
@@ -49,6 +52,8 @@ const AlbumList = () => {
   const [album, setAlbum] = useState<Album>(initialAlbum)
   const [originalAlbum, setOriginalAlbum] = useState<Album>(initialAlbum)
   const [albumNameWork, setAlbumNameWork] = useState<string>('')
+  const [aiPrompt, setAiPrompt] = useState<string>('')
+  const [showAiPromptForm, setShowAiPromptForm] = useState("")
 
   const checkLogin = async () => {
     await checkUser()
@@ -94,6 +99,25 @@ const AlbumList = () => {
       listening_count: prev.listening_count == null ? 1 : Number(prev.listening_count) + 1,
       last_listened_at: new Date(),
     }))
+  }
+
+  const handleGetAIPrompt = async () => {
+    let promptText = aiPrompt
+    if (!promptText) {
+      const result = await fetchAiPrompt('a22af4df-3c11-432c-9be4-b191c9499085')
+      promptText = result.prompt_text || ''
+      setAiPrompt(promptText ?? '')
+    }
+    promptText = promptText.replace('{0}', album.artist_name_1).replace('{1}', album.album_name_1)
+    navigator.clipboard.writeText(promptText)
+  }
+
+  const handleSetAIPrompt = () => {
+    setShowAiPromptForm('a22af4df-3c11-432c-9be4-b191c9499085')
+  }
+  const handleAiPromptSaved = async (promptText: string) => {
+    setShowAiPromptForm('')
+    setAiPrompt(promptText ?? '')
   }
 
   const handleSave = () => {
@@ -158,19 +182,6 @@ const AlbumList = () => {
     album_type: prev.album_type,
     album_no: newAlbumNo
   })
-
-  const searchAlbum = async () => {
-    const response = await fetch(
-      `/api/musicbrainz/album?artist=${encodeURIComponent(album.artist_name_1)}&album=${encodeURIComponent(album.album_name_1)}`
-    )
-    const data = await response.json()
-    console.log(data)
-  }
-  const getPopularTracks = async (mbid: string) => {
-    const response = await fetch(`/api/lastfm/album?mbid=${encodeURIComponent(mbid)}`)
-    const data = await response.json()
-    console.log(data)
-  }
 
   const handleSearchTracks = () => {
     addToHistory({ title: 'albumForm', path: `${pathname}?${searchParams.toString()}`})
@@ -369,10 +380,17 @@ const AlbumList = () => {
           </textarea>
         </div>
         <div>
-          <button className="button-normal"
-              onClick={searchAlbum}>
-            Search MusicBrainz
-          </button>
+          <label htmlFor="ai" className="input-label">Track Search AI</label>
+          <div className="div-input-left">
+            <button className="button-normal"
+                onClick={handleGetAIPrompt}>
+              <Copy size={16} />
+            </button>
+            <button className="button-normal"
+                onClick={handleSetAIPrompt}>
+              <Settings size={16} />
+            </button>
+          </div>
         </div>
       </div>
       <div className="footer-area">
@@ -414,6 +432,13 @@ const AlbumList = () => {
         </div>
       </div>
       <ConfirmModal />
+      {showAiPromptForm && (
+        <Modal onClose={() => setShowAiPromptForm("")}>
+          <AiPromptForm 
+              promptId={showAiPromptForm}
+              onSave={handleAiPromptSaved} />
+        </Modal>
+      )}
       <HiddenPanel
           isOpen={hiddenPanelOpen}
           content={

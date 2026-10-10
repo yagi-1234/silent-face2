@@ -136,6 +136,7 @@ const ArtistList = () => {
       setShowCandidates(false)
       return
     }
+    if (condition.artist_name === searchParams.get('artist_name')) return
     const timer = setTimeout(async () => {
       const candidates = await fetchArtistforCandidates(condition.artist_name)
       setCandidates(candidates)

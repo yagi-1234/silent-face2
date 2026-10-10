@@ -117,6 +117,20 @@ const TrackSearch = () => {
       })
     }
     setTracks(tracks)
+
+    const response2 = await fetch(
+      `/api/lastfm/album?artist=${encodeURIComponent(condition.artist_name)}&album=${encodeURIComponent(condition.album_name)}`
+    )
+    const data2 = await response2.json()
+    console.log(data2)
+  }
+
+  const getPopularTracks = async (mbid: string) => {
+    const response = await fetch(
+      `/api/lastfm/album?mbid=${encodeURIComponent(mbid)}`
+    )
+    const data = await response.json()
+    console.log(data)
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, rowIndex: number) => {
@@ -328,3 +342,28 @@ const TrackSearch = () => {
     </div>
   )
 }
+
+// Example response from the MusicBrainz API for a release group with tracks
+// {
+//   "artist": "Radiohead",
+//   "album": "OK Computer",
+//   "mbid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+//   "listeners": "1234567",
+//   "playcount": "45678901",
+//   "tracks": [
+//     {
+//       "trackNumber": 1,
+//       "title": "Airbag",
+//       "duration": "280",
+//       "mbid": "",
+//       "url": "..."
+//     },
+//     {
+//       "trackNumber": 2,
+//       "title": "Paranoid Android",
+//       "duration": "383",
+//       "mbid": "",
+//       "url": "..."
+//     }
+//   ]
+// }
