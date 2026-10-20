@@ -1,5 +1,7 @@
 import { supabase } from '@/lib/supabase'
-import { PlaylistRow, PlaylistView, PlaylistFunc, PlaylistTrackRow, PlaylistTrackView } from '@/types/music/playlist-types'
+
+import { PlaylistRow, PlaylistView, PlaylistFunc, PlaylistTrackRow, PlaylistTrackView, PlaylistCondition, PlaylistTrackDetailRow } from '@/types/music/playlist-types'
+import { makeKeywordForSql } from '@/utils/stringUtils'
 
 export const fetchPlaylist = async (playlistId: string): Promise<PlaylistView> => {
   console.log(playlistId)
@@ -146,25 +148,33 @@ export const fetchPlaylistTracks = async (playlistId: string): Promise<PlaylistT
 export const mergePlaylistTracks = async (newData: PlaylistTrackView[], deleteData: PlaylistTrackView[]) => {
   console.log(newData)
   for (const row of newData) {
-    if (row.edit_mode === 'i') await insertPlaylistTrack(row)
-    if (row.edit_mode === 'u') await updatePlaylistTrack(row)
+    if (row.edit_mode === 'i') {
+      const result = await insertPlaylistTrack(row)
+      await insertPlaylistTrackDetail(result.playlist_track_id ?? '', row)
+    }
+    if (row.edit_mode === 'u') {
+      await updatePlaylistTrack(row)
+      await updatePlaylistTrackDetail(row)
+    }
   }
   for (const row of deleteData) {
     await deletePlaylistTrack(row)
   }
 }
 
-const insertPlaylistTrack = async (newData: PlaylistTrackView) => {
+const insertPlaylistTrack = async (newData: PlaylistTrackView): Promise<PlaylistTrackView> => {
   const insertData = copyToPlaylistTrackRecord(newData, newData.edit_mode ?? '')
   console.log('insertData:', insertData)
   const { data: result, error } = await supabase
       .from('mt42_playlist_tracks')
       .insert(insertData)
+      .select()
+      .single()
   if (error) {
     console.error('Error insertPlaylistTrack:', error)
     throw(error)
   }
-  console.log('insertPlaylistTrack Complete Result:')
+  return result
 }
 
 const updatePlaylistTrack = async (newData: PlaylistTrackView) => {
@@ -194,6 +204,32 @@ const deletePlaylistTrack = async (deleteData: PlaylistTrackView) => {
     throw(error)
   }
   console.log('deletePlaylistTrack Complete Result:')
+}
+
+const insertPlaylistTrackDetail = async (playlistTrackId: string, newData: PlaylistTrackView) => {
+  const insertData = copyToPlaylistTrackDetailRecord(playlistTrackId, newData)
+  console.log('insertData:', insertData)
+  const { data: result, error } = await supabase
+      .from('mt43_playlist_tracks_detail')
+      .insert(insertData)
+  if (error) {
+    console.error('Error insertPlaylistTrackDetail:', error)
+    throw(error)
+  }
+}
+
+const updatePlaylistTrackDetail = async (newData: PlaylistTrackView) => {
+  const updateData = copyToPlaylistTrackDetailRecord(newData.playlist_track_id ?? '', newData)
+  console.log('updateData:', updateData)
+  const { data: result, error } = await supabase
+      .from('mt43_playlist_tracks_detail')
+      .update(updateData)
+      .eq('playlist_track_id', newData.playlist_track_id)
+  if (error) {
+    console.error('Error updatePlaylistTrackDetail:', error)
+    throw(error)
+  }
+  console.log('updatePlaylistTrackDetail Complete Result:')
 }
 
 const fetchPlaylistFunc = async (parentPlaylistId: string): Promise<PlaylistFunc> => {
@@ -250,6 +286,22 @@ const copyToPlaylistTrackRecord = (PlaylistTrackView: PlaylistTrackView, process
   }
 }
 
+const copyToPlaylistTrackDetailRecord = (playlistTrackId: string, playlistTrackView: PlaylistTrackView): PlaylistTrackDetailRow => {
+  const row: PlaylistTrackDetailRow = {
+    playlist_track_id: playlistTrackId,
+    artist_id: playlistTrackView.artist_id,
+    artist_name_1: playlistTrackView.artist_name_1,
+    album_id: playlistTrackView.album_id,
+    album_name_1: playlistTrackView.album_name_1,
+    track_id: playlistTrackView.track_id,
+    track_name_1: playlistTrackView.track_name_1,
+    created_at: playlistTrackView.edit_mode === 'i' ? new Date() : playlistTrackView.created_at,
+    updated_at: new Date(),
+    updated_count: playlistTrackView.edit_mode === 'i' ? 0 : Number(playlistTrackView.updated_count ?? 0) + 1
+  }
+  return row
+}
+
 export const isPlaylistTrackEdited = (original?: PlaylistTrackView, current?: PlaylistTrackView): boolean => {
   if (!original || !current) return true
   if (original.artist_id !== current.artist_id) return true
@@ -261,4 +313,29 @@ export const isPlaylistTrackEdited = (original?: PlaylistTrackView, current?: Pl
   if (original.album_name_1 !== current.album_name_1) return true
   if (original.rank_no !== current.rank_no) return true
   return false
+}
+
+export const fetchPlaylistsByTrack = async (condition: PlaylistCondition, pageNo: number): Promise<PlaylistView[]> => {
+  console.log('fetchPlaylistsByTrack condition:', condition, 'pageNo:', pageNo)
+  if (!condition.artist_name || !condition.track_name) return []
+  const fetchCount = 20
+  
+  let query = supabase
+      .from('mv43_playlists_with_tracks')
+      .select('*')
+  if (condition.artist_name) {
+    query = query.eq('artist_name_1', condition.artist_name)
+  }
+  if (condition.track_name) {
+    query = query.eq('track_name_1', condition.track_name)
+  }
+  query = query.order('disp_order')
+  query = query.range(fetchCount * (pageNo - 1), fetchCount * pageNo - 1)
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchPlaylistsByTrack:', error)
+    return []
+  }
+  console.log('fetchPlaylistsByTrack result:', result)
+  return result
 }

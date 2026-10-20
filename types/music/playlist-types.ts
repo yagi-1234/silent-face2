@@ -23,6 +23,16 @@ export const initialPlaylist: PlaylistView = {
   max_disp_order: 0,
 }
 
+export type PlaylistCondition = {
+  artist_name: string | null,
+  track_name: string | null,
+}
+
+export const initialPlaylistCondition: PlaylistCondition = {
+  artist_name: null,
+  track_name: null,
+}
+
 export type PlaylistFunc = {
   parent_playlist_id: string | null,
   max_disp_order: number | null,
@@ -74,4 +84,17 @@ export const initialPlaylistTrack: PlaylistTrackView = {
   max_rank_count: null,
   prev_rank_no: null,
   edit_mode: null,
+}
+
+export type PlaylistTrackDetailRow = {
+  playlist_track_id: string | null,
+  artist_id: string | null,
+  artist_name_1: string | null,
+  album_id: string | null,
+  album_name_1: string | null,
+  track_id: string | null,
+  track_name_1: string | null,
+  created_at: Date | null
+  updated_at: Date | null
+  updated_count: number | null,
 }

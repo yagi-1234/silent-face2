@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, FileText, Menu, ListPlus, Plus } from "lucide-react"
+import { ArrowLeft, Group, Menu, ListPlus, Plus, Search } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { fetchPlaylists, fetchPlaylistsCount, mergePlaylist, updatePlaylist } from '@/actions/music/playlist-action'
+import { fetchPlaylists, fetchPlaylistsCount, mergePlaylist, updatePlaylist, fetchPlaylistsByTrack } from '@/actions/music/playlist-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
 import HiddenPanel from '@/components/HiddenPanel'
@@ -17,7 +17,8 @@ import { checkUser } from '@/contexts/RooterContext'
 import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { PlaylistView, initialPlaylist } from '@/types/music/playlist-types'
+import { PlaylistView, PlaylistCondition } from '@/types/music/playlist-types'
+import { initialPlaylist, initialPlaylistCondition } from '@/types/music/playlist-types'
 import { useCustomBack } from '@/utils/navigationUtils'
 import { ellipsis } from '@/utils/viewUtils'
 
@@ -41,6 +42,7 @@ const PlaylistList = () => {
   const searchParams = useSearchParams()
 
   const [hiddenPanelOpen] = useState(false)
+  const [condition, setCondition] = useState<PlaylistCondition>(initialPlaylistCondition)
   const [playlists, setPlaylists] = useState<PlaylistView[]>([])
   const [newPlaylist, setNewPlaylist] = useState<PlaylistView>(initialPlaylist)
   const [newSubPlaylist, setNewSubPlaylist] = useState<PlaylistView>(initialPlaylist)
@@ -50,6 +52,19 @@ const PlaylistList = () => {
 
   const checkLogin = async () => {
     await checkUser()
+  }
+
+  const handleChangeCondition = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setCondition(prev => ({
+      ...prev,
+      [name]: value ? value : null
+    }))
+  }
+
+  const handleSearch = async () => {
+    const fetchData = await fetchPlaylistsByTrack(condition, 1)
+    setPlaylists(fetchData)
   }
 
   const checkDataCount = async () => {
@@ -155,7 +170,39 @@ const PlaylistList = () => {
           onClose={() => setMessage('')} />
       <Breadcrumb />
       <h2 className="header-title">Playlists</h2>
-      <div className="searchPanel">
+      <div className="div-input-row">
+        <label htmlFor="artist_name" className="input-label">
+          Artist Name
+        </label>
+        <input type="text"
+            id="artist_name"
+            name="artist_name"
+            value={condition.artist_name ?? ""}
+            className="w-full sm:w-160"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch()
+            }}
+            onChange={handleChangeCondition} />
+      </div>
+      <div className="div-input-row">
+        <label htmlFor="track_name" className="input-label">
+          Track Name
+        </label>
+        <input type="text"
+            id="track_name"
+            name="track_name"
+            value={condition.track_name ?? ""}
+            className="w-full sm:w-160"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch()
+            }}
+            onChange={handleChangeCondition} />
+      </div>
+      <div className="div-row-right">
+        <button className="button-search"
+            onClick={handleSearch}>
+          <Search size={16} />
+        </button>
       </div>
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext
@@ -263,32 +310,26 @@ const SortableRow = ({ playlist, onShowTracks, onPlus }: Props) => {
         {playlist.parent_playlist_id && (
           <span>&nbsp;&nbsp;</span>
         )}
-        {ellipsis(playlist.playlist_name, 24)}
+        <button
+            className="button-link"
+            onClick={() => onShowTracks(playlist.playlist_id ?? '')}>
+          {ellipsis(playlist.playlist_name, 24)}
+        </button>
       </td>
-      <td className='flex'>
-        <div>
+      <td className="w-8">
+        {!playlist.parent_playlist_id && (
           <button
               className="button-page"
-              onClick={() => onShowTracks(playlist.playlist_id ?? '')}>
-            <FileText className='w-5 h-5' />
+              onClick={() => onPlus(playlist.playlist_id ?? '')} >
+            <ListPlus className="w-4 h-4" />
           </button>
-        </div>
-        <div className="w-8">
-          {!playlist.parent_playlist_id && (
-            <button
-                className="button-page"
-                onClick={() => onPlus(playlist.playlist_id ?? '')} >
-              <ListPlus className="w-4 h-4" />
-            </button>
-          )}
-        </div>
+        )}
       </td>
       <td style={{ cursor: "grab" }}>
         <span {...attributes} {...listeners}>
           <Menu size={16} />
         </span>
       </td>
-      <td>{playlist.disp_order}</td>
     </tr>
   )
 }

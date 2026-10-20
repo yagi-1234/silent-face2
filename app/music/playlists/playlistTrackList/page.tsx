@@ -10,6 +10,7 @@ import { fetchPlaylist, copyPlaylist, mergePlaylist, fetchPlaylistTracks, mergeP
 import { fetchArtistTrack } from '@/actions/music/track-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
+import { EllipsisAndTooltip } from '@/components/EllipsisAndTooltip'
 import HiddenPanel from '@/components/HiddenPanel'
 import MessageBanner from '@/components/MessageBanner'
 import Modal from '@/components/Modal'
@@ -21,7 +22,6 @@ import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities'
 import { PlaylistView, initialPlaylist, PlaylistTrackView, initialPlaylistTrack } from '@/types/music/playlist-types'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { ellipsis } from '@/utils/viewUtils'
 
 const Page = () => {
   return (
@@ -458,9 +458,9 @@ const SortableRow = ({ playlistTrack, onDelete, onCheck, onUpdate }: Props) => {
         ) : null}
       </td>
       <td className="numeric-field">{playlistTrack.play_order}</td>
-      <td>{ellipsis(playlistTrack.artist_name_1, 24)}</td>
-      <td>{ellipsis(playlistTrack.album_name_1, 24)}</td>
-      <td>{ellipsis(playlistTrack.track_name_1, 24)}</td>
+      <td>{EllipsisAndTooltip(playlistTrack.artist_name_1 ?? '', 24)}</td>
+      <td>{EllipsisAndTooltip(playlistTrack.album_name_1 ?? '', 24)}</td>
+      <td>{EllipsisAndTooltip(playlistTrack.track_name_1 ?? '', 24)}</td>
       <td className="numeric-field">{playlistTrack.entry_count}</td>
       <td className="numeric-field">{playlistTrack.entry_count && playlistTrack.entry_count > 1 ? playlistTrack.rank_no : "New"}</td>
       <td className="numeric-field">{setPrevRankCell(playlistTrack.rank_no, playlistTrack.prev_rank_no)}</td>
