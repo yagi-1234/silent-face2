@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { AlarmClockCheck, ArrowLeft, AtSign, CalendarCheck, FileText, OctagonX, 
+import { AlarmClockCheck, ArrowLeft, AtSign, Check, CalendarCheck, FileText, OctagonX, 
     Pen, Plus, Search, Spotlight, Star } from 'lucide-react'
 
 import { fetchItems, fetchItemsCount, fetchItemMst } from '@/actions/library/library-action'
@@ -17,7 +17,7 @@ import { checkUser } from '@/contexts/RooterContext'
 import { CodeCompletedFlag, CodeOwnedMagazineFlag, CodeLibraryGrade, CodeTaskType, CodeTaskStatus, OrderLibraryList } from '@/utils/codeUtils'
 import { formatDateTime } from "@/utils/dateFormat"
 import { useCustomBack } from '@/utils/navigationUtils'
-import { LibraryItem, LibraryItemMst, LibraryCondition, initialLibraryCondition } from '@/types/library/library-types'
+import { LibraryItemView, LibraryItemMst, LibraryCondition, initialLibraryCondition } from '@/types/library/library-types'
 import PagingControl from '@/components/PagingControl'
 
 const Page = () => {
@@ -39,7 +39,7 @@ const LibraryList = () => {
   const searchParams = useSearchParams()
   const inLibraryType = searchParams.get('library_type') ?? ''
 
-  const [items, setItems] = useState<LibraryItem[]>([])
+  const [items, setItems] = useState<LibraryItemView[]>([])
   const [itemMst, setItemMst] = useState<LibraryItemMst>()
   const [condition, setCondition] = useState<LibraryCondition>(initialLibraryCondition)
   const [currentPageNo, setCurrentPageNo] = useState<number>(0)
@@ -69,11 +69,6 @@ const LibraryList = () => {
       ...prev, 
       [name]: newValue
     }))
-  }
-
-  const handleShowTask = (taskId: string) => {
-    addToHistory({ title: CodeTaskType[inLibraryType] + ' List', path: `${pathname}?${searchParams.toString()}`})
-    router.push(`/tasks/tasks/taskForm?task_id=${taskId}`)
   }
 
   const handleShowForm = (itemId: string) => {
@@ -391,12 +386,11 @@ const LibraryList = () => {
                 <td>{CodeLibraryGrade[item.grade ?? ""]}</td>
                 {/* <td className="numeric-field">{item.progress}</td> */}
                 <td>{item.action_count ?? 0 > 0 ? formatDateTime(item.last_actioned_at, "yyyy/MM/dd") + " (" + item.action_count + ")" : ""}</td>
-                <td className="numeric-field">
-                  <button
-                      className="button-link"
-                      onClick={() => handleShowTask(item.task_id ?? "")}>
-                    {CodeTaskStatus[item.task_status ?? ""]}
-                  </button>
+                <td>
+                  <div className="flex items-center gap-1">
+                    {item.task_name}
+                    {item.completed === "1" ? <Check className="w-6 h-5 text-green-600" /> : null}
+                  </div>
                 </td>
                 <td>
                   <button

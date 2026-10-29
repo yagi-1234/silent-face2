@@ -1,4 +1,4 @@
-export type LibraryItem = {
+export type LibraryItemRow = {
   item_id: string
   library_type: string
   item_type: string
@@ -27,11 +27,49 @@ export type LibraryItem = {
   created_at: Date | null
   updated_at: Date | null
   updated_count: number | null
-  task_id: string | null
-  task_status: string | null
 }
 
-export const initialLibraryItem: LibraryItem = {
+export type LibraryItemView = LibraryItemRow & {
+  task_id: string | null
+  task_name: string | null
+  acted_at: Date | null
+  completed: string | null
+}
+
+// export type LibraryItem = {
+//   item_id: string
+//   library_type: string
+//   item_type: string
+//   item_name_0: string
+//   item_name_1: string
+//   item_name_2: string
+//   author_name_0: string
+//   author_name_1: string
+//   author_name_2: string
+//   owner_name: string
+//   source_name: string
+//   actors_1: string
+//   actors_2: string
+//   music: string
+//   released: string
+//   volumes: number | null
+//   completed_flag: string
+//   genre: string
+//   owned_flag: string
+//   added_at: Date | null
+//   action_count: number | null
+//   progress: number | null
+//   last_actioned_at: Date | null
+//   grade: string | null
+//   item_comment: string
+//   created_at: Date | null
+//   updated_at: Date | null
+//   updated_count: number | null
+//   task_id: string | null
+//   task_status: string | null
+// }
+
+export const initialLibraryItem: LibraryItemView = {
   item_id: '',
   library_type: '',
   item_type: '',
@@ -60,8 +98,10 @@ export const initialLibraryItem: LibraryItem = {
   created_at: null,
   updated_at: null,
   updated_count: 0,
-  task_id: '',
-  task_status: '',
+  task_id: null,
+  task_name: null,
+  acted_at: null,
+  completed: null,
 }
 
 export type LibraryItemMst = {

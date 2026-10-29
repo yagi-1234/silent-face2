@@ -1,10 +1,10 @@
 import { supabase } from '@/lib/supabase'
 
-import type { LibraryItem, LibraryItemMst, LibraryCondition } from '@/types/library/library-types'
+import type { LibraryItemView, LibraryItemMst, LibraryCondition } from '@/types/library/library-types'
 import { TaskView, initialTask } from '@/types/tasks/task-types'
 import { makeKeywordForSql, makeKeywordForSql2 } from '@/utils/stringUtils'
 
-export const fetchItem = async (itemId: string): Promise<LibraryItem> => {
+export const fetchItem = async (itemId: string): Promise<LibraryItemView> => {
   console.log('itemId:', itemId)
   const { data: result, error } = await supabase
       .from('lt11_libray_items')
@@ -29,7 +29,7 @@ export const fetchItemForTask = async (itemId: string): Promise<TaskView> => {
   return task
 }
 
-export const fetchItems = async (condition: LibraryCondition, pageNo: number): Promise<LibraryItem[]> => {
+export const fetchItems = async (condition: LibraryCondition, pageNo: number): Promise<LibraryItemView[]> => {
   console.log('condition:', condition)
   const fetchCount = 20
   let query = supabase
@@ -116,13 +116,13 @@ export const fetchItemsCount = async (condition: LibraryCondition): Promise<numb
   return count ?? 0
 }
 
-export const mergeItem = async (newData: LibraryItem): Promise<LibraryItem> => {
+export const mergeItem = async (newData: LibraryItemView): Promise<LibraryItemView> => {
   if (newData.item_id) return await updateItem(newData)
   else return await insertItem(newData)
 }
 
-const insertItem = async (newData: LibraryItem): Promise<LibraryItem> => {
-  const { item_id, task_id, task_status, ...insertData } = newData
+const insertItem = async (newData: LibraryItemView): Promise<LibraryItemView> => {
+  const { item_id, task_id, task_name, acted_at, completed, ...insertData } = newData
   console.log('insertData:', insertData)
   const { data: result, error } = await supabase
       .from('lt11_libray_items')
@@ -137,8 +137,8 @@ const insertItem = async (newData: LibraryItem): Promise<LibraryItem> => {
   return result
 }
 
-const updateItem = async (newData: LibraryItem): Promise<LibraryItem> => {
-  const { task_id, task_status, ...newData2 } = newData
+const updateItem = async (newData: LibraryItemView): Promise<LibraryItemView> => {
+  const { task_id, task_name, acted_at, completed, ...newData2 } = newData
   const updateData = { ...newData2,
     updated_at: new Date(),
     updated_count: Number(newData2.updated_count ?? 0) + 1,

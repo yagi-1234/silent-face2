@@ -19,7 +19,7 @@ import { checkUser } from '@/contexts/RooterContext'
 import { CodeOwnedFlag, CodeOwnedMagazineFlag, CodeLibraryGrade, CodeTaskType } from '@/utils/codeUtils'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
-import { LibraryItem, initialLibraryItem, LibraryItemMst } from '@/types/library/library-types'
+import { LibraryItemView, initialLibraryItem, LibraryItemMst } from '@/types/library/library-types'
 
 const Page = () => {
   return (
@@ -43,8 +43,8 @@ const LibraryForm = () => {
   const inLibraryType = searchParams.get('library_type') ?? ''
 
   const [itemMst, setItemMst] = useState<LibraryItemMst>()
-  const [item, setItem] = useState<LibraryItem>(initialLibraryItem)
-  const [originalItem, setOriginalItem] = useState<LibraryItem>(initialLibraryItem)
+  const [item, setItem] = useState<LibraryItemView>(initialLibraryItem)
+  const [originalItem, setOriginalItem] = useState<LibraryItemView>(initialLibraryItem)
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const [showTaskForm, setShowTaskForm] = useState(false)
 
