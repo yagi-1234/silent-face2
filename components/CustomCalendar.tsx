@@ -50,7 +50,7 @@ export default function CustomCalendar({ events, onShowForm, selectedMonth = new
 
   const getEventStyle = (eventType: string) => {
     let bgColor = 'bg-blue-100'
-    let textColor = 'text-white'
+    const textColor = 'text-white'
     switch (eventType) {
       case '01': bgColor = 'bg-red-400'; break
       case '02': bgColor = 'bg-green-600'; break
