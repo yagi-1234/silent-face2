@@ -27,6 +27,24 @@ export const fetchEvents = async (eventType: string | null): Promise<EventItem[]
   return result
 }
 
+export const fetchEvents2 = async (eventType: string | null, fromDate: string): Promise<EventItem[]> => {
+  const toDate = new Date(fromDate)
+  toDate.setMonth(toDate.getMonth() + 1)
+  const toDate2 = toDate.toISOString().split('T')[0]
+  let query = supabase
+      .from('tt03_events')
+      .select('*')
+  if (eventType) query = query.eq('event_type', eventType)
+  query = query.gte('start_at', fromDate)
+      .lt('start_at', toDate2)
+      .order('start_at')
+  const { data: result, error } = await query
+  if (error) {    console.error('Error fetchEvents:', error)
+    return []
+  }
+  return result
+}
+
 export const mergeEvent = async (newData: EventItem): Promise<EventItem> => {
   if (newData.event_id) {
     return await updateEvent(newData)

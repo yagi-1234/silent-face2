@@ -7,10 +7,8 @@ import { ArrowLeft, Briefcase, CalendarDays, EyeClosed, PawPrint, Flower2, Heart
 
 import { fetchEvents } from '@/actions/tasks/event-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
-import ConfirmModal from '@/components/ConfirmModal'
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import MessageBanner from '@/components/MessageBanner'
-import PartialDateInput from '@/components/PartialDateInput'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
