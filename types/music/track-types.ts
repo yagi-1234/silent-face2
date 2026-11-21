@@ -136,3 +136,12 @@ export type TrackSearchCondition = {
   album_id: string
   album_name: string
 }
+
+export type SimpleTrackView = {
+  artist_id: string
+  artist_name: string
+  album_id: string | null
+  album_name: string | null
+  track_id: string | null
+  track_name: string | null
+}

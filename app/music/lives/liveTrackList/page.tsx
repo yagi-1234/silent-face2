@@ -9,15 +9,18 @@ import { fetchArtists } from '@/actions/music/artist-action'
 import { fetchTracks } from '@/actions/music/track-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import ConfirmModal from '@/components/ConfirmModal'
+import { EllipsisAndTooltip } from '@/components/EllipsisAndTooltip'
 import HiddenPanel from '@/components/HiddenPanel'
 import { useHistory } from '@/contexts/HistoryContext'
+import { TrackSimpleForm } from '@/components/form/TrackSimpleForm'
 import MessageBanner from '@/components/MessageBanner'
+import Modal from '@/components/Modal'
 import { useConfirmModal } from '@/contexts/ConfirmModalContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { LiveView, initialLive, LiveTrackView, initialLiveTrack } from '@/types/music/liveTrack-types'
 import { initialArtistCondition } from '@/types/music/artist-types'
-import { initialTrackCondition } from '@/types/music/track-types'
+import { initialTrackCondition, SimpleTrackView } from '@/types/music/track-types'
 import { useCustomBack } from '@/utils/navigationUtils'
 
 const Page = () => {
@@ -47,6 +50,9 @@ const LiveTrackList = () => {
   const [liveTracks, setLiveTracks] = useState<LiveTrackView[]>([])
   const [liveTrackForEdit, setLiveTrackForEdit] = useState<LiveTrackView>(initialLiveTrack)
   const [isEdit, setIsEdit] = useState<boolean>(false)
+  const [showTrackForm, setShowTrackForm] = useState<boolean>(false)
+  const [simpleTrack, setSimpleTrack] = useState<SimpleTrackView>({ artist_id: '', artist_name: '', album_id: '', album_name: '', track_id: '', track_name: '' })
+  const [trackList, setTrackList] = useState<SimpleTrackView[]>([])
 
   const inEventId = searchParams.get('event_id')
 
@@ -98,13 +104,52 @@ const LiveTrackList = () => {
       [name]: value ? value : null
     }))
   }
+
+  const handleShowAlbum = (albumId: string) => {
+    addToHistory({ title: 'Live Track List', path: `${pathname}?${searchParams.toString()}`})
+    router.push(`/music/albums/albumForm?album_id=${albumId}`)
+  }
+
+  const handleShowTrack = (trackId: string) => {
+    addToHistory({ title: 'Live Track List', path: `${pathname}?${searchParams.toString()}`})
+    router.push(`/music/tracks/trackForm?track_id=${trackId}`)
+  }
+
+  const handleTrackLink = (liveTrack: LiveTrackView) => {
+    setSimpleTrack({
+      artist_id: liveTrack.track_artist_id ?? lives.filter(live => live.is_select).at(0)?.artist_id ?? '',
+      artist_name: lives.filter(live => live.is_select).at(0)?.artist_name ?? '', 
+      album_id: liveTrack.album_id ?? '',
+      album_name: liveTrack.album_name ?? '',
+      track_id: liveTrack.track_id ?? '',
+      track_name: liveTrack.track_name ?? ''
+    })
+    setShowTrackForm(true)
+  }
+  const handleTrackLinkSaved = (simpleTrack: SimpleTrackView) => {
+    setLiveTrackForEdit(prev => ({
+      ...prev,
+      track_artist_id: simpleTrack.artist_id,
+      artist_name: simpleTrack.artist_name,
+      album_id: simpleTrack.album_id,
+      album_name: simpleTrack.album_name,
+      track_id: simpleTrack.track_id,
+      track_name: simpleTrack.track_name
+    }))
+    setShowTrackForm(false)
+  }
+
   const handleSave = async () => {
     const selectedLiveId = lives.filter(filtered => filtered.is_select).at(0)?.live_id ?? ''
     const newData = { ...liveTrackForEdit, live_id: selectedLiveId }
     if (isEdit) await updateLiveTrack(newData)
     else await insertLiveTrack(newData)
-    await loadData(newData.live_id ?? '')
-    setLiveTrackForEdit(initialLiveTrack)
+    const fetchData = await loadData(newData.live_id ?? '')
+    const setData = {
+      ...initialLiveTrack,
+      play_order: (fetchData.at(-1)?.play_order ?? 0) + 1
+     }
+    setLiveTrackForEdit(setData)
     setIsEdit(false)
   }
 
@@ -120,11 +165,12 @@ const LiveTrackList = () => {
     const fetchData = await fetchLives(inEventId ?? '')
     const fetchData2 = fetchData.map((row, index) => index === 0 ? { ...row, is_select: true } : row)
     setLives(fetchData2)
-    if (fetchData2.length === 1) loadData(fetchData2[0].live_id ?? '')
+    if (fetchData2.length === 1) await loadData(fetchData2[0].live_id ?? '')
   }
-  const loadData = async (liveId: string) => {
+  const loadData = async (liveId: string): Promise<LiveTrackView[]> => {
     const fetchData = await fetchLiveTracks(liveId ?? '')
     setLiveTracks(fetchData)
+    return fetchData
   }
 
   const searchId = useRef(0)
@@ -166,7 +212,9 @@ const LiveTrackList = () => {
     // return () => window.removeEventListener('keydown', handler)
   }, [newLive.artist_name])
   useEffect(() => {
-    if (!liveTrackForEdit.track_name || liveTrackForEdit.track_name.length < 2) return
+    if (!liveTrackForEdit.track_name) return
+    const artistId = lives.filter(live => live.is_select).at(0)?.artist_id
+    if (!!!artistId) return
     const timer = setTimeout(async () => {
       const id = ++searchId.current
       const condition1 = {
@@ -311,12 +359,27 @@ const LiveTrackList = () => {
                     {!!!liveTrack.track_id ? (
                       <button
                           className="button-page" >
-                        <Link2Off className="h-3 w-3" />
+                        <Link2Off className="h-3 w-3"
+                            onClick={() => handleTrackLink(liveTrack)} />
                       </button>
                     ) : ( null )}
                   </td>
-                  <td>{liveTrack.track_name}</td>
-                  <td>{liveTrack.album_name}</td>
+                  <td>
+                    {liveTrack.track_id ? (
+                      <button className="button-link"
+                          onClick={() => handleShowTrack(liveTrack.track_id ?? "")}>
+                        {EllipsisAndTooltip(liveTrack.track_name ?? '', 32)}
+                      </button>
+                    ) : ( <>{liveTrack.track_name}</>)}
+                  </td>
+                  <td>
+                    {liveTrack.track_id ? (
+                      <button className="button-link"
+                          onClick={() => handleShowAlbum(liveTrack.album_id ?? "")}>
+                        {EllipsisAndTooltip(liveTrack.album_name ?? '', 32)}
+                      </button>
+                    ) : ( <>{liveTrack.album_name}</>)}
+                  </td>
                   <td>{liveTrack.guest_artist_name}</td>
                   <td>{liveTrack.live_track_comment}</td>
                   <td>
@@ -346,12 +409,14 @@ const LiveTrackList = () => {
                 <td>
                   {liveTrackForEdit.track_id ? (
                     <button
-                        className="button-page text-orange-600" >
+                        className="button-page text-orange-600"
+                        onClick={() => handleTrackLink(liveTrackForEdit)}>
                       <Link className="h-3 w-3" />
                     </button>
                   ) : (
                     <button
-                        className="button-page" >
+                        className="button-page"
+                        onClick={() => handleTrackLink(liveTrackForEdit)} >
                       <Link2Off className="h-3 w-3" />
                     </button>
                   )}
@@ -417,6 +482,13 @@ const LiveTrackList = () => {
         </div>
       </div>
       <ConfirmModal />
+      {showTrackForm && (
+        <Modal onClose={() => setShowTrackForm(false)}>
+          <TrackSimpleForm
+              track={simpleTrack}
+              onSave={handleTrackLinkSaved} />
+        </Modal>
+      )}
       <HiddenPanel
           isOpen={hiddenPanelOpen}
           content={

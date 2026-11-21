@@ -359,7 +359,7 @@ const TrackList = () => {
                   <button className="button-link"
                       onClick={() => handleShowAlbum(track.album_id ?? "")}>
                     {EllipsisAndTooltip(track.album_name_1 ?? '', 32)}
-                  </button>  
+                  </button>
                 </td>
                 <td className="numeric-field">
                   {track.track_no}{track.disc_no ? ' / ' + track.disc_no : ''}

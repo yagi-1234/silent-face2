@@ -42,6 +42,7 @@ export type LiveTrackRow = {
   part_name: string | null
   track_id: string | null
   track_name: string | null
+  track_artist_id: string | null
   artist_name: string | null
   guest_artist_name: string | null
   album_id: string | null
@@ -62,6 +63,7 @@ export const initialLiveTrack: LiveTrackView = {
   part_name: null,
   track_id: null,
   track_name: null,
+  track_artist_id: null,
   artist_name: null,
   guest_artist_name: null,
   album_id: null,

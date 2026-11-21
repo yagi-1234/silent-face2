@@ -97,6 +97,7 @@ const TaskList = () => {
     setFormTaskId(taskId ?? '')
     setShowTaskForm(true)
   }
+
   const handleTaskSaved = async () => {
     await loadData()
     setShowTaskForm(false)

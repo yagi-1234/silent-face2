@@ -317,3 +317,46 @@ const copyToTrackView = (track: TrackRow): TrackView => {
   }
   return trackView
 }
+
+import { SimpleTrackView } from '@/types/music/track-types'
+
+export const fetchArtistAlbumTracks = async (condition: SimpleTrackView): Promise<SimpleTrackView[]> => {
+  if (condition.track_id || condition.track_name) return await fetchSimpleTracks(condition)
+  else if (condition.album_id || condition.album_name) return [] // album search
+  else if (condition.artist_id || condition.artist_name) return [] // artist search
+
+  return []
+}
+
+export const fetchSimpleTracks = async (condition: SimpleTrackView): Promise<SimpleTrackView[]> => {
+  console.log('condition:', condition)
+  let query = supabase
+      .from('mv31_tracks')
+      .select('artist_id, artist_name:artist_name_1, album_id, album_name:album_name_1, track_id, track_name:track_name_1')
+  if (condition.artist_id)
+    query = query.eq('artist_id', condition.artist_id)
+  else if (condition.artist_name)
+    query = query.eq('artist_name_1', condition.artist_name)
+  if (condition.album_id)
+    query = query.eq('album_id', condition.album_id)
+  else if (condition.album_name)
+    query = query.eq('album_name_1', condition.album_name)
+  if (condition.track_id)
+    query = query.eq('track_id', condition.track_id)
+  else if (condition.track_name) {
+    const keyword = makeKeywordForSql(condition.track_name, true)
+    query = query.or(`track_name_0.ilike.${keyword},track_name_1.ilike.${keyword},track_name_2.ilike.${keyword}`)
+  }
+  query = query.limit(10)
+  query.order('artist_name_1')
+  query.order('album_name_1')
+  query.order('track_name_1')
+
+  const { data: result, error } = await query
+  if (error) {
+    console.error('Error fetchSimpleTracks:', error)
+    return []
+  }
+  console.log('fetchSimpleTracks result:', result)
+  return result
+}
