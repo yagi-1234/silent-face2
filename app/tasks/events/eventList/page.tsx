@@ -194,11 +194,11 @@ const EventList = () => {
               {(event.event_type !== '23' || hiddenNumber === '423') && (
                 <div className="border rounded-sm p-1 shadow-sm flex items-center" key={event.event_id}>
                   <span className="font-bold w-14">{formatDateTime(event.start_at, "MM/dd EEE")}</span>
-                  {getEventTypeIcon(event.event_type)}
+                  {getEventTypeIcon(event.event_type ?? "")}
                   <span>&ensp;</span>
                   <button
                       className="button-link card-title"
-                      onClick={() => handleShowForm(event.event_type, event.event_id ?? "")}>
+                      onClick={() => handleShowForm(event.event_type ?? "", event.event_id ?? "")}>
                     {event.event_name}
                   </button>
                 </div>
@@ -263,11 +263,11 @@ const EventList = () => {
                       <div className="div-row-flexible">
                         <span className="w-24">{formatDateTime(event.start_at, "dd EEE")}</span>
                         <span className="w-12">{event.start_time}</span>
-                        <span className="w-4 flex justify-center">{getEventTypeIcon(event.event_type)}</span>
-                        <span className="w-24">{CodeEventType[event.event_type]}</span>
+                        <span className="w-4 flex justify-center">{getEventTypeIcon(event.event_type ?? "")}</span>
+                        <span className="w-24">{CodeEventType[event.event_type ?? ""]}</span>
                         <span className="w-96">
                           <button className="button-link"
-                              onClick={() => handleShowForm(event.event_type, event.event_id ?? "")}>
+                              onClick={() => handleShowForm(event.event_type ?? "", event.event_id ?? "")}>
                             {event.event_name}
                           </button>
                         </span>
