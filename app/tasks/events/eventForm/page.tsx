@@ -109,7 +109,7 @@ const EventForm = () => {
               id="event_type"
               name="event_type"
               className="w-36"
-              value={event.event_type}
+              value={event.event_type ?? ''}
               onChange={(e) => handleChange(e)}>
             <option value=""></option>
             {Object.entries(CodeEventType).map(([key, label]) => (
@@ -186,7 +186,7 @@ const EventForm = () => {
               id="priority"
               name="priority"
               className="w-32"
-              value={event.priority}
+              value={event.priority ?? ''}
               onChange={(e) => handleChange(e)}>
             <option value=""></option>
             {Object.entries(CodePriorityType).map(([key, label]) => (
