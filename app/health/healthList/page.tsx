@@ -6,10 +6,12 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 import { fetchWeights } from '@/actions/health/health-action'
 import { Breadcrumb } from '@/components/Breadcrumb'
+import CustomCalendar from '@/components/CustomCalendar'
 import PartialDateInput from '@/components/PartialDateInput'
 import { useHistory } from '@/contexts/HistoryContext'
 import { checkUser } from '@/contexts/RooterContext'
 import { WeightView, WeightCondition, initialWeightCondition } from '@/types/health/health-types'
+import { EventItem } from '@/types/tasks/event-types'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 
@@ -31,6 +33,7 @@ const HealthList = () => {
   const searchParams = useSearchParams()
 
   const [weights, setWeights] = useState<WeightView[]>([])
+  const [events, setEvents] = useState<EventItem[]>([])
   const [condition, setCondition] = useState<WeightCondition>(initialWeightCondition)
 
   const checkLogin = async () => {
@@ -40,6 +43,22 @@ const HealthList = () => {
   const loadData = async (condition1: WeightCondition) => {
     const fetchData = await fetchWeights(condition1)
     setWeights(fetchData)
+    setEvents(fetchData.map(weight => ({
+      event_id: weight.weight_id ?? '',
+      event_type: null,
+      task_id: null,
+      event_name: `Weight: ${weight.weight}kg`,
+      event_name_2: `BFP：${weight.bfp}% VFL：${weight.vfl}`,
+      location: null,
+      start_at: weight.weight_date ?? new Date(),
+      start_time: null,
+      organized: null,
+      event_url: null,
+      priority: null,
+      event_comment: null,
+      updated_at: weight.updated_at,
+      updated_count: weight.updated_count
+    })))
   }
 
   const handleChangeDate = (value: string) => {
@@ -57,10 +76,21 @@ const HealthList = () => {
     setWeights(fetchData)
   }
 
-  const handleShowForm = (weightId: string) => {
+  const handleShowForm = (weightId: string, eventType: string) => {
     addToHistory({ title: 'healthList', path: `${pathname}?${searchParams.toString()}`})
     if (weightId) router.push(`/health/healthForm?weight_id=${weightId}`)
     else router.push(`/health/healthForm`)
+  }
+
+  const setSelectedMonth = (selectedMonth: Date) => {
+    const fromDate = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1)
+    const condtion1 = {
+      ...condition,
+      weight_date_from: fromDate, 
+      weight_date_to: new Date(fromDate.getFullYear(), fromDate.getMonth() + 1, 0)
+    }
+    setCondition(condtion1)
+    loadData(condtion1)
   }
 
   const handlePlus = () => {
@@ -85,6 +115,13 @@ const HealthList = () => {
       <h2 className="header-title">Health List</h2>
       <div>
         <div className="hidden sm:block">
+          <div className="mx-auto max-w-6xl p-4">
+            <CustomCalendar
+                events={events}
+                selectedMonth={condition.weight_date_from ?? new Date()}
+                onSelectMonth={setSelectedMonth}
+                onShowForm={handleShowForm} />
+          </div>
         </div>
         <div className="block sm:hidden">
           <div>
@@ -111,7 +148,7 @@ const HealthList = () => {
                 <div className="div-card-row card-title">
                   <button
                       className="button-link"
-                      onClick={() => handleShowForm(weight.weight_id ?? '')}>
+                      onClick={() => handleShowForm(weight.weight_id ?? '', '')}>
                     {formatDateTime(weight.weight_date, "yyyy/MM/dd")}
                   </button>
                 </div>

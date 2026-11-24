@@ -7,17 +7,17 @@ export type CalendarEvent = {
 
 export type EventItem = {
   event_id: string | ''
-  event_type: string | ''
+  event_type: string | null
   task_id: string | null
-  event_name: string | ''
-  event_name_2: string | ''
+  event_name: string | null
+  event_name_2: string | null
   location: string | null
   start_at: Date
   start_time: string | null
   organized: string | null
   event_url: string | null
-  priority: string | ''
-  event_comment: string | ''
+  priority: string | null
+  event_comment: string | null
   updated_at: Date | null
   updated_count: Number | null
 }

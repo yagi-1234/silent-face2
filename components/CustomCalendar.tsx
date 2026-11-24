@@ -11,7 +11,7 @@ type CustomCalendarProps = {
   events: EventItem[]
   selectedMonth?: Date
   onSelectMonth: (selectedMonth: Date) => void
-  onShowForm: (eventType: string, eventId: string) => void
+  onShowForm: (eventId: string, eventType: string) => void
 }
 
 const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -45,8 +45,13 @@ export default function CustomCalendar({ events, onShowForm, selectedMonth = new
   const changeMonth = (offset: number) => {
     onSelectMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + offset, 1))
   }
+  const changeYearAndMonth = (year: number, month: number) => {
+    onSelectMonth(new Date(year, month - 1, 1))
+  }
 
   const monthLabel = formatDateTime(selectedMonth, 'MMMM yyyy')
+  const currentYear = formatDateTime(selectedMonth, 'yyyy')
+  const currentMonth = formatDateTime(selectedMonth, 'M')
 
   const getEventStyle = (eventType: string) => {
     let bgColor = 'bg-blue-100'
@@ -67,11 +72,51 @@ export default function CustomCalendar({ events, onShowForm, selectedMonth = new
     return `truncate rounded px-1 py-0.5 w-36 text-left text-xs ${bgColor} ${textColor}`
   }
 
+const MonthList: { [key: number]: string | '' } = {
+  1: "January",
+  2: "February",
+  3: "March",
+  4: "April",
+  5: "May",
+  6: "June",
+  7: "July",
+  8: "August",
+  9: "September",
+  10: "October",
+  11: "November",
+  12: "December"
+}
+
+const YearList = Array.from({ length: Number(currentYear) - 2020 + 4 }, (_, i) => {
+  const year = 2020 + i
+  return { key: year, value: year.toString()}
+})
+
   return (
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">
-          {monthLabel}
+          <select
+              id="currentMonth"
+              name="currentMonth"
+              className="w-36 mr-2"
+              value={currentMonth}
+              onChange={(e) => changeYearAndMonth(Number(currentYear), Number(e.target.value))} >
+            {Object.entries(MonthList)
+                .sort(([a], [b]) => Number(a) - Number(b))
+                .map(([key, label]) => (<option key={key} value={key}>{label}</option>
+            ))}
+          </select>
+          <select
+              id="currentYear"
+              name="currentYear"
+              className="w-24"
+              value={currentYear}
+              onChange={(e) => changeYearAndMonth(Number(e.target.value), Number(currentMonth))} >
+            {YearList.map(year => (
+              <option key={year.key} value={year.value}>{year.value}</option>
+            ))}
+          </select>
         </h2>
         <div className="flex items-center gap-2">
           <input type="text"
@@ -134,8 +179,8 @@ export default function CustomCalendar({ events, onShowForm, selectedMonth = new
               <div className="mt-1 space-y-1">
                 {dayEvents.slice(0, 2).map((event) => (
                   <button key={event.event_id}
-                      className={getEventStyle(event.event_type)}
-                      onClick={() => onShowForm(event.event_type, event.event_id)}>
+                      className={getEventStyle(event.event_type ?? '')}
+                      onClick={() => onShowForm(event.event_id, event.event_type ?? '')}>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -145,10 +190,9 @@ export default function CustomCalendar({ events, onShowForm, selectedMonth = new
                           </div>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>
-                            {event.start_time && `${event.start_time}`}
-                            {event.event_name}
-                          </p>
+                          <p>{event.start_time && `${event.start_time}`}</p>
+                          <p>{event.event_name}</p>
+                          <p>{event.event_name_2}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -184,7 +228,7 @@ export default function CustomCalendar({ events, onShowForm, selectedMonth = new
             {events.filter((event) => formatDateTime(event.start_at, 'yyyy-MM-dd') === selectedDate && (event.event_type !== '23' || hiddenNumber === '423')).map((event) => (
               <li key={event.event_id}
                   className="rounded bg-gray-100 px-3 py-2 text-sm">
-                {event.start_time} {event.event_name}
+                {event.start_time} {event.event_name} {event.event_name_2}
               </li>
             ))}
           </ul>

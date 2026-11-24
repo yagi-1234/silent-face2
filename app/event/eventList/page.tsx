@@ -11,7 +11,7 @@ import MessageBanner from '@/components/MessageBanner'
 import { useHistory } from '@/contexts/HistoryContext'
 import { useMessage } from '@/contexts/MessageContext'
 import { checkUser } from '@/contexts/RooterContext'
-import { EventItem, eventCondition, initialEventCondition } from '@/types/tasks/event-types'
+import { EventItem } from '@/types/tasks/event-types'
 import { formatDateTime } from '@/utils/dateFormat'
 import { useCustomBack } from '@/utils/navigationUtils'
 
@@ -40,7 +40,7 @@ const EventList = () => {
 
   const inEventType = searchParams.get('event_type') ?? ''
 
-  const handleShowForm = (eventType: string, eventId: string) => {
+  const handleShowForm = (eventId: string, eventType: string) => {
     const query = new URLSearchParams()
     query.append('selectMonth', formatDateTime(selectedMonth, 'yyyy-MM-dd'))
     const url = `/event/eventList?${query.toString()}`
@@ -89,7 +89,6 @@ const EventList = () => {
           onClose={() => setMessage('')} />
       <Breadcrumb />
       <h2 className="header-title">{"Events" + (inEventType === "01" ? " (Live)" : "")}</h2>
-      <p>{formatDateTime(selectedMonth, 'yyyy-MM-dd')}</p>
       <div className="mx-auto max-w-6xl p-4">
         <CustomCalendar
             events={events}
