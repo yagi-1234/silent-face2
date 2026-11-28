@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import { Check, ArrowLeft, EllipsisVertical, Minus, Plus } from 'lucide-react'
+import { Check, ArrowLeft, EllipsisVertical, Minus, Pencil, Plus } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { fetchNote, mergeNote, deleteNote } from '@/actions/tasks/note-action'
@@ -31,50 +31,16 @@ const NoteForm = () => {
   const inNoteId = searchParams.get('note_id') ?? ''
 
   const { setIsModalOpen, setModalMessage, setConfirmHandler } = useConfirmModal()
-  const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
-  const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const { handleBack } = useCustomBack()
+  const { message, setMessage, messageType, setMessageType, errors, setErrors } = useMessage()
 
   const [note, setNote] = useState<NoteView>(initialNote)
-  // const [originalTrack, setOriginalTrack] = useState<TrackView>(initialTrack)
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target
-    setNote(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  const handleSave = () => {
-    setModalMessage('Do you want to continue with this registration?')
-    setConfirmHandler(async () => {
-      //const validationErrors = validateWeight(weight)
-      // if (0 < Object.keys(validationErrors).length) {
-      //   setMessage('Validation Error!')
-      //   setMessageType('error')
-      //   setErrors(validationErrors)
-      //   return
-      // }
-
-      const result = await mergeNote(note)
-      setNote(result)
-      // setOriginalTrack(result)
-      setMessage('Saved Successfully!')
-      setMessageType('info')
-    })
-    setIsModalOpen(true)
-  }
-  const handleDelete = async () => {
-    setModalMessage('Do you want to continue with this deletion?')
-    setConfirmHandler(async () => {
-      await deleteNote(note)
-      setMessage('Deleted Successfully!')
-      setMessageType('info')
-      handleBack(false)
-    })
-    setIsModalOpen(true)
-  }
+  const lines = (note.content ?? '').split('\n')
+  const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
+  const [isEdit, setIsEdit] = useState<boolean>(false)
+  const [checkedItems, setCheckedItems] = useState<number[]>([])
+  const [showSubMenu, setshowSubMenu] = useState(false)
+  const [subMenuPosition, setSubMenuPosition] = useState({ x: 0, y: 0 })
 
   const checkLogin = async () => {
     await checkUser()
@@ -85,6 +51,69 @@ const NoteForm = () => {
       const fetchData = await fetchNote(inNoteId)
       setNote(fetchData)
     }
+  }
+
+  const renderContent = (content: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g
+    return content.split(urlRegex).map((part, index) => {
+      if (urlRegex.test(part)) {
+        urlRegex.lastIndex = 0
+        return (
+          <a key={index}
+              href={part}
+              target="_blank"
+              rel="nooperner noreferrer"
+              className="text-blue-500 underline hover:text-blue-700">
+            {part}
+          </a>
+        )
+      }
+      return part
+    })
+  }
+
+  const toggleCheck = (index: number) => {
+    setCheckedItems((prev) =>
+      prev.includes(index) ? prev.filter((item) => item !== index) : [...prev, index]
+    )
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target
+    setNote(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.clientX
+    console.log(event.clientX)
+    setSubMenuPosition({ x: event.clientX, y: event.clientY })
+    setshowSubMenu(true)
+  }
+
+  const handleSave = () => {
+    setModalMessage('Do you want to continue with this registration?')
+    setConfirmHandler(async () => {
+      const result = await mergeNote(note)
+      setNote(result)
+      setMessage('Saved Successfully!')
+      setMessageType('info')
+      setIsEdit(false)
+    })
+    setIsModalOpen(true)
+  }
+
+  const handleDelete = async () => {
+    setModalMessage('Do you want to continue with this deletion?')
+    setConfirmHandler(async () => {
+      await deleteNote(note)
+      setMessage('Deleted Successfully!')
+      setMessageType('info')
+      handleBack(false)
+    })
+    setIsModalOpen(true)
   }
 
   useEffect(() => {
@@ -98,15 +127,6 @@ const NoteForm = () => {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [])
-
-  const [showSubMenu, setshowSubMenu] = useState(false)
-  const [subMenuPosition, setSubMenuPosition] = useState({ x: 0, y: 0 })
-  const handleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.clientX
-    console.log(event.clientX)
-    setSubMenuPosition({ x: event.clientX, y: event.clientY })
-    setshowSubMenu(true)
-  }
 
   return (
     <div className="root-panel">
@@ -136,15 +156,50 @@ const NoteForm = () => {
         </div>
         <div className="div-input-row">
           <div className="input-form-full">
-            <label htmlFor="content">Content</label>
-            <div className="div-row-left">
-              <textarea id="content"
-                  name="content"
-                  rows={10}
-                  value={note.content ?? ""}
-                  onChange={handleChange} >
-              </textarea>
+            <div className="div-row-left items-center">
+              <label htmlFor="content" className="w-16">Content</label>
+              {!isEdit && note.note_id ? (
+                <button
+                    onClick={() => setIsEdit(true)} >
+                  <Pencil size={16} />
+                </button>
+              ) : null}
             </div>
+            {isEdit || !note.note_id ? (
+              <div className="div-row-left">
+                <textarea id="content"
+                    name="content"
+                    rows={10}
+                    value={note.content ?? ""}
+                    onChange={handleChange} >
+                </textarea>
+              </div>
+            ) : (
+              <div className="div-row-left">
+                <div className="whitespace-pre-wrap">
+                  {lines.map((line, index) => {
+                    const match = line.match(/^\[([ x])\]\s*(.*)$/i)
+                    if (match) {
+                      const isChecked = match[1].toLowerCase() === 'x' || checkedItems.includes(index)
+                      return (
+                            <div className="div-row-left">
+                              <input type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => toggleCheck(index)}
+                                  className="w-4 mr-2" />
+                              <span>{renderContent(match[2])}</span>
+                            </div>
+                      )
+                    }
+                    return (
+                      <div key={index}>
+                        {renderContent(line)}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -157,14 +212,16 @@ const NoteForm = () => {
             </button>
           </div>
           <div className="footer-right">
-            <button className="button-save"
-                onClick={handleSave}>
-              {note.note_id ? (
-                <Check size={16} />
-              ) : (
-                <Plus size={16} />
-              )}
-            </button>
+            {isEdit || !note.note_id ? (
+              <button className="button-save"
+                  onClick={handleSave}>
+                {note.note_id ? (
+                  <Check size={16} />
+                ) : (
+                  <Plus size={16} />
+                )}
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

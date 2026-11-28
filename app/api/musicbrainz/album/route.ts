@@ -22,14 +22,28 @@ export async function GET(request: NextRequest) {
       `&fmt=json` +
       `&limit=10`
   try {
+    console.log('MusicBrainz API called')
+    console.log('Artist:', artist)
+    console.log('Album:', album)
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'silent-face2/1.0 (yagi69874521@gmail.com)'
       }
     })
     if (!response.ok) {
+      const errorText = await response.text()
+
+      console.error('MusicBrainz API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      })
+
       return NextResponse.json(
-        { error: `MusicBrainz API error: ${response.status}` },
+        {
+          error: `MusicBrainz API error: ${response.status}`,
+          detail: errorText
+        },
         { status: response.status }
       )
     }

@@ -45,21 +45,35 @@ const TrackSearch = () => {
 
   const handleGetMbid = async () => {
     if (!condition.artist_name && !condition.album_name) return
-    const response = await fetch(
-      `/api/musicbrainz/album?artist=${encodeURIComponent(condition.artist_name)}&album=${encodeURIComponent(condition.album_name)}`
-    )
-    const data = await response.json()
-    const albums: MbAlbumData[] = []
-    data.forEach((album: MbAlbumData) => {
-      albums.push({
+
+    try {
+      setMbAlbumData([])
+      setMbid('')
+      const response = await fetch(
+        `/api/musicbrainz/album?artist=${encodeURIComponent(condition.artist_name)}&album=${encodeURIComponent(condition.album_name)}`
+      )
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error ?? `HTTP Error: ${response.status}`)
+      if (!Array.isArray(data)) throw new Error('Invalid API response')
+
+      const albums: MbAlbumData[] = data.map((album: MbAlbumData) => ({
         mbid: album.mbid,
         artist: album.artist,
         firstReleaseDate: album.firstReleaseDate,
         primaryType: album.primaryType,
         title: album.title,
-      })
-    })
-    setMbAlbumData(albums)
+      }))
+      setMbAlbumData(albums)
+
+      if (albums.length === 0) {
+        setMessage('No albums found.')
+        setMessageType('info')
+      }
+    } catch (error) {
+      console.error('MusicBrainz search error:', error)
+      setMessage(error instanceof Error ? error.message : 'Album search failed.')
+      setMessageType('error')
+    }
   }
 
   const handleSelectAlbum = (album: MbAlbumData) => {
