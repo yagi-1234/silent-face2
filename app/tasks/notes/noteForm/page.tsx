@@ -182,13 +182,13 @@ const NoteForm = () => {
                     if (match) {
                       const isChecked = match[1].toLowerCase() === 'x' || checkedItems.includes(index)
                       return (
-                            <div className="div-row-left">
-                              <input type="checkbox"
-                                  checked={isChecked}
-                                  onChange={() => toggleCheck(index)}
-                                  className="w-4 mr-2" />
-                              <span>{renderContent(match[2])}</span>
-                            </div>
+                        <div key={index} className="div-row-left">
+                          <input type="checkbox"
+                              checked={isChecked}
+                              onChange={() => toggleCheck(index)}
+                              className="w-4 mr-2" />
+                          <span>{renderContent(match[2])}</span>
+                        </div>
                       )
                     }
                     return (
